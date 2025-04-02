@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // --- Configuration ---
 const VISIBILITY_THRESHOLD_DIVISOR = 1; // Show button after scrolling 1/X of the viewport height (e.g., 2 = half)
-const INACTIVITY_TIMEOUT_MS = 500; // Hide button after 2000ms (2 seconds) of no scrolling
+const INACTIVITY_TIMEOUT_MS = 1500; // Hide button after 2000ms (2 seconds) of no scrolling
 
 const ScrollUpButton = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
