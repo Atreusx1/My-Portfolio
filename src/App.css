@@ -50,12 +50,14 @@ button {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  /* GHIBLI CHANGE: Apply background image here */
-  background-image: url('ghibli.png'); /* ADJUST PATH AS NEEDED */
+  /* REMOVE background-image from here */
+  /* background-image: url('ghibli.png'); << REMOVE THIS */
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  /* Add transition for smooth background change (optional) */
+  transition: background-image 0.5s ease-in-out;
 }
 
 .canvas-container {
@@ -782,17 +784,36 @@ section {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* Base rule - comes FIRST */
   .fixed-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('ghibli.png');
+    /* Default image can be removed if initial class is set,
+       or kept as a fallback */
+    /* background-image: url('/ghibli.png'); */
     background-size: cover;
-    background-position: bottom center;
+    background-position: bottom center; /* Or 'center center' if preferred */
+    background-repeat: no-repeat;
     z-index: -1;
+    /* Add transition for smoother background change */
+    transition: background-image 0.5s ease-in-out;
   }
+
+  /* Mode-specific rules - come AFTER the base rule */
+  .fixed-background.light-mode {
+    /* Ensure the path is relative to the public folder */
+    background-image: url('ghibli-day.png');
+  }
+  .fixed-background.dark-mode {
+    /* Ensure the path is relative to the public folder */
+    background-image: url('ghibli-night.png');
+  }
+
+  /* Keep the rest of the iOS fix rules */
   .app {
     background: none !important;
     position: relative;
@@ -805,7 +826,7 @@ section {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 0;
+    z-index: 0; /* Behind .content, in front of .fixed-background */
     overflow: hidden;
     background-color: transparent !important;
   }
@@ -821,16 +842,124 @@ section {
   }
   .content {
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Above canvas */
   }
   section {
-    background: transparent !important;
+    background: transparent !important; /* Sections should be transparent */
     position: relative;
     z-index: 2;
      min-height: 100vh;
   }
 }
 
+/* --- Non-iOS Fallback (Optional but recommended) ---
+   If not using the iOS fix, the .app container would handle the background */
+@supports not (-webkit-touch-callout: none) {
+  .app {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center center; /* Or bottom center */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    transition: background-image 0.5s ease-in-out;
+  }
+  .app.light-mode {
+    background-image: url('ghibli-day.png');
+  }
+  .app.dark-mode {
+    background-image: url('ghibli-night.png');
+  }
+  /* Canvas container still needs to be fixed */
+   .canvas-container {
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100vw;
+     height: 100vh;
+     z-index: 0;
+     overflow: hidden;
+     background-color: transparent !important;
+   }
+    @supports (height: 100dvh) {
+      .canvas-container { height: 100dvh; }
+    }
+    canvas {
+      width: 100% !important; height: 100% !important;
+      background-color: transparent !important;
+    }
+   .content {
+     position: relative;
+     z-index: 1; /* Above canvas */
+   }
+   section {
+     /* Optional: Add a very subtle overlay if needed on non-iOS */
+     /* background-color: rgba(0, 0, 0, 0.05); */
+     position: relative;
+     z-index: 1;
+     min-height: 100vh;
+   }
+   /* Hide the dedicated fixed-background div if not on iOS */
+   .fixed-background {
+       display: none;
+   }
+
+   .dark-mode-toggle-button {
+    right: auto;     /* Unset the right position */
+    left: 20px;      /* Set the left position (adjust value as needed) */
+    top: 20px;       /* Optionally adjust top position for mobile */
+    /* Adjust size slightly for smaller screens if desired */
+    /* width: 40px; */
+    /* height: 40px; */
+    /* font-size: 1.2rem; */
+  }
+}
+
+/* --- Add styles for the DarkModeToggle button (if not already present) --- */
+/* (Include the DarkModeToggle button CSS from the previous answer here) */
+/* Example: */
+.dark-mode-toggle-button {
+  /* --- Positioning (Default: Top Right) --- */
+  position: fixed;
+  top: 25px;      /* Default top position */
+  right: 25px;     /* Default right position */
+  left: auto;      /* Ensure left is not set by default */
+  z-index: 1000;   /* High z-index to stay on top */
+
+  /* --- Base Styles (Copied from inline or refined) --- */
+  background: var(--bg-overlay-medium);
+  color: var(--text-light);
+  border: 1px solid var(--sky-blue);
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: background-color 0.3s ease, border-color 0.3s ease,
+              opacity 0.3s ease, visibility 0.3s ease; /* Add transitions if using visibility toggle */
+  padding: 0; /* Reset default button padding */
+  backdrop-filter: blur(5px); /* Optional nice effect */
+}
+.dark-mode-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+/* Add specific theme variable overrides if you use them */
+/* Example using variables from previous context: */
+.dark-mode-toggle-button {
+   background: var(--bg-overlay-medium, rgba(255, 255, 255, 0.1));
+   color: var(--text-light, white);
+   border: 1px solid var(--sky-blue, rgba(255, 255, 255, 0.5));
+   /* ... other styles ... */
+}
+.dark-mode-toggle-button:hover {
+   background: var(--bg-overlay-blue, rgba(79, 163, 224, 0.15));
+   border-color: var(--flower-yellow, yellow);
+}
 /* Loading Screen */
 .loading-screen {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
@@ -886,15 +1015,48 @@ section {
 
 /* Scroll Up Button */
 .scroll-up-button {
-  position: fixed; bottom: 25px; right: 25px;
-  width: 50px; height: 50px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; cursor: pointer;
-  background-color: var(--tree-green-dark);
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  /* background-color: var(--tree-green-dark); */ /* Base, overridden by inline style */
   box-shadow: 0 4px 8px rgba(74, 68, 58, 0.3);
-  background-clip: padding-box; border: none;
+  background-clip: padding-box;
+  border: none;
   padding: 3px;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease; /* Add opacity/visibility */
+  z-index: 999; /* <<< ADD THIS LINE */
+  opacity: 0; /* Start hidden */
+  visibility: hidden; /* Start hidden */
+  pointer-events: none; /* Start non-interactive */
 }
+
+@media screen and (max-width: 768px) {
+  .dark-mode-toggle-button {
+    right: auto;     /* Unset the right position */
+    left: 20px;      /* Set the left position (adjust value as needed) */
+    top: 20px;       /* Optionally adjust top position for mobile */
+    /* Adjust size slightly for smaller screens if desired */
+    /* width: 40px; */
+    /* height: 40px; */
+    /* font-size: 1.2rem; */
+  }
+}
+
+/* Add a class to show the button */
+.scroll-up-button.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+
 .inner-circle {
   width: 100%; height: 100%; border-radius: 50%;
   background-color: var(--grass-green-medium);
@@ -902,13 +1064,15 @@ section {
   transition: background-color 0.3s ease;
 }
 .arrow { color: var(--text-light); font-size: 24px; }
+
 .scroll-up-button:hover {
-  background-color: var(--flower-yellow);
+  /* Use conic gradient hover or a solid color */
+   /* background-color: var(--flower-yellow); */ /* Keep conic gradient for hover too? */
 }
+
 .scroll-up-button:hover .inner-circle {
   background-color: var(--grass-green-light);
 }
-
 
 /* --- MEDIA QUERIES --- */
 
