@@ -1,7 +1,7 @@
 /* GHIBLI THEME - Base Colors */
 :root {
   /* --- Core Palette (Slightly Punchier) --- */
-  --sky-blue: #4FA3E0;         /* Brighter, cleaner sky blue */
+  --sky-blue: #55a6e0;         /* Brighter, cleaner sky blue */
   --grass-green-light: #A5CC6F;  /* More vibrant light green */
   --grass-green-medium: #7CB556; /* Richer mid-tone green */
   --tree-green-dark: #305A40;    /* Deep, slightly desaturated dark green */
@@ -14,10 +14,16 @@
 
   /* --- Overlays (Slightly more opaque for readability) --- */
   --bg-overlay-dark: rgba(48, 90, 64, 0.8);   /* Dark Tree Green, 80% opaque */
-  --bg-overlay-medium: rgba(124, 181, 86, 0.7); /* Medium Grass Green, 70% opaque */
+  --bg-overlay-medium: rgba(255, 255, 255, 0.11); /* Medium Grass Green, 70% opaque */
   --bg-overlay-light: rgba(255, 255, 255, 0.1); /* Very subtle white overlay */
   --bg-overlay-blue: rgba(79, 163, 224, 0.15); /* Faint blue for hovers/accents */
   --bg-overlay-yellow: rgba(253, 216, 53, 0.15);/* Faint yellow for hovers/accents */
+  --bg-overlay-selected: rgba(79, 163, 224, 0.2); /* Slightly stronger blue for selection */
+
+
+  /* Define bg-medium-transparent and bg-light-transparent based on existing overlays */
+  --bg-medium-transparent: var(--bg-overlay-medium); /* Example: Use medium green overlay */
+  --bg-light-transparent: var(--bg-overlay-light);   /* Example: Use light white overlay */
 }
 
 * {
@@ -49,7 +55,7 @@ button {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-attachment: fixed; 
+  background-attachment: fixed;
 }
 
 .canvas-container {
@@ -118,6 +124,26 @@ section {
   display: inline-block;
   color: var(--text-light);
   font-weight: 700; /* Bolder */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+.section-title2 {
+  font-size: 1.8rem; /* Slightly larger */
+  margin-bottom: 3.5rem;
+  position: relative;
+  display: inline-block;
+  color: var(--text-light);
+  font-weight: 700; /* Bolder */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.section-title1 {
+  font-size: 2.8rem; /* Slightly larger */
+  margin-bottom: 3.5rem;
+  position: relative;
+  display: flex;
+  color: var(--text-light);
+  justify-content: center;
+  font-weight: 800; /* Bolder */
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
 .section-title:after {
@@ -387,234 +413,402 @@ section {
 }
 .project-link:hover { color: var(--flower-yellow); /* GHIBLI CHANGE */ }
 
-/* Education Styles */
-.education-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+/* --- Tab Styles --- */
+.tabs-container {
+  display: flex;
+  justify-content: center; /* Or flex-start */
+  margin-bottom: 3rem; /* Space between tabs and content */
+  gap: 1rem; /* Space between tab buttons */
+}
+
+.tab-button {
+  padding: 0.8rem 2rem; /* Generous padding */
+  font-size: 1.1rem; /* Slightly larger font */
+  font-weight: 600;
+  border-radius: 30px; /* Pill shape */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid var(--sky-blue); /* Use a theme color for border */
+  background-color: transparent; /* Default transparent */
+  color: var(--text-light); /* Default text color */
+  font-family: 'Nunito', 'Poppins', sans-serif; /* Ensure font */
+}
+
+.tab-button:hover {
+  background-color: var(--bg-overlay-blue); /* Use a theme overlay on hover */
+  border-color: var(--sky-blue); /* Keep border color */
+}
+
+.tab-button.active {
+  /* Use a vibrant gradient for active tab */
+  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue));
+  color: var(--text-dark); /* Dark text for contrast on gradient */
+  border-color: transparent; /* Hide border when filled */
+  box-shadow: 0 4px 10px rgba(79, 163, 224, 0.3); /* Subtle shadow */
+}
+
+/* --- Content Grid --- */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Keep the two-column layout */
+  gap: 3rem; /* Keep the gap */
+}
+
+
+/* Education/Experience Styles */
 .subsection-title {
   font-size: 1.8rem; margin-bottom: 2rem; color: var(--grass-green-light); /* GHIBLI CHANGE */
 }
+
+/* --- Timeline Adjustments --- */
+.timeline-section {
+    /* Adjust padding/margin if needed */
+}
+
 .timeline { position: relative; }
 .timeline:before { /* The vertical line */
   content: ''; position: absolute; top: 0; left: 15px; height: 100%; width: 3px; /* Thicker */
   background: var(--sky-blue); /* GHIBLI CHANGE */
   border-radius: 2px;
 }
-.timeline-item { position: relative; padding-left: 45px; margin-bottom: 3rem; }
-.timeline-marker { /* The circle */
-  position: absolute; top: 0; left: 0; width: 30px; height: 30px;
-  border-radius: 50%;
-  background: var(--text-light); /* GHIBLI CHANGE: Light background */
-  border: 4px solid var(--sky-blue); /* GHIBLI CHANGE: Blue border */
-  z-index: 1;
+.timeline-item {
+  position: relative;
+  padding-left: 45px; /* Space for marker */
+  margin-bottom: 3rem;
+  transition: background-color 0.3s ease, border-radius 0.3s ease, transform 0.3s ease; /* Smoother transitions */
+  border-radius: 8px; /* Add slight rounding for background effect */
+  padding-top: 10px; /* Add some padding for background visibility */
+  padding-bottom: 10px;
+  padding-right: 15px; /* Padding on the right too */
+  cursor: pointer; /* Indicate clickability */
 }
+
+/* --- ENHANCED Timeline Selection Visibility --- */
+.timeline-item.selected {
+    background-color: var(--bg-medium-transparent); /* Use the defined blue overlay */
+    /* transform: scale(1.01); Optional subtle scale */
+    box-shadow: 0 0 15px rgba(79, 163, 224, 0.3); /* Soft glow */
+}
+
+.timeline-item.selected .timeline-marker {
+    /* Make the existing glow stronger */
+    box-shadow: 0 0 0 5px rgba(79, 163, 224, 0.6); /* Increased spread and opacity */
+    /* Optionally change border or background */
+    /* border-color: var(--flower-yellow); */
+}
+
+/* Keep marker styles */
+.timeline-marker {
+  position: absolute; top: 10px; left: 0; /* Align with top padding */
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--text-light);
+  border: 4px solid var(--sky-blue);
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease; /* Add transitions */
+}
+
+.timeline-marker-icon {
+    color: var(--tree-green-dark);
+}
+.experience-marker {
+    border-color: var(--grass-green-medium);
+}
+.experience-marker .timeline-marker-icon {
+     color: var(--grass-green-medium);
+}
+.education-marker {
+    border-color: var(--sky-blue);
+}
+.education-marker .timeline-marker-icon {
+    color: var(--sky-blue);
+}
+
+/* Keep content styles */
 .timeline-period {
   display: inline-block; padding: 0.3rem 1rem;
-  background: rgba(91, 149, 212, 0.15); /* GHIBLI CHANGE: Faint blue bg */
-  color: var(--sky-blue); /* GHIBLI CHANGE */
+  background: rgba(91, 149, 212, 0.15);
+  color: var(--sky-blue);
   border-radius: 15px; font-size: 0.9rem; margin-bottom: 1rem; font-weight: 500;
 }
-.timeline-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); /* GHIBLI CHANGE */ }
+.timeline-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); }
 .timeline-institution {
-  font-size: 1rem; color: var(--grass-green-light); /* GHIBLI CHANGE */ margin-bottom: 1rem; font-weight: 500;
+  font-size: 1rem; color: var(--grass-green-light); margin-bottom: 1rem; font-weight: 500;
 }
-.timeline-description {
-  font-size: 0.95rem; /* Slightly larger */
-  color: var(--text-light); /* GHIBLI CHANGE */
+.timeline-description { /* Used for Education Description */
+  font-size: 0.95rem;
+  color: var(--text-light);
   opacity: 0.9;
   line-height: 1.6;
 }
 
+
+/* --- Experience Details Section (UPDATED for Single Box) --- */
+.details-section {
+    /* Styles for the section containing the box */
+}
+
+/* Style the container div as the box */
+.experience-details-list {
+    background: var(--bg-medium-transparent); /* Box background */
+    padding: 2rem; /* Padding inside the box */
+    border-radius: 10px;
+    border: 1px solid rgba(250, 240, 230, 0.2);
+    box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
+    margin-top: 0; /* Align with subsection title */
+}
+
+.details-title { /* If you add title/company back */
+    font-size: 1.2rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+/* Style the UL inside the box */
+.details-points {
+    list-style: none; /* Remove default bullets */
+    padding: 0; /* Reset default padding */
+    margin: 0; /* Reset default margin */
+}
+
+/* Style each LI (bullet point) inside the box */
+.details-point {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    opacity: 0.9;
+    line-height: 1.7; /* Line height for the text */
+    margin-bottom: 1rem; /* Space between points */
+    position: relative;
+    padding-left: 25px; /* Space for custom bullet */
+
+    /* Reset styles from previous box attempt */
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0; /* Reset padding here, use li padding-left */
+    padding-left: 25px; /* Keep this for bullet spacing */
+    border-radius: 0;
+    transition: none;
+    display: block; /* Back to default block display */
+}
+/* Remove hover effect from individual points */
+.details-point:hover {
+    background: none;
+    transform: none;
+    border-color: none;
+    box-shadow: none;
+}
+.details-point:last-child {
+    margin-bottom: 0; /* Remove margin from last point */
+}
+
+/* Custom bullet point using ::before (Keep as is) */
+.details-point::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    top: 0px; /* Adjust vertical alignment if needed */
+    color: var(--grass-green-light);
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.7; /* Match text line height */
+}
+
+.no-selection-message {
+    color: var(--text-medium);
+    font-style: italic;
+    text-align: center;
+    margin-top: 3rem;
+    /* Optionally style this message within a box too */
+    background: var(--bg-medium-transparent);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(250, 240, 230, 0.2);
+}
+
+/* Certifications Styles (Keep as is) */
 .certifications-list { display: flex; flex-direction: column; gap: 1.5rem; }
 .certification-item {
-  display: flex; gap: 1.5rem; align-items: center; /* GHIBLI CHANGE: Align */
-  background: var(--bg-medium-transparent); /* GHIBLI CHANGE */
+  display: flex; gap: 1.5rem; align-items: center;
+  background: var(--bg-medium-transparent);
   padding: 1.5rem; border-radius: 10px; transition: all 0.3s ease;
-  border: 1px solid rgba(250, 240, 230, 0.2); /* Subtle border */
+  border: 1px solid rgba(250, 240, 230, 0.2);
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
 }
 .certification-item:hover {
-  /* GHIBLI CHANGE: Hover effect */
   background: var(--bg-light-transparent);
   transform: translateX(8px);
   border-color: var(--flower-yellow);
+  box-shadow: 0 6px 18px rgba(74, 68, 58, 0.15); /* Slightly enhance shadow on hover */
 }
 .certification-icon {
   width: 50px; height: 50px; border-radius: 50%;
-  /* GHIBLI CHANGE: Icon bg */
   background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue));
   display: flex; justify-content: center; align-items: center; flex-shrink: 0;
 }
-.certification-icon i { font-size: 24px; color: var(--text-light); /* GHIBLI CHANGE */ }
-.certification-title { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light); /* GHIBLI CHANGE */ }
-.certification-issuer { font-size: 0.9rem; color: var(--grass-green-light); /* GHIBLI CHANGE */ }
+.certification-icon .fa-trophy {
+    font-size: 24px;
+    color: var(--flower-yellow);
+}
+.certification-details { /* Container for title/issuer */ }
+.certification-title { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light); margin-top: 0; }
+.certification-issuer { font-size: 0.9rem; color: var(--grass-green-light); margin: 0; }
 
 /* Contact Styles */
 .contact-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
 .contact-info { padding-right: 2rem; }
 .contact-info h3 {
-  font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--grass-green-light); /* GHIBLI CHANGE */
+  font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--grass-green-light);
 }
-.contact-info p { margin-bottom: 2rem; line-height: 1.8; color: var(--text-light); /* GHIBLI CHANGE */ }
+.contact-info p { margin-bottom: 2rem; line-height: 1.8; color: var(--text-light); }
 .contact-details { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
-.contact-item { display: flex; gap: 1.5rem; align-items: center; /* GHIBLI CHANGE: Align */ }
+.contact-item { display: flex; gap: 1.5rem; align-items: center; }
 .contact-icon {
   display: flex; justify-content: center; align-items: center;
   width: 50px; height: 50px; border-radius: 50%;
-  background: rgba(91, 149, 212, 0.2); /* GHIBLI CHANGE: Faint blue bg */
-  color: var(--sky-blue); /* GHIBLI CHANGE */
+  background: rgba(91, 149, 212, 0.2);
+  color: var(--sky-blue);
   font-size: 1.5rem; flex-shrink: 0;
 }
-.contact-text h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--sky-blue); /* GHIBLI CHANGE */ }
-.contact-text p { font-size: 0.9rem; margin-bottom: 0; color: var(--text-light); /* GHIBLI CHANGE */ }
+.contact-text h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--sky-blue); }
+.contact-text p { font-size: 0.9rem; margin-bottom: 0; color: var(--text-light); }
 
 .social-links { display: flex; gap: 1rem; }
 .social-link {
   padding: 0.5rem 1rem;
-  background: rgba(250, 240, 230, 0.1); /* GHIBLI CHANGE: Faint light bg */
-  color: var(--text-light); /* GHIBLI CHANGE */
+  background: rgba(250, 240, 230, 0.1);
+  color: var(--text-light);
   border-radius: 4px; text-decoration: none; transition: all 0.3s ease;
   border: 1px solid rgba(250, 240, 230, 0.2);
 }
 .social-link:hover {
-  background: rgba(247, 211, 80, 0.2); /* GHIBLI CHANGE: Faint yellow bg */
-  color: var(--flower-yellow); /* GHIBLI CHANGE */
+  background: rgba(247, 211, 80, 0.2);
+  color: var(--flower-yellow);
   border-color: var(--flower-yellow);
 }
 
 .contact-form-container {
-  background: var(--bg-medium-transparent); /* GHIBLI CHANGE */
+  background: var(--bg-medium-transparent);
   padding: 2rem; border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Softer shadow */
-  border: 1px solid rgba(250, 240, 230, 0.2); /* Subtle border */
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
+  border: 1px solid rgba(250, 240, 230, 0.2);
 }
 
 .form-group { margin-bottom: 1.5rem; }
-.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-light); /* GHIBLI CHANGE */ }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-light); }
 .form-group input, .form-group textarea {
   width: 100%; padding: 1rem;
-  /* GHIBLI CHANGE: Input style */
-  background: rgba(250, 240, 230, 0.15); /* Faint light bg */
+  background: rgba(250, 240, 230, 0.15);
   border: 1px solid rgba(250, 240, 230, 0.3);
-  border-radius: 6px; /* Rounder */
-  color: var(--text-light); /* Light text input */
+  border-radius: 6px;
+  color: var(--text-light);
   font-family: inherit;
 }
 .form-group input:focus, .form-group textarea:focus {
   outline: none;
-  border-color: var(--sky-blue); /* GHIBLI CHANGE */
-  background: rgba(250, 240, 230, 0.2); /* Slightly more opaque on focus */
+  border-color: var(--sky-blue);
+  background: rgba(250, 240, 230, 0.2);
 }
 
 .submit-button {
   padding: 1rem 2rem;
-  /* GHIBLI CHANGE: Submit button style */
   background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium));
-  color: var(--text-dark); /* Dark text */
+  color: var(--text-dark);
   border: none; border-radius: 6px;
-  font-family: 'Nunito', 'Poppins', sans-serif; /* Ensure font */
+  font-family: 'Nunito', 'Poppins', sans-serif;
   font-weight: bold; font-size:medium; cursor: pointer;
   transition: all 0.3s ease; width: 100%;
 }
 .submit-button:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(247, 211, 80, 0.3); /* Yellowish shadow */
+  box-shadow: 0 8px 15px rgba(247, 211, 80, 0.3);
 }
-.submit-button.sending { background: #B0BEC5; cursor: not-allowed; } /* Keep standard sending/success */
-.submit-button.success { background: #66BB6A; } /* Softer green for success */
+.submit-button.sending { background: #B0BEC5; cursor: not-allowed; }
+.submit-button.success { background: #66BB6A; }
 
 
 /* Footer Styles */
 .footer {
-  /* GHIBLI CHANGE: Footer background */
-  background: rgba(51, 85, 63, 0.8); /* Darker Tree Green Transparent */
+  background: rgba(51, 85, 63, 0.8);
   padding: 3rem 1rem 1rem;
-  border-top: 1px solid rgba(250, 240, 230, 0.1); /* Subtle top border */
+  border-top: 1px solid rgba(250, 240, 230, 0.1);
 }
 
 .footer-content { max-width: 1200px; margin: 0 auto; margin-bottom: 2rem; }
 .footer-left-container { margin-bottom: 2rem; }
 .footer-logo {
   font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem;
-  /* GHIBLI CHANGE: Footer logo gradient */
   background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue), var(--flower-yellow));
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
 
 .footer-links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
 .footer-links a {
-  color: var(--text-light); /* GHIBLI CHANGE */
-  opacity: 0.8; /* Slightly muted footer links */
-  text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
-}
-.footer-links a:hover { color: var(--flower-yellow); opacity: 1; /* GHIBLI CHANGE */ }
-
-.footer-social { display: flex; gap: 1rem; margin-top: 1rem; justify-content: center; }
-.social-icon {
-  color: var(--text-light); /* GHIBLI CHANGE */
+  color: var(--text-light);
   opacity: 0.8;
   text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
 }
-.social-icon:hover { color: var(--flower-yellow); opacity: 1; /* GHIBLI CHANGE */ }
+.footer-links a:hover { color: var(--flower-yellow); opacity: 1; }
+
+.footer-social { display: flex; gap: 1rem; margin-top: 1rem; justify-content: center; }
+.social-icon {
+  color: var(--text-light);
+  opacity: 0.8;
+  text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
+}
+.social-icon:hover { color: var(--flower-yellow); opacity: 1; }
 
 .footer-bottom {
   max-width: 1200px; margin: 0 auto; text-align: center;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(250, 240, 230, 0.1); /* Subtle separator */
+  border-top: 1px solid rgba(250, 240, 230, 0.1);
 }
 .footer-bottom p {
-  color: var(--text-light); /* GHIBLI CHANGE */
-  opacity: 0.7; /* More muted copyright */
-  font-size: 0.95rem; /* Slightly smaller */
+  color: var(--text-light);
+  opacity: 0.7;
+  font-size: 0.95rem;
 }
 
+/* --- iOS Fixed Background Fix --- */
 @supports (-webkit-touch-callout: none) {
-  /* --- iOS Fixed Background Fix --- */
-
-  /* Ensure html/body have base styles but DON'T fix height */
   html, body {
-    /* REMOVED: height: 100%; */
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Keep horizontal overflow hidden */
-    /* Ensure scrolling is possible if needed, though usually default */
-    /* overflow-y: auto; */ /* Usually not needed, default is visible/auto */
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
   }
-
-  /* Create a fixed background container */
   .fixed-background {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('ghibli.png'); /* Make sure path is correct */
+    background-image: url('ghibli.png');
     background-size: cover;
     background-position: bottom center;
     z-index: -1;
   }
-
-  /* .app should contain the scrollable content but have no background */
   .app {
     background: none !important;
-    position: relative; /* Needed for z-index stacking context */
-    z-index: 1;       /* Ensures .app is above .fixed-background */
-    /* Crucially, .app should now grow with its content */
-    min-height: 100vh; /* Ensure it fills viewport at minimum */
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
   }
-
-  /* Canvas should be behind content, transparent */
   .canvas-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 0; /* GHIBLI CHANGE: Behind content, but in front of .app background */
+    z-index: 0;
     overflow: hidden;
-    /* GHIBLI CHANGE: Ensure canvas itself doesn't block the image */
     background-color: transparent !important;
   }
-   /* Fix viewport height issue on mobile for canvas */
   @supports (height: 100dvh) {
     .canvas-container {
       height: 100dvh;
@@ -625,51 +819,30 @@ section {
     height: 100% !important;
     background-color: transparent !important;
   }
-
-
-  /* Content needs to be above background and canvas */
   .content {
     position: relative;
-    z-index: 2; /* Above canvas */
+    z-index: 2;
   }
-
-  /* Sections inside content should be transparent */
-  .section {
+  section {
     background: transparent !important;
-    position: relative; /* Maintain stacking context if needed */
-    z-index: 2; /* Above canvas */
-     /* Ensure sections contribute to overall height */
-     min-height: 100vh; /* Or whatever your section height is */
+    position: relative;
+    z-index: 2;
+     min-height: 100vh;
   }
-
-  /* --- IMPORTANT: Add the .fixed-background element to your HTML --- */
-  /* You need to actually add this div in your HTML structure,
-     usually right after the opening <body> tag: */
-  /*
-  <body>
-    <div class="fixed-background"></div>
-    <div id="root">
-       <div class="app">
-          ... your content ...
-       </div>
-    </div>
-  </body>
-  */
 }
 
 /* Loading Screen */
 .loading-screen {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-  /* GHIBLI CHANGE: Loading background */
   background: var(--grass-green-medium);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   z-index: 9999;
 }
 .loader {
   width: 40px; height: 40px;
-  border: 3px solid rgba(250, 240, 230, 0.3); /* GHIBLI CHANGE: Loader track */
+  border: 3px solid rgba(250, 240, 230, 0.3);
   border-radius: 50%;
-  border-top-color: var(--flower-yellow); /* GHIBLI CHANGE: Loader active part */
+  border-top-color: var(--flower-yellow);
   animation: spin 1s linear infinite; margin-bottom: 1rem;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -677,116 +850,89 @@ section {
 
 /* Tech Icons Specific Styles */
 .tech-icons {
-  margin: 15px; padding: 15px; /* Slightly more padding */
+  margin: 15px; padding: 15px;
   opacity: 0.95;
-  /* GHIBLI CHANGE: Tech icon style */
   border: 1.7px solid var(--grass-green-light);
-  text-align: center; border-radius: 8px; /* Rounder */
-  box-shadow: 4px 5px 8px rgba(74, 68, 58, 0.15); /* Softer shadow */
+  text-align: center; border-radius: 8px;
+  box-shadow: 4px 5px 8px rgba(74, 68, 58, 0.15);
   transition: all 0.4s ease 0s; cursor: pointer;
-  background-color: rgba(250, 240, 230, 0.1); /* Faint light bg */
+  background-color: rgba(250, 240, 230, 0.1);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  color: var(--text-light); /* Base text color */
+  color: var(--text-light);
 }
 .tech-icons:hover {
   transform: scale(1.06);
-  border-color: var(--flower-yellow); /* GHIBLI CHANGE: Hover border */
+  border-color: var(--flower-yellow);
   background-color: rgba(250, 240, 230, 0.15);
   box-shadow: 4px 5px 12px rgba(74, 68, 58, 0.25);
 }
 .tech-icons .icon-element {
-   font-size: 4em; /* Slightly smaller */
-   margin-bottom: 10px; /* More space */
+   font-size: 4em;
+   margin-bottom: 10px;
    color: var(--text-medium);
-; /* GHIBLI CHANGE: Icon color */
 }
 .tech-icons .skill-name {
-  font-size: 1rem; /* Smaller text */
+  font-size: 1rem;
   font-weight: 500;
-  color: var(--text-light); /* Ensure text color */
+  color: var(--text-light);
   margin-top: 0; line-height: 1.2;
 }
-.tech-icons-grid { /* Keep grid layout */
+.tech-icons-grid {
   display: grid; grid-template-columns: repeat(6, 1fr);
-  gap: 30px; /* Adjust gap */
+  gap: 30px;
   justify-items: center;
 }
-@media (max-width: 767px) { /* Mobile adjustments */
-  .tech-icons { margin: 10px; padding: 10px; }
-  .tech-icons .icon-element { font-size: 3em; margin-bottom: 6px; }
-   .tech-icons .skill-name { font-size: 0.8rem; }
-  .tech-icons-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
-}
 
-/* === Mobile Background Image Fix === */
-@media screen and (max-width: 768px) {
-  .app {
-    /* Allow the background to scroll with the content on mobile */
-    /* background-attachment: fixed; */
-    background-size: cover;
-    /* Optional: Adjust position if 'center center' crops too much.
-       'center top' keeps the top part (sky/upper trees) more visible.
-       'center bottom' would keep the hill/grass more visible.
-       Experiment to see what looks best with your specific image. */
-     background-position: bottom center; 
-  }
 
-  /* Also ensure overlays provide enough contrast if the background gets busy */
-  .skill-category,
-  .project-card,
-  .contact-form-container,
-  .certification-item {
-      /* You might slightly increase opacity if needed on mobile */
-      /* Example: background: rgba(48, 90, 64, 0.85); */
-  }
-}
 /* Scroll Up Button */
 .scroll-up-button {
-  position: fixed; bottom: 25px; right: 25px; /* Slightly higher */
+  position: fixed; bottom: 25px; right: 25px;
   width: 50px; height: 50px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; cursor: pointer;
-  background-color: var(--tree-green-dark); /* GHIBLI CHANGE: Dark base */
+  background-color: var(--tree-green-dark);
   box-shadow: 0 4px 8px rgba(74, 68, 58, 0.3);
   background-clip: padding-box; border: none;
-  padding: 3px; /* Space for inner */
+  padding: 3px;
   transition: background-color 0.3s ease;
 }
 .inner-circle {
   width: 100%; height: 100%; border-radius: 50%;
-  background-color: var(--grass-green-medium); /* GHIBLI CHANGE: Inner color */
+  background-color: var(--grass-green-medium);
   display: flex; align-items: center; justify-content: center;
   transition: background-color 0.3s ease;
 }
-.arrow { color: var(--text-light); font-size: 24px; /* GHIBLI CHANGE: Arrow color */ }
+.arrow { color: var(--text-light); font-size: 24px; }
 .scroll-up-button:hover {
-  background-color: var(--flower-yellow); /* GHIBLI CHANGE: Outer hover */
+  background-color: var(--flower-yellow);
 }
 .scroll-up-button:hover .inner-circle {
-  background-color: var(--grass-green-light); /* GHIBLI CHANGE: Inner hover */
-}
-@media (max-width: 768px) { /* Responsive scroll button */
-  .scroll-up-button { width: 45px; height: 45px; padding: 2px; bottom: 20px; right: 20px; }
-  .arrow { font-size: 21px; }
-}
-@media (max-width: 480px) {
-  .scroll-up-button { width: 40px; height: 40px; }
-  .arrow { font-size: 18px; }
+  background-color: var(--grass-green-light);
 }
 
 
-/* --- REMAINING MEDIA QUERIES (Adjusted for Ghibli Theme where needed) --- */
+/* --- MEDIA QUERIES --- */
 
 @media screen and (max-width: 1024px) {
   .contact-content, .about-content { grid-template-columns: 1fr; }
-  .about-image { margin-bottom: 3rem; /* More space */ }
-  .education-content { grid-template-columns: 1fr; }
+  .about-image { margin-bottom: 3rem; }
   .certification-section { margin-top: 3rem; }
   .footer-content { text-align: center; }
   .footer-links, .footer-social { justify-content: center; }
+
+  /* Responsive Adjustments for the Grid */
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  .details-section {
+      margin-top: 3rem; /* Add space between timeline and details when stacked */
+  }
+  .timeline:before {
+      /* Adjust timeline line height if needed */
+  }
 }
 
 @media screen and (max-width: 768px) {
-  section { padding: 80px 2rem; /* Adjust padding for mobile */ }
+  section { padding: 80px 2rem; }
   .menu-icon { display: block; }
 
   .personal-info { grid-template-columns: 1fr; }
@@ -802,20 +948,63 @@ section {
   .footer-links { flex-direction: column; gap: 0.8rem; margin: 1rem 0; }
   .footer-social { gap: 0.8rem; }
   .footer-bottom p { font-size: 0.9rem; }
+
+  /* Mobile Background Image Fix */
+  .app {
+     background-size: cover;
+     background-position: bottom center;
+  }
+
+  .skill-category,
+  .project-card,
+  .contact-form-container,
+  .certification-item {
+      /* Adjust overlay opacity if needed */
+  }
+
+  /* Scroll Up Button */
+  .scroll-up-button { width: 45px; height: 45px; padding: 2px; bottom: 20px; right: 20px; }
+  .arrow { font-size: 21px; }
+
+  /* Tech Icons */
+   .tech-icons { margin: 10px; padding: 10px; }
+   .tech-icons .icon-element { font-size: 3em; margin-bottom: 6px; }
+   .tech-icons .skill-name { font-size: 0.8rem; }
+   .tech-icons-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
+
+   /* Tab & Grid Adjustments */
+    .tabs-container {
+        margin-bottom: 2rem;
+        gap: 0.5rem;
+    }
+    .tab-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+    }
+    .content-grid {
+        gap: 2rem;
+    }
+     .details-section {
+      margin-top: 2rem;
+    }
 }
 
 @media screen and (max-width: 480px) {
   .button-container { flex-direction: column; gap: 1rem; }
-  .primary-button, .secondary-button { text-align: center; width: 100%; /* Full width buttons */ }
+  .primary-button, .secondary-button { text-align: center; width: 100%; }
   .section-title { font-size: 2rem; }
   .project-filters { flex-direction: column; align-items: center; }
-  .project-filters button { width: 100%; max-width: 250px; /* Wider filter buttons */ }
+  .project-filters button { width: 100%; max-width: 250px; }
 
   .footer-logo { font-size: 1.2rem; }
   .footer-links a { font-size: 0.9rem; }
   .footer-social { flex-wrap: wrap; gap: 0.5rem; }
   .social-icon { font-size: 0.9rem; }
   .footer-bottom p { font-size: 0.8rem; }
+
+  /* Scroll Up Button */
+  .scroll-up-button { width: 40px; height: 40px; }
+  .arrow { font-size: 18px; }
 }
 
 /* Animation utility (keep as is) */

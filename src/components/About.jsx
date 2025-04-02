@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import ajinkya from '../Assets/images/AJINKYA1.webp';
+// You might want to rename this import and the file if you have Anish's image
+import anish from '../Assets/images/anish.jpg'; // Keeping the original import name as requested
 
 const About = () => {
   const aboutRef = useRef(null);
@@ -11,7 +12,7 @@ const About = () => {
           entry.target.classList.add('animate-in');
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 } // Keep animation trigger logic
     );
 
     if (aboutRef.current) {
@@ -30,32 +31,28 @@ const About = () => {
       <h2 className="section-title">Know Me Better</h2>
       <div className="about-content">
 
-<div className="about-image">
-  <div className="image-placeholder">
-    <img src= {ajinkya} alt="Ajinkya's Image" width="320" height="290" loading='lazy' style={{ borderRadius: "10%" }} />
-  </div>
-</div>
+        <div className="about-image">
+          <div className="image-placeholder">
+            {/* Using the original image variable 'ajinkya'. Replace src if you have Anish's image */}
+            <img src= {anish} alt="Anish Kadam's Image" width="320" height="290" loading='lazy' style={{ borderRadius: "10%" }} />
+          </div>
+        </div>
+
         <div className="about-text">
-          <p>
-            I'm a passionate software developer with over a year of experience building modern web applications.
-            I specialize in creating interactive experiences using React, Node.js, MongoDB and other cutting-edge technologies.
+        <p>
+            Think of me as a digital lego builder who accidentally got a Master's in Blockchain! I love snapping together cool Web2 sites (MERN, Django) and futuristic Web3 DApps (Solana, MONAD, Solidity). My superpower? Making complex code run fast and play nice.
           </p>
           <p>
-            My journey in software development began when I built my first website at 16. Since then,
-            I've been continuously learning and improving my skills to deliver high-quality, user-centered applications.
-          </p>
-          <p>
-            When I'm not coding, you can find me hiking in the mountains, reading science fiction, or experimenting with
-            new web technologies and frameworks.
+             Basically, I turn caffeine and code into working software. Got a blockchain puzzle or a web challenge? Let's build something awesome (and hopefully stable)!
           </p>
           <div className="personal-info">
             <div className="info-item">
               <span className="info-label">Name:</span>
-              <span className="info-value">Ajinkya Gajarmal</span>
+              <span className="info-value">Anish Kadam</span>
             </div>
             <div className="info-item">
               <span className="info-label">Email:</span>
-              <span className="info-value">ajinkya.gajarmal@gmail.com</span>
+              <span className="info-value">Anishkadam92@gmail.com</span>
             </div>
             <div className="info-item">
               <span className="info-label">Location:</span>
@@ -66,7 +63,8 @@ const About = () => {
               <span className="info-value">Open to opportunities</span>
             </div>
           </div>
-          <a href="/Assets/Ajinkya-Gajarmal-Resume.pdf" target="_blank" className="resume-button">Download Resume</a>
+          {/* Make sure the resume PDF exists at this path in your public/Assets folder */}
+          <a href="/Assets/Anish-Kadam-Resume.pdf" target="_blank" rel="noopener noreferrer" className="resume-button">Download Resume</a>
         </div>
       </div>
     </div>
