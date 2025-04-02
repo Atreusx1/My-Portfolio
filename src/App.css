@@ -49,7 +49,7 @@ button {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* Keep background fixed during scroll */
+  background-attachment: fixed; 
 }
 
 .canvas-container {
@@ -565,6 +565,98 @@ section {
   font-size: 0.95rem; /* Slightly smaller */
 }
 
+@supports (-webkit-touch-callout: none) {
+  /* --- iOS Fixed Background Fix --- */
+
+  /* Ensure html/body have base styles but DON'T fix height */
+  html, body {
+    /* REMOVED: height: 100%; */
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Keep horizontal overflow hidden */
+    /* Ensure scrolling is possible if needed, though usually default */
+    /* overflow-y: auto; */ /* Usually not needed, default is visible/auto */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Create a fixed background container */
+  .fixed-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('ghibli.png'); /* Make sure path is correct */
+    background-size: cover;
+    background-position: bottom center;
+    z-index: -1;
+  }
+
+  /* .app should contain the scrollable content but have no background */
+  .app {
+    background: none !important;
+    position: relative; /* Needed for z-index stacking context */
+    z-index: 1;       /* Ensures .app is above .fixed-background */
+    /* Crucially, .app should now grow with its content */
+    min-height: 100vh; /* Ensure it fills viewport at minimum */
+  }
+
+  /* Canvas should be behind content, transparent */
+  .canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0; /* GHIBLI CHANGE: Behind content, but in front of .app background */
+    overflow: hidden;
+    /* GHIBLI CHANGE: Ensure canvas itself doesn't block the image */
+    background-color: transparent !important;
+  }
+   /* Fix viewport height issue on mobile for canvas */
+  @supports (height: 100dvh) {
+    .canvas-container {
+      height: 100dvh;
+    }
+  }
+   canvas {
+    width: 100% !important;
+    height: 100% !important;
+    background-color: transparent !important;
+  }
+
+
+  /* Content needs to be above background and canvas */
+  .content {
+    position: relative;
+    z-index: 2; /* Above canvas */
+  }
+
+  /* Sections inside content should be transparent */
+  .section {
+    background: transparent !important;
+    position: relative; /* Maintain stacking context if needed */
+    z-index: 2; /* Above canvas */
+     /* Ensure sections contribute to overall height */
+     min-height: 100vh; /* Or whatever your section height is */
+  }
+
+  /* --- IMPORTANT: Add the .fixed-background element to your HTML --- */
+  /* You need to actually add this div in your HTML structure,
+     usually right after the opening <body> tag: */
+  /*
+  <body>
+    <div class="fixed-background"></div>
+    <div id="root">
+       <div class="app">
+          ... your content ...
+       </div>
+    </div>
+  </body>
+  */
+}
+
 /* Loading Screen */
 .loading-screen {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
@@ -630,7 +722,7 @@ section {
 @media screen and (max-width: 768px) {
   .app {
     /* Allow the background to scroll with the content on mobile */
-    background-attachment: fixed;
+    /* background-attachment: fixed; */
     background-size: cover;
     /* Optional: Adjust position if 'center center' crops too much.
        'center top' keeps the top part (sky/upper trees) more visible.
