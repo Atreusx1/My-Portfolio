@@ -631,12 +631,11 @@ section {
   .app {
     /* Allow the background to scroll with the content on mobile */
     background-attachment: fixed;
-
+    background-size: cover;
     /* Optional: Adjust position if 'center center' crops too much.
        'center top' keeps the top part (sky/upper trees) more visible.
        'center bottom' would keep the hill/grass more visible.
        Experiment to see what looks best with your specific image. */
-    /* background-position: center top; */
      background-position: bottom center; 
   }
 
