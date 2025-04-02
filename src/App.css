@@ -1,0 +1,713 @@
+/* GHIBLI THEME - Base Colors */
+:root {
+  --sky-blue: #5B95D4;       /* Sampled from sky */
+  --grass-green-light: #A4C37A; /* Sampled from lighter grass */
+  --grass-green-medium: #7FAA54; /* Sampled from mid-tone grass */
+  --tree-green-dark: #33553F;   /* Sampled from dark trees */
+  --flower-yellow: #F7D350;    /* Sampled from flowers */
+  --text-light: #FAF0E6;     /* Linen - Soft off-white for text */
+  --text-dark: #4A443A;      /* Dark Brown/Green - For text on light bg */
+  --bg-light-transparent: rgba(250, 240, 230, 0.6); /* Semi-transparent Linen for overlays */
+  --bg-medium-transparent: rgba(164, 195, 122, 0.5); /* Semi-transparent light green */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  /* GHIBLI CHANGE: Font - Softer, rounded sans-serif */
+  font-family: 'Nunito', 'Poppins', sans-serif; /* Added Nunito */
+  scroll-behavior: smooth;
+  background-color: var(--grass-green-medium); /* Fallback background */
+  color: var(--text-light); /* GHIBLI CHANGE: Default text color */
+  overflow-x: hidden;
+  /* Optional: Custom cursor - could be a leaf or simple dot */
+  /* cursor: url('/path/to/leaf-cursor.png'), auto; */
+}
+
+button {
+  /* Optional: change cursor for buttons too */
+   cursor: pointer; /* Using standard pointer for simplicity */
+   font-family: 'Nunito', 'Poppins', sans-serif; /* Ensure button font matches */
+}
+
+.app {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  /* GHIBLI CHANGE: Apply background image here */
+  background-image: url('ghibli.png'); /* ADJUST PATH AS NEEDED */
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Keep background fixed during scroll */
+}
+
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* GHIBLI CHANGE: Behind content, but in front of .app background */
+  overflow: hidden;
+  /* GHIBLI CHANGE: Ensure canvas itself doesn't block the image */
+  background-color: transparent !important;
+}
+
+/* Fix viewport height issue on mobile */
+@supports (height: 100dvh) {
+  .canvas-container {
+    height: 100dvh;
+  }
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+  /* GHIBLI CHANGE: Ensure canvas is transparent */
+  background-color: transparent !important;
+}
+
+.content {
+  position: relative;
+  z-index: 1; /* GHIBLI CHANGE: Ensure content is above canvas */
+
+}
+
+
+
+/* Section Styles */
+.sections { width: 100%; }
+section {
+  padding: 90px 5.5rem; /* Slightly more padding */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* GHIBLI CHANGE: Optional subtle overlay per section if needed */
+  /* background-color: rgba(250, 240, 230, 0.05); */
+  /* border-bottom: 1px solid rgba(250, 240, 230, 0.1); */ /* Subtle separator */
+}
+
+.section-container, .section-container1 {
+  max-width: 1200px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease;
+}
+.section-container.animate-in, .section-container1.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.section-container1.animate-in { display: contents; } /* Keep this */
+
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  position: relative;
+  display: inline-block;
+  color: var(--text-light); /* GHIBLI CHANGE */
+  font-weight: 600; /* Slightly less bold maybe */
+}
+
+.section-title:after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  /* GHIBLI CHANGE: Title underline gradient */
+  background: linear-gradient(45deg, var(--flower-yellow), var(--sky-blue), var(--grass-green-light));
+  border-radius: 2px; /* Soften edges */
+}
+
+/* Home Styles */
+.home-container {
+  /* Inherits padding/min-height from section */
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease;
+}
+.home-container.animate-in { opacity: 1; transform: translateY(0); }
+
+.greeting {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--sky-blue); /* GHIBLI CHANGE */
+}
+
+.name {
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text-light); /* GHIBLI CHANGE */
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--grass-green-light); /* GHIBLI CHANGE */
+  height: 2.5rem; /* Keep for typewriter effect maybe */
+}
+
+.description {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin-bottom: 3rem;
+  line-height: 1.7; /* Slightly more spacing */
+  color: var(--text-light); /* GHIBLI CHANGE */
+}
+
+.button-container { display: flex; gap: 1.5rem; }
+
+.primary-button, .secondary-button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600; /* GHIBLI CHANGE: Bolder */
+  border-radius: 6px; /* GHIBLI CHANGE: Slightly rounder */
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none; /* GHIBLI CHANGE: Remove border from primary by default */
+}
+
+.primary-button {
+  /* GHIBLI CHANGE: Button gradient and text color */
+  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue));
+  color: var(--text-dark); /* Dark text for contrast */
+  font-weight: bold;
+}
+
+.secondary-button {
+  background: transparent;
+  color: var(--text-light); /* GHIBLI CHANGE */
+  border: 2px solid var(--sky-blue); /* GHIBLI CHANGE */
+}
+
+.primary-button:hover {
+  transform: translateY(-4px); /* Slightly more hover effect */
+  box-shadow: 0 8px 15px rgba(74, 68, 58, 0.3); /* Softer shadow */
+}
+
+.secondary-button:hover {
+  /* GHIBLI CHANGE: Hover for secondary */
+  color: var(--flower-yellow);
+  background: rgba(91, 149, 212, 0.15); /* Faint blue background */
+  transform: translateY(-4px);
+  border-color: var(--flower-yellow);
+}
+
+/* About Styles */
+.about-content { display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: center; /* GHIBLI CHANGE: Align items */ }
+.about-image { display: flex; justify-content: center; align-items: center; /* GHIBLI CHANGE: Center vertically too */ }
+
+.image-placeholder {
+  width: 280px;
+  height: 280px;
+  border-radius: 20px;
+  /* GHIBLI CHANGE: Gradient for image bg */
+  background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue));
+  display: flex; justify-content: center; align-items: center;
+  font-size: 5rem; font-weight: 700; color: var(--text-light);
+  position: relative; overflow: hidden;
+  animation: float 3.5s ease-in-out infinite; /* Slightly slower float */
+  perspective: 1000px;
+}
+@keyframes float { /* Keep float animation */
+  0% { transform: translateY(0) rotateX(0deg); }
+  50% { transform: translateY(-10px) rotateX(8deg); } /* Slightly less rotate */
+  100% { transform: translateY(0) rotateX(0deg); }
+}
+.image-placeholder img {
+  border-radius: 15px; /* GHIBLI CHANGE: Rounder */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0px 8px 12px rgba(74, 68, 58, 0.3); /* Softer shadow */
+  width: 100%; height: 100%; object-fit: cover; /* Ensure image covers */
+}
+.image-placeholder:hover img {
+  transform: scale(1.04) rotateX(3deg);
+  box-shadow: 0px 12px 18px rgba(74, 68, 58, 0.4);
+}
+
+.about-text p {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+  color: var(--text-light); /* GHIBLI CHANGE */
+}
+
+.personal-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin: 2rem 0; }
+.info-item { display: flex; flex-direction: column; }
+.info-label {
+  font-weight: 600;
+  color: var(--grass-green-light); /* GHIBLI CHANGE */
+  margin-bottom: 0.5rem;
+}
+.info-value { color: var(--text-light); /* GHIBLI CHANGE */ }
+
+.resume-button {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  /* GHIBLI CHANGE: Button style */
+  background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium));
+  color: var(--text-dark); /* Dark text */
+  font-weight: bold;
+  border-radius: 6px; /* Match other buttons */
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.resume-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(247, 211, 80, 0.3); /* Yellowish shadow */
+}
+
+/* Skills Styles */
+.skills-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.skill-category {
+  /* GHIBLI CHANGE: Background for skill cards */
+  background: var(--bg-medium-transparent);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Softer shadow */
+  border: 1px solid rgba(250, 240, 230, 0.2); /* Subtle border */
+}
+
+.category-title {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-light); /* GHIBLI CHANGE */
+  border-bottom: 2px solid var(--grass-green-light); /* Add underline */
+  padding-bottom: 0.5rem;
+  display: inline-block;
+}
+
+.skill-item { margin-bottom: 1.5rem; }
+.skill-info { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+.skill-name { font-weight: 500; color: var(--text-light); /* GHIBLI CHANGE */ }
+.skill-percentage { color: var(--sky-blue); /* GHIBLI CHANGE */ font-weight: 600; }
+
+.skill-bar {
+  height: 8px;
+  /* GHIBLI CHANGE: Bar background */
+  background: rgba(250, 240, 230, 0.2); /* Faint light bg */
+  border-radius: 4px;
+  overflow: hidden;
+}
+.skill-progress {
+  height: 100%;
+  /* GHIBLI CHANGE: Progress gradient */
+  background: linear-gradient(to right, var(--sky-blue), var(--grass-green-light));
+  border-radius: 4px;
+  transition: width 1s ease-in-out;
+}
+
+/* Projects Styles */
+.project-filters { display: flex; justify-content: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
+.project-filters button {
+  padding: 0.6rem 1.5rem;
+  background: transparent;
+  color: var(--text-light); /* GHIBLI CHANGE */
+  border: 2px solid var(--grass-green-light); /* GHIBLI CHANGE */
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.project-filters button.active, .project-filters button:hover {
+  /* GHIBLI CHANGE: Filter active/hover */
+  background: linear-gradient(45deg, var(--flower-yellow), var(--sky-blue));
+  border-color: transparent;
+  color: var(--text-dark); /* Dark text */
+}
+
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; }
+.project-card {
+  /* GHIBLI CHANGE: Project card background */
+  background: var(--bg-medium-transparent);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Softer shadow */
+  transition: all 0.3s ease;
+  border: 1px solid rgba(250, 240, 230, 0.2); /* Subtle border */
+}
+.project-card:hover {
+  transform: translateY(-8px); /* Less lift */
+  box-shadow: 0 10px 20px rgba(74, 68, 58, 0.25);
+}
+
+.project-image { width: 100%; height: 200px; overflow: hidden; }
+.project-image .image-placeholder {
+  width: 100%; height: 100%; border-radius: 0; font-size: 3rem;
+  /* GHIBLI CHANGE: Gradient */
+  background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue));
+}
+
+.project-content { padding: 1.5rem; }
+.project-title {
+  font-size: 1.3rem; margin-bottom: 1rem; color: var(--text-light); /* GHIBLI CHANGE */
+}
+.project-description {
+  font-size: 0.95rem; /* Slightly larger */
+  color: var(--text-light); /* GHIBLI CHANGE */
+  opacity: 0.9; /* Slightly less prominent */
+  margin-bottom: 1.5rem; line-height: 1.6;
+}
+.project-tech { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+.tech-tag {
+  padding: 0.3rem 0.8rem;
+  /* GHIBLI CHANGE: Tech tag style */
+  background: rgba(91, 149, 212, 0.2); /* Light blue bg */
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: var(--sky-blue); /* Blue text */
+  font-weight: 500;
+}
+
+.project-links { display: flex; gap: 1rem; }
+.project-link {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: var(--text-light); /* GHIBLI CHANGE */
+  text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease;
+  font-weight: 500;
+}
+.project-link:hover { color: var(--flower-yellow); /* GHIBLI CHANGE */ }
+
+/* Education Styles */
+.education-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+.subsection-title {
+  font-size: 1.8rem; margin-bottom: 2rem; color: var(--grass-green-light); /* GHIBLI CHANGE */
+}
+.timeline { position: relative; }
+.timeline:before { /* The vertical line */
+  content: ''; position: absolute; top: 0; left: 15px; height: 100%; width: 3px; /* Thicker */
+  background: var(--sky-blue); /* GHIBLI CHANGE */
+  border-radius: 2px;
+}
+.timeline-item { position: relative; padding-left: 45px; margin-bottom: 3rem; }
+.timeline-marker { /* The circle */
+  position: absolute; top: 0; left: 0; width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--text-light); /* GHIBLI CHANGE: Light background */
+  border: 4px solid var(--sky-blue); /* GHIBLI CHANGE: Blue border */
+  z-index: 1;
+}
+.timeline-period {
+  display: inline-block; padding: 0.3rem 1rem;
+  background: rgba(91, 149, 212, 0.15); /* GHIBLI CHANGE: Faint blue bg */
+  color: var(--sky-blue); /* GHIBLI CHANGE */
+  border-radius: 15px; font-size: 0.9rem; margin-bottom: 1rem; font-weight: 500;
+}
+.timeline-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); /* GHIBLI CHANGE */ }
+.timeline-institution {
+  font-size: 1rem; color: var(--grass-green-light); /* GHIBLI CHANGE */ margin-bottom: 1rem; font-weight: 500;
+}
+.timeline-description {
+  font-size: 0.95rem; /* Slightly larger */
+  color: var(--text-light); /* GHIBLI CHANGE */
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.certifications-list { display: flex; flex-direction: column; gap: 1.5rem; }
+.certification-item {
+  display: flex; gap: 1.5rem; align-items: center; /* GHIBLI CHANGE: Align */
+  background: var(--bg-medium-transparent); /* GHIBLI CHANGE */
+  padding: 1.5rem; border-radius: 10px; transition: all 0.3s ease;
+  border: 1px solid rgba(250, 240, 230, 0.2); /* Subtle border */
+}
+.certification-item:hover {
+  /* GHIBLI CHANGE: Hover effect */
+  background: var(--bg-light-transparent);
+  transform: translateX(8px);
+  border-color: var(--flower-yellow);
+}
+.certification-icon {
+  width: 50px; height: 50px; border-radius: 50%;
+  /* GHIBLI CHANGE: Icon bg */
+  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue));
+  display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+}
+.certification-icon i { font-size: 24px; color: var(--text-light); /* GHIBLI CHANGE */ }
+.certification-title { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light); /* GHIBLI CHANGE */ }
+.certification-issuer { font-size: 0.9rem; color: var(--grass-green-light); /* GHIBLI CHANGE */ }
+
+/* Contact Styles */
+.contact-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+.contact-info { padding-right: 2rem; }
+.contact-info h3 {
+  font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--grass-green-light); /* GHIBLI CHANGE */
+}
+.contact-info p { margin-bottom: 2rem; line-height: 1.8; color: var(--text-light); /* GHIBLI CHANGE */ }
+.contact-details { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+.contact-item { display: flex; gap: 1.5rem; align-items: center; /* GHIBLI CHANGE: Align */ }
+.contact-icon {
+  display: flex; justify-content: center; align-items: center;
+  width: 50px; height: 50px; border-radius: 50%;
+  background: rgba(91, 149, 212, 0.2); /* GHIBLI CHANGE: Faint blue bg */
+  color: var(--sky-blue); /* GHIBLI CHANGE */
+  font-size: 1.5rem; flex-shrink: 0;
+}
+.contact-text h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--sky-blue); /* GHIBLI CHANGE */ }
+.contact-text p { font-size: 0.9rem; margin-bottom: 0; color: var(--text-light); /* GHIBLI CHANGE */ }
+
+.social-links { display: flex; gap: 1rem; }
+.social-link {
+  padding: 0.5rem 1rem;
+  background: rgba(250, 240, 230, 0.1); /* GHIBLI CHANGE: Faint light bg */
+  color: var(--text-light); /* GHIBLI CHANGE */
+  border-radius: 4px; text-decoration: none; transition: all 0.3s ease;
+  border: 1px solid rgba(250, 240, 230, 0.2);
+}
+.social-link:hover {
+  background: rgba(247, 211, 80, 0.2); /* GHIBLI CHANGE: Faint yellow bg */
+  color: var(--flower-yellow); /* GHIBLI CHANGE */
+  border-color: var(--flower-yellow);
+}
+
+.contact-form-container {
+  background: var(--bg-medium-transparent); /* GHIBLI CHANGE */
+  padding: 2rem; border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Softer shadow */
+  border: 1px solid rgba(250, 240, 230, 0.2); /* Subtle border */
+}
+
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-light); /* GHIBLI CHANGE */ }
+.form-group input, .form-group textarea {
+  width: 100%; padding: 1rem;
+  /* GHIBLI CHANGE: Input style */
+  background: rgba(250, 240, 230, 0.15); /* Faint light bg */
+  border: 1px solid rgba(250, 240, 230, 0.3);
+  border-radius: 6px; /* Rounder */
+  color: var(--text-light); /* Light text input */
+  font-family: inherit;
+}
+.form-group input:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: var(--sky-blue); /* GHIBLI CHANGE */
+  background: rgba(250, 240, 230, 0.2); /* Slightly more opaque on focus */
+}
+
+.submit-button {
+  padding: 1rem 2rem;
+  /* GHIBLI CHANGE: Submit button style */
+  background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium));
+  color: var(--text-dark); /* Dark text */
+  border: none; border-radius: 6px;
+  font-family: 'Nunito', 'Poppins', sans-serif; /* Ensure font */
+  font-weight: bold; font-size:medium; cursor: pointer;
+  transition: all 0.3s ease; width: 100%;
+}
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(247, 211, 80, 0.3); /* Yellowish shadow */
+}
+.submit-button.sending { background: #B0BEC5; cursor: not-allowed; } /* Keep standard sending/success */
+.submit-button.success { background: #66BB6A; } /* Softer green for success */
+
+
+/* Footer Styles */
+.footer {
+  /* GHIBLI CHANGE: Footer background */
+  background: rgba(51, 85, 63, 0.8); /* Darker Tree Green Transparent */
+  padding: 3rem 1rem 1rem;
+  border-top: 1px solid rgba(250, 240, 230, 0.1); /* Subtle top border */
+}
+
+.footer-content { max-width: 1200px; margin: 0 auto; margin-bottom: 2rem; }
+.footer-left-container { margin-bottom: 2rem; }
+.footer-logo {
+  font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem;
+  /* GHIBLI CHANGE: Footer logo gradient */
+  background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue), var(--flower-yellow));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+.footer-links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+.footer-links a {
+  color: var(--text-light); /* GHIBLI CHANGE */
+  opacity: 0.8; /* Slightly muted footer links */
+  text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
+}
+.footer-links a:hover { color: var(--flower-yellow); opacity: 1; /* GHIBLI CHANGE */ }
+
+.footer-social { display: flex; gap: 1rem; margin-top: 1rem; justify-content: center; }
+.social-icon {
+  color: var(--text-light); /* GHIBLI CHANGE */
+  opacity: 0.8;
+  text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
+}
+.social-icon:hover { color: var(--flower-yellow); opacity: 1; /* GHIBLI CHANGE */ }
+
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto; text-align: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(250, 240, 230, 0.1); /* Subtle separator */
+}
+.footer-bottom p {
+  color: var(--text-light); /* GHIBLI CHANGE */
+  opacity: 0.7; /* More muted copyright */
+  font-size: 0.95rem; /* Slightly smaller */
+}
+
+/* Loading Screen */
+.loading-screen {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  /* GHIBLI CHANGE: Loading background */
+  background: var(--grass-green-medium);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999;
+}
+.loader {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(250, 240, 230, 0.3); /* GHIBLI CHANGE: Loader track */
+  border-radius: 50%;
+  border-top-color: var(--flower-yellow); /* GHIBLI CHANGE: Loader active part */
+  animation: spin 1s linear infinite; margin-bottom: 1rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+
+/* Tech Icons Specific Styles */
+.tech-icons {
+  margin: 15px; padding: 15px; /* Slightly more padding */
+  opacity: 0.95;
+  /* GHIBLI CHANGE: Tech icon style */
+  border: 1.7px solid var(--grass-green-light);
+  text-align: center; border-radius: 8px; /* Rounder */
+  box-shadow: 4px 5px 8px rgba(74, 68, 58, 0.15); /* Softer shadow */
+  transition: all 0.4s ease 0s; cursor: pointer;
+  background-color: rgba(250, 240, 230, 0.1); /* Faint light bg */
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--text-light); /* Base text color */
+}
+.tech-icons:hover {
+  transform: scale(1.06);
+  border-color: var(--flower-yellow); /* GHIBLI CHANGE: Hover border */
+  background-color: rgba(250, 240, 230, 0.15);
+  box-shadow: 4px 5px 12px rgba(74, 68, 58, 0.25);
+}
+.tech-icons .icon-element {
+   font-size: 4em; /* Slightly smaller */
+   margin-bottom: 10px; /* More space */
+   color: var(--sky-blue); /* GHIBLI CHANGE: Icon color */
+}
+.tech-icons .skill-name {
+  font-size: 1rem; /* Smaller text */
+  font-weight: 500;
+  color: var(--text-light); /* Ensure text color */
+  margin-top: 0; line-height: 1.2;
+}
+.tech-icons-grid { /* Keep grid layout */
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 30px; /* Adjust gap */
+  justify-items: center;
+}
+@media (max-width: 767px) { /* Mobile adjustments */
+  .tech-icons { margin: 10px; padding: 10px; }
+  .tech-icons .icon-element { font-size: 3em; margin-bottom: 6px; }
+   .tech-icons .skill-name { font-size: 0.8rem; }
+  .tech-icons-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
+}
+
+/* Scroll Up Button */
+.scroll-up-button {
+  position: fixed; bottom: 25px; right: 25px; /* Slightly higher */
+  width: 50px; height: 50px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  background-color: var(--tree-green-dark); /* GHIBLI CHANGE: Dark base */
+  box-shadow: 0 4px 8px rgba(74, 68, 58, 0.3);
+  background-clip: padding-box; border: none;
+  padding: 3px; /* Space for inner */
+  transition: background-color 0.3s ease;
+}
+.inner-circle {
+  width: 100%; height: 100%; border-radius: 50%;
+  background-color: var(--grass-green-medium); /* GHIBLI CHANGE: Inner color */
+  display: flex; align-items: center; justify-content: center;
+  transition: background-color 0.3s ease;
+}
+.arrow { color: var(--text-light); font-size: 24px; /* GHIBLI CHANGE: Arrow color */ }
+.scroll-up-button:hover {
+  background-color: var(--flower-yellow); /* GHIBLI CHANGE: Outer hover */
+}
+.scroll-up-button:hover .inner-circle {
+  background-color: var(--grass-green-light); /* GHIBLI CHANGE: Inner hover */
+}
+@media (max-width: 768px) { /* Responsive scroll button */
+  .scroll-up-button { width: 45px; height: 45px; padding: 2px; bottom: 20px; right: 20px; }
+  .arrow { font-size: 21px; }
+}
+@media (max-width: 480px) {
+  .scroll-up-button { width: 40px; height: 40px; }
+  .arrow { font-size: 18px; }
+}
+
+
+/* --- REMAINING MEDIA QUERIES (Adjusted for Ghibli Theme where needed) --- */
+
+@media screen and (max-width: 1024px) {
+  .contact-content, .about-content { grid-template-columns: 1fr; }
+  .about-image { margin-bottom: 3rem; /* More space */ }
+  .education-content { grid-template-columns: 1fr; }
+  .certification-section { margin-top: 3rem; }
+  .footer-content { text-align: center; }
+  .footer-links, .footer-social { justify-content: center; }
+}
+
+@media screen and (max-width: 768px) {
+  section { padding: 80px 2rem; /* Adjust padding for mobile */ }
+  .menu-icon { display: block; }
+  .nav-menu {
+    position: fixed; top: 0; right: -100%; width: 75%; /* Slightly wider */
+    height: 100vh;
+    /* GHIBLI CHANGE: Mobile menu background */
+    background: var(--bg-light-transparent);
+    backdrop-filter: blur(10px);
+    flex-direction: column; justify-content: center; align-items: center;
+    padding: 2rem; transition: all 0.5s ease;
+  }
+  .nav-menu.active { right: 0; }
+  .nav-item { margin: 1.5rem 0; }
+  .personal-info { grid-template-columns: 1fr; }
+  .skills-content { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .greeting { font-size: 1.2rem; }
+  .name { font-size: 2.8rem; }
+  .title { font-size: 1.5rem; }
+
+  .footer { padding: 2rem 1rem 1rem; }
+  .footer-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .footer-logo { font-size: 1.5rem; }
+  .footer-links { flex-direction: column; gap: 0.8rem; margin: 1rem 0; }
+  .footer-social { gap: 0.8rem; }
+  .footer-bottom p { font-size: 0.9rem; }
+}
+
+@media screen and (max-width: 480px) {
+  .button-container { flex-direction: column; gap: 1rem; }
+  .primary-button, .secondary-button { text-align: center; width: 100%; /* Full width buttons */ }
+  .section-title { font-size: 2rem; }
+  .project-filters { flex-direction: column; align-items: center; }
+  .project-filters button { width: 100%; max-width: 250px; /* Wider filter buttons */ }
+
+  .footer-logo { font-size: 1.2rem; }
+  .footer-links a { font-size: 0.9rem; }
+  .footer-social { flex-wrap: wrap; gap: 0.5rem; }
+  .social-icon { font-size: 0.9rem; }
+  .footer-bottom p { font-size: 0.8rem; }
+}
+
+/* Animation utility (keep as is) */
+@keyframes animate-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.animate-in { animation: animate-in 1s ease-out forwards; }

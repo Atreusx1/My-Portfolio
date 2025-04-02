@@ -1,0 +1,364 @@
+/* src/components/Navbar.module.css */
+/* Ghibli Theme, Transparent Background, Minimal Mobile, Hide Logo on Scroll */
+
+/* --- Base Nav Styles (Mobile First) --- */
+.nav {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 1.5rem 1.5rem; /* Default mobile padding */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100; /* Ensure navbar is above most content */
+    /* Make background transparent */
+    background-color: transparent;
+    background-image: none;
+    /* Transitions for smooth effects */
+    transition: padding 0.3s ease, transform 0.5s ease, opacity 0.5s ease;
+    /* Prevent nav background from blocking clicks, allow children */
+    pointer-events: none;
+    opacity: 1;
+    transform: translateY(0);
+
+    @media (min-width: 640px) { /* sm: Desktop styles start */
+        padding: 2rem 2rem; /* Desktop padding */
+    }
+     @media (min-width: 1024px) { /* lg: Larger desktop padding */
+          padding: 2.5rem 4rem;
+     }
+}
+
+/* --- Hide/Show State for entire Navbar --- */
+/* Applied via JS when isVisible is false */
+.hidden {
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none; /* Not interactive when hidden */
+}
+
+/* --- Scrolled State --- */
+/* Applied via JS when scrolled is true */
+.nav.scrolled {
+   /* Background still transparent */
+   /* Optional: Add blur effect when scrolled over content */
+   /* backdrop-filter: blur(5px); */
+
+   /* Padding adjustments when scrolled */
+   padding-top: 1rem;
+   padding-bottom: 1rem;
+
+   @media (min-width: 640px) { /* sm */
+     padding: 1rem 2rem;
+   }
+    @media (min-width: 1024px) { /* lg */
+      padding: 1.5rem 4rem;
+   }
+}
+
+/* --- Wrapper --- */
+/* Contains logo (desktop), menus */
+.navWrapper {
+  width: 100%;
+  display: flex;
+  /* Mobile: Push hamburger icon to the right */
+  justify-content: flex-end;
+  align-items: center; /* Vertically center hamburger icon */
+  max-width: 1600px; /* Optional max width */
+  margin: 0 auto;
+
+   @media (min-width: 640px) { /* sm: Desktop layout */
+       /* Space between logo and desktop menu */
+       justify-content: space-between;
+       /* Align logo and menu to the top */
+       align-items: flex-start;
+   }
+}
+
+/* --- Logo Link --- */
+.logoLink {
+  display: none; /* Hidden on mobile by default */
+  pointer-events: auto; /* Clickable */
+  cursor: pointer;
+  text-decoration: none;
+  /* Transitions for smooth hide/show on desktop scroll */
+  transition: opacity 0.4s ease, transform 0.4s ease;
+
+  @media (min-width: 640px) { /* sm: Show on desktop */
+      display: flex;
+      align-items: flex-start;
+      /* Default visible state on desktop */
+      opacity: 1;
+      transform: translateY(0);
+   }
+}
+
+/* --- Class to Hide Logo on Desktop Scroll --- */
+/* Applied via JS when scrolled is true */
+.logoHiddenWhenScrolled {
+   @media (min-width: 640px) { /* Apply only on desktop */
+      opacity: 0;
+      transform: translateY(-10px); /* Optional slight move up */
+      pointer-events: none; /* Not interactive when hidden */
+   }
+}
+
+/* Logo Text Styling (Ghibli Theme) */
+.logoText {
+    font-family: 'Nunito', 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 1.625rem;
+    /* Inherit transition from parent link for opacity */
+    /* transition: opacity 0.3s ease; */ /* Can likely remove this */
+  
+    background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue), var(--flower-yellow));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--sky-blue);
+    /* text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); */
+  }
+.logoText:hover {
+    /* Reduce opacity slightly on hover */
+    opacity: 0.85;
+}
+/* Larger logo text on large screens */
+@media (min-width: 1024px) { /* lg */
+  .logoText {
+    font-size: 2.25rem;
+  }
+}
+
+/* --- Desktop Menu (Vertical on Right) --- */
+.desktopMenu {
+  list-style: none;
+  display: none; /* Hidden on mobile */
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 0.5rem; /* Align with top of logo */
+  padding: 0; /* Remove default padding */
+  transition: transform 0.4s ease; /* Smooth movement if needed */
+
+  @media (min-width: 640px) { /* sm: Show on desktop */
+    display: flex;
+  }
+}
+
+/* Desktop Menu Item */
+.menuItem {
+  position: relative; /* For positioning the active indicator */
+  display: flex;
+  align-items: center;
+  font-family: 'Nunito', 'Poppins', sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  pointer-events: auto; /* Clickable */
+  cursor: pointer;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+/* Desktop menu link */
+.menuItem a {
+    color: inherit; /* Color comes from parent li */
+    text-decoration: none;
+    padding-right: 1.5rem; /* Space for the indicator */
+    /* Optional: Shadow for readability */
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
+}
+/* Larger font on large screens */
+@media (min-width: 1024px) { /* lg */
+  .menuItem {
+    font-size: 1.5rem;
+  }
+}
+
+/* Inactive Desktop Item Style */
+.inactiveMenuItem {
+  color: var(--text-light); /* Ghibli light text */
+  opacity: 0.7; /* Dimmed */
+}
+.inactiveMenuItem:hover {
+   color: var(--flower-yellow); /* Ghibli yellow on hover */
+   opacity: 1;
+}
+
+/* Active Desktop Item Style */
+.activeMenuItem {
+  color: var(--text-light); /* Ghibli light text */
+  opacity: 1; /* Fully visible */
+}
+
+/* Active Indicator Bar (Desktop) */
+.activeIndicator {
+  position: absolute;
+  right: -2.5rem; /* Position relative to the item */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.5rem; /* Bar width */
+  height: 1.5rem; /* Bar height */
+  background-color: var(--sky-blue); /* Ghibli blue */
+  border-radius: 2px;
+}
+@media (min-width: 1024px) { /* lg */
+  .activeIndicator {
+    height: 2rem; /* Taller bar on large screens */
+  }
+}
+
+
+/* --- Mobile Menu --- */
+/* Container holding the hamburger button */
+.mobileMenuContainer {
+  display: flex;
+  flex-grow: 0; /* Don't take extra space */
+  justify-content: flex-end;
+  align-items: center;
+  pointer-events: auto; /* Allow clicking the button */
+
+  @media (min-width: 640px) { /* sm: Hide on desktop */
+    display: none;
+  }
+}
+
+/* Mobile Toggle Button (Hamburger) */
+.mobileMenuToggle {
+  width: 30px; /* Icon size */
+  height: 30px;
+  cursor: pointer;
+  z-index: 115; /* Above the overlay */
+  background: none; /* Transparent button */
+  border: none;
+  padding: 0; /* Remove default padding */
+  display: flex; /* Center the image inside */
+  align-items: center;
+  justify-content: center;
+}
+.mobileMenuToggle img {
+  display: block; /* Prevent extra space */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: invert(1) brightness(1.5) drop-shadow(0px 1px 1px rgba(0,0,0,0.4)); /* White icon with shadow */
+}
+
+/* Mobile Menu Overlay (Fullscreen) */
+.mobileDropdown {
+  /* Positioning & Sizing */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh; /* Use viewport height */
+  z-index: 110; /* Below toggle/close, above page content */
+
+  /* Appearance (Ghibli Theme) */
+  background-color: rgba(51, 85, 63, 0.97); /* Dark green overlay */
+  backdrop-filter: blur(10px); /* Blur background */
+
+  /* Content Layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  /* Animation & Interaction */
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  opacity: 0; /* Start hidden */
+  transform: scale(1.05); /* Start slightly scaled up */
+  pointer-events: none; /* Not interactive when hidden */
+}
+
+/* State when mobile menu is open */
+.mobileDropdownOpen {
+  opacity: 1;
+  transform: scale(1); /* Scale down to normal size */
+  pointer-events: auto; /* Interactive when open */
+}
+
+/* Close Button (Inside Overlay) */
+.mobileCloseButton {
+    position: absolute;
+    top: 1.7rem; /* Align with nav padding */
+    right: 1.5rem; /* Align with nav padding */
+    cursor: pointer;
+    z-index: 120; /* Ensure it's above menu items */
+    background: none;
+    border: none;
+    padding: 0.5rem; /* Larger tap area */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.mobileCloseButton img {
+    width: 32px; /* Icon size */
+    height: 32px;
+    display: block;
+    filter: invert(1) brightness(1.5) drop-shadow(0px 1px 1px rgba(0,0,0,0.4)); /* White icon with shadow */
+}
+
+
+/* Mobile Menu List (within Overlay) */
+.mobileMenuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem; /* Spacing between links */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Menu Item (within Overlay) */
+.mobileMenuItem {
+  font-family: 'Nunito', 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1.8rem; /* Large font */
+  transition: color 0.3s ease, transform 0.3s ease, opacity 0.3s ease;
+  text-align: center;
+  transform: scale(1);
+  opacity: 0.8; /* Slightly faded default */
+}
+/* Mobile menu link */
+.mobileMenuItem a {
+    color: inherit;
+    text-decoration: none;
+    padding: 0.5rem 1rem; /* Touch area padding */
+    display: block;
+}
+/* Hover/Focus state for mobile items */
+.mobileMenuItem:hover,
+.mobileMenuItem:focus-within {
+    transform: scale(1.05); /* Scale up slightly */
+    opacity: 1; /* Fully opaque */
+}
+
+/* Mobile Inactive Item Style */
+.mobileInactiveItem {
+  color: var(--text-light);
+}
+.mobileInactiveItem:hover,
+.mobileInactiveItem:focus-within {
+  color: var(--flower-yellow); /* Ghibli yellow */
+}
+
+/* Mobile Active Item Style */
+.mobileActiveItem {
+  color: var(--flower-yellow); /* Ghibli yellow */
+  opacity: 1;
+  font-weight: 700; /* Bolder */
+}
+
+/* --- Accessibility --- */
+/* Class to visually hide elements but keep them for screen readers */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
