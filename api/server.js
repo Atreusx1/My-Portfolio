@@ -18,8 +18,8 @@ module.exports = async (req, res) => {
     // Email options
     const mailOptions = {
       from: process.env.EMAIL_USER, // Sender's email (user-provided)
-      to: 'ajinkya.gajarmal@gmail.com', // Receiver's email (you or your business email)
-      cc: 'ajinkya.gajarmal2001@gmail.com', // CC email (optional)
+      to: 'anishkadam92@gmail.com', // Receiver's email (you or your business email)
+      cc: 'anishkadam92@gmail.com', // CC email (optional)
       subject: subject || 'No Subject', // Subject of the email
       text: `
         Name: ${name}

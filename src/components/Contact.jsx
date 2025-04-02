@@ -99,8 +99,8 @@ const Contact = () => {
               <div className="contact-icon">📧</div>
               <div className="contact-text">
                 <h4>Email</h4>
-                <a href="mailto:ajinkya.gajarmal@gmail.com" style={{ textDecoration: 'none' }}>
-                  <p>ajinkya.gajarmal@gmail.com</p>
+                <a href="mailto:aniskadam92@gmail.com" style={{ textDecoration: 'none' }}>
+                  <p>aniskadam92@gmail.com</p>
                 </a>
               </div>
             </div>
@@ -109,8 +109,8 @@ const Contact = () => {
               <div className="contact-icon">📱</div>
               <div className="contact-text">
                 <h4>Phone</h4>
-                <a href="tel:+919890467841" style={{ textDecoration: 'none' }}>
-                  <p>+91 9890467841</p>
+                <a href="tel:+917559369953" style={{ textDecoration: 'none' }}>
+                  <p>+91 7559369953</p>
                 </a>
               </div>
             </div>
@@ -125,9 +125,8 @@ const Contact = () => {
           </div>
           
           <div className="social-links">
-            <a href="https://github.com/ajinkyagajarmal" target="_blank" rel="noopener noreferrer" className="social-link">GitHub</a>
-            <a href="https://www.linkedin.com/in/ajinkya-gajarmal-a87367245/" target="_blank" rel="noopener noreferrer" className="social-link">LinkedIn</a>
-            <a href="https://x.com/ajinkyagajarmal" target="_blank" rel="noopener noreferrer" className="social-link">Twitter</a>
+            <a href="https://github.com/atreusx1" target="_blank" rel="noopener noreferrer" className="social-link">GitHub</a>
+            <a href="https://www.linkedin.com/in/anish-defi/" target="_blank" rel="noopener noreferrer" className="social-link">LinkedIn</a>
           </div>
         </div>
         

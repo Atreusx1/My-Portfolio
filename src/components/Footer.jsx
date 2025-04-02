@@ -8,12 +8,11 @@ const Footer = () => {
       <div className="footer-content" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div className="footer-left-container">
           <div className="footer-logo">
-            <span className='logo-text'>The Invincible Studio</span>
+            <span className='logo-text'>My Portfolio</span>
           </div>
           <div className="footer-social">
-            <a href="https://github.com/ajinkyagajarmal" target="_blank" rel="noopener noreferrer" className="social-icon">GitHub</a>
-            <a href="https://www.linkedin.com/in/ajinkya-gajarmal-a87367245/" target="_blank" rel="noopener noreferrer" className="social-icon">LinkedIn</a>
-            <a href="https://x.com/ajinkyagajarmal" target="_blank" rel="noopener noreferrer" className="social-icon">Twitter</a>
+            <a href="https://github.com/atreusx1" target="_blank" rel="noopener noreferrer" className="social-icon">GitHub</a>
+            <a href="https://www.linkedin.com/in/anish-defi/" target="_blank" rel="noopener noreferrer" className="social-icon">LinkedIn</a>
           </div>
         </div>
         
@@ -28,7 +27,7 @@ const Footer = () => {
       </div>
       
       <div className="footer-bottom">
-        <p>© {currentYear} Ajinkya Gajarmal. All Rights Reserved.</p>
+        <p>© {currentYear} Anish Kadam. All Rights Reserved.</p>
       </div>
     </footer>
   );

@@ -37,7 +37,7 @@ function App() {
         <main>
           {/* Ensure all sections have correct IDs matching navLinks */}
           <section id="home"><Home /></section>
-          <section id="about"><About /></section>
+          {/* <section id="about"><About /></section> */}
           <section id="skills"><Skills /></section>
           <section id="education"><Education /></section>
           <section id="projects"><Projects /></section>

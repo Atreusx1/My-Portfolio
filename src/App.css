@@ -1,14 +1,23 @@
 /* GHIBLI THEME - Base Colors */
 :root {
-  --sky-blue: #5B95D4;       /* Sampled from sky */
-  --grass-green-light: #A4C37A; /* Sampled from lighter grass */
-  --grass-green-medium: #7FAA54; /* Sampled from mid-tone grass */
-  --tree-green-dark: #33553F;   /* Sampled from dark trees */
-  --flower-yellow: #F7D350;    /* Sampled from flowers */
-  --text-light: #FAF0E6;     /* Linen - Soft off-white for text */
-  --text-dark: #4A443A;      /* Dark Brown/Green - For text on light bg */
-  --bg-light-transparent: rgba(250, 240, 230, 0.6); /* Semi-transparent Linen for overlays */
-  --bg-medium-transparent: rgba(164, 195, 122, 0.5); /* Semi-transparent light green */
+  /* --- Core Palette (Slightly Punchier) --- */
+  --sky-blue: #4FA3E0;         /* Brighter, cleaner sky blue */
+  --grass-green-light: #A5CC6F;  /* More vibrant light green */
+  --grass-green-medium: #7CB556; /* Richer mid-tone green */
+  --tree-green-dark: #305A40;    /* Deep, slightly desaturated dark green */
+  --flower-yellow: #FDD835;     /* Bright, distinct golden yellow (like Material Amber 600) */
+
+  /* --- Text & Backgrounds (Contrast Focused) --- */
+  --text-light: #FFFFFF;        /* Pure white for high contrast on dark/colored backgrounds */
+  --text-medium: #E0F2F7;       /* Very light cyan/off-white for secondary text */
+  --text-dark: #263238;         /* Dark Blue-Grey - Better contrast on light/yellow backgrounds than brown */
+
+  /* --- Overlays (Slightly more opaque for readability) --- */
+  --bg-overlay-dark: rgba(48, 90, 64, 0.8);   /* Dark Tree Green, 80% opaque */
+  --bg-overlay-medium: rgba(124, 181, 86, 0.7); /* Medium Grass Green, 70% opaque */
+  --bg-overlay-light: rgba(255, 255, 255, 0.1); /* Very subtle white overlay */
+  --bg-overlay-blue: rgba(79, 163, 224, 0.15); /* Faint blue for hovers/accents */
+  --bg-overlay-yellow: rgba(253, 216, 53, 0.15);/* Faint yellow for hovers/accents */
 }
 
 * {
@@ -18,14 +27,11 @@
 }
 
 body, html {
-  /* GHIBLI CHANGE: Font - Softer, rounded sans-serif */
-  font-family: 'Nunito', 'Poppins', sans-serif; /* Added Nunito */
+  font-family: 'Nunito', 'Poppins', sans-serif; /* Soft, rounded font */
   scroll-behavior: smooth;
   background-color: var(--grass-green-medium); /* Fallback background */
-  color: var(--text-light); /* GHIBLI CHANGE: Default text color */
+  color: var(--text-light); /* Default text: White for contrast */
   overflow-x: hidden;
-  /* Optional: Custom cursor - could be a leaf or simple dot */
-  /* cursor: url('/path/to/leaf-cursor.png'), auto; */
 }
 
 button {
@@ -105,26 +111,25 @@ section {
   transform: translateY(0);
 }
 .section-container1.animate-in { display: contents; } /* Keep this */
-
 .section-title {
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
+  font-size: 2.8rem; /* Slightly larger */
+  margin-bottom: 3.5rem;
   position: relative;
   display: inline-block;
-  color: var(--text-light); /* GHIBLI CHANGE */
-  font-weight: 600; /* Slightly less bold maybe */
+  color: var(--text-light);
+  font-weight: 700; /* Bolder */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
-
 .section-title:after {
   content: '';
   position: absolute;
-  bottom: -10px;
+  bottom: -12px;
   left: 0;
-  width: 60px;
-  height: 4px;
-  /* GHIBLI CHANGE: Title underline gradient */
-  background: linear-gradient(45deg, var(--flower-yellow), var(--sky-blue), var(--grass-green-light));
-  border-radius: 2px; /* Soften edges */
+  width: 70px;
+  height: 5px;
+  /* Vibrant underline gradient */
+  background: linear-gradient(90deg, var(--flower-yellow), var(--sky-blue));
+  border-radius: 3px;
 }
 
 /* Home Styles */
@@ -600,7 +605,8 @@ section {
 .tech-icons .icon-element {
    font-size: 4em; /* Slightly smaller */
    margin-bottom: 10px; /* More space */
-   color: var(--sky-blue); /* GHIBLI CHANGE: Icon color */
+   color: var(--text-medium);
+; /* GHIBLI CHANGE: Icon color */
 }
 .tech-icons .skill-name {
   font-size: 1rem; /* Smaller text */
@@ -668,17 +674,7 @@ section {
 @media screen and (max-width: 768px) {
   section { padding: 80px 2rem; /* Adjust padding for mobile */ }
   .menu-icon { display: block; }
-  .nav-menu {
-    position: fixed; top: 0; right: -100%; width: 75%; /* Slightly wider */
-    height: 100vh;
-    /* GHIBLI CHANGE: Mobile menu background */
-    background: var(--bg-light-transparent);
-    backdrop-filter: blur(10px);
-    flex-direction: column; justify-content: center; align-items: center;
-    padding: 2rem; transition: all 0.5s ease;
-  }
-  .nav-menu.active { right: 0; }
-  .nav-item { margin: 1.5rem 0; }
+
   .personal-info { grid-template-columns: 1fr; }
   .skills-content { grid-template-columns: 1fr; }
   .projects-grid { grid-template-columns: 1fr; }
