@@ -149,7 +149,7 @@ section {
 .greeting {
   font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: var(--sky-blue); /* GHIBLI CHANGE */
+  color: var( --grass-green-medium); /* GHIBLI CHANGE */
 }
 
 .name {
@@ -626,6 +626,29 @@ section {
   .tech-icons-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
 }
 
+/* === Mobile Background Image Fix === */
+@media screen and (max-width: 768px) {
+  .app {
+    /* Allow the background to scroll with the content on mobile */
+    background-attachment: fixed;
+
+    /* Optional: Adjust position if 'center center' crops too much.
+       'center top' keeps the top part (sky/upper trees) more visible.
+       'center bottom' would keep the hill/grass more visible.
+       Experiment to see what looks best with your specific image. */
+    /* background-position: center top; */
+     background-position: bottom center; 
+  }
+
+  /* Also ensure overlays provide enough contrast if the background gets busy */
+  .skill-category,
+  .project-card,
+  .contact-form-container,
+  .certification-item {
+      /* You might slightly increase opacity if needed on mobile */
+      /* Example: background: rgba(48, 90, 64, 0.85); */
+  }
+}
 /* Scroll Up Button */
 .scroll-up-button {
   position: fixed; bottom: 25px; right: 25px; /* Slightly higher */
