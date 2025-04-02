@@ -1,0 +1,272 @@
+/* src/components/Loading.module.css */
+
+/* --- Base Styles (Desktop First) --- */
+
+.loadingScreenSplit {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex; /* Default: Desktop uses flex for split */
+    overflow: hidden;
+    background-color: transparent; /* Parent is see-through */
+    z-index: 9999; /* High z-index */
+    perspective: 1000px; /* For 3D transforms on desktop */
+    /* Default transition for mobile fade (overridden by desktop animation) */
+    transition: opacity 1.2s ease-out, visibility 1.2s step-end; /* Default visibility transition */
+    opacity: 1; /* Start visible */
+    visibility: visible; /* Start visible */
+    will-change: transform, opacity, visibility; /* Optimize animation */
+    pointer-events: auto; /* Default: allow interaction (needed for desktop halves) */
+  }
+  
+  .loadingHalf {
+    width: 50%; /* Default: Desktop halves */
+    height: 100%;
+    position: relative; /* For positioning canvas inside */
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    will-change: transform, opacity;
+    pointer-events: auto; /* Halves are interactive conceptually */
+    transform-style: preserve-3d;
+    transform: translateX(0%) rotateY(0deg);
+    /* Desktop animation transitions */
+    transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1),
+                opacity 0.5s ease-out;
+  }
+  
+  .loadingLeft {
+    background-image: url('../ghibli-day.png');
+    background-position: left center;
+    background-color: #87CEEB; /* Fallback */
+    transform-origin: right center;
+    /* Ensure default relative positioning for canvas child */
+    position: relative;
+    z-index: 1; /* Base layer */
+  }
+  
+  .loadingRight {
+    background-image: url('../ghibli-night.png');
+    background-position: right center;
+    background-color: #1a2a2a; /* Fallback */
+    transform-origin: left center;
+     /* Ensure default relative positioning for canvas child */
+    position: relative;
+    z-index: 1; /* Base layer */
+  }
+  
+  .particleCanvas {
+    /* Default: Positioned within its half */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    z-index: 1; /* Behind potential content in half, above half's background */
+    opacity: 1;
+    will-change: opacity;
+    transition: opacity 0.8s ease-out;
+    background-color: transparent !important;
+    pointer-events: none; /* Canvas itself shouldn't block */
+  }
+  
+  .loaderOverlay {
+    /* Centered overlay, covers both halves */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10; /* Above halves and particles */
+    pointer-events: none; /* Click through overlay */
+    opacity: 1;
+    will-change: opacity;
+    transition: opacity 0.4s ease-out; /* Faster fade for loader */
+  }
+  
+  .loaderCanvasContainer {
+    width: 180px; /* Or adjust based on ParticleSpinner preference */
+    height: 180px;
+    margin-bottom: 25px;
+  }
+  
+  .loaderCanvas {
+     width: 100% !important;
+     height: 100% !important;
+     display: block;
+  }
+  
+  .loadingText {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+    text-align: center;
+    padding: 0 20px;
+    opacity: 1;
+    transition: opacity 0.4s ease-out; /* Match loader fade */
+    will-change: opacity;
+  }
+  
+  /* --- Desktop Curtain Animation Keyframes --- */
+  
+  @keyframes slideRotateOutLeft {
+    from { transform: translateX(0%) rotateY(0deg); opacity: 1; }
+    to { transform: translateX(-105%) rotateY(-20deg); opacity: 0.8; }
+  }
+  
+  @keyframes slideRotateOutRight {
+    from { transform: translateX(0%) rotateY(0deg); opacity: 1; }
+    to { transform: translateX(105%) rotateY(20deg); opacity: 0.8; }
+  }
+  
+  /* --- Exiting State Base Styles --- */
+  .exiting {
+    /* pointer-events: none; redundant if applied to .loadingScreenSplit.exiting */
+  }
+  
+  /* Apply desktop animations by default */
+  .exiting .loadingLeft {
+    animation: slideRotateOutLeft 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+    /* Ensure pointer events are disabled during/after animation */
+    pointer-events: none !important;
+  }
+  
+  .exiting .loadingRight {
+    animation: slideRotateOutRight 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+     /* Ensure pointer events are disabled during/after animation */
+    pointer-events: none !important;
+  }
+  
+  /* Base fade-out for particles and loader (applies unless overridden by mobile) */
+  .exiting .particleCanvas {
+    opacity: 0 !important; /* Use important to ensure fade */
+    transition: opacity 0.8s 0.1s ease-out !important;
+  }
+  
+  .exiting .loaderOverlay {
+    opacity: 0 !important; /* Use important to ensure fade */
+     transition: opacity 0.4s ease-out !important;
+  }
+  .exiting .loadingText {
+      opacity: 0 !important; /* Use important to ensure fade */
+      transition: opacity 0.4s ease-out !important;
+  }
+  
+  
+  /* --- Mobile Overrides (Targeting screens 768px and below) --- */
+  /* IMPORTANT: This media query must come AFTER the base styles */
+  @media (max-width: 768px) {
+  
+    /* 1. Style the main container */
+    .loadingScreenSplit {
+      display: block;
+      position: fixed;
+      background-image: url('../ghibli-day.png');
+      background-size: cover;
+      background-position: center center;
+      background-color: var(--sky-blue);
+      perspective: none;
+      opacity: 1; /* Start visible */
+      visibility: visible; /* Start visible */
+      z-index: 9999;
+      pointer-events: none !important; /* <<< ADDED: Make container non-interactive by default on mobile */
+      /* Setup transitions for fade out */
+      transition: opacity 1.2s ease-out, visibility 1.2s ease-out; /* <<< UPDATED: Transition visibility too */
+      will-change: opacity, visibility;
+    }
+  
+    /* 2. Hide the right half */
+    .loadingRight {
+      display: none !important;
+    }
+  
+    /* 3. Make left half full-screen, transparent, but positioned */
+    .loadingLeft {
+      display: block !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      background: none !important;
+      transform: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      pointer-events: none !important; /* Ensure this layer doesn't block */
+      z-index: 1;
+    }
+  
+    /* 4. Position Particle Canvas within the full-screen .loadingLeft */
+    .loadingLeft .particleCanvas {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      opacity: 1 !important;
+      z-index: 1;
+      pointer-events: none !important; /* Ensure canvas doesn't block */
+      transition: opacity 0.8s 0.1s ease-out !important;
+    }
+     /* Hide canvas from the non-displayed right side */
+    .loadingRight .particleCanvas {
+         display: none !important;
+     }
+  
+    /* 5. Ensure Loader Overlay is correctly positioned and on top */
+    .loaderOverlay {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      z-index: 10 !important;
+      opacity: 1 !important;
+      pointer-events: none !important; /* Overlay is never interactive */
+      transition: opacity 0.4s ease-out !important;
+    }
+  
+    /* 6. Mobile Exit Behavior: Fade the main container AND hide visibility */
+    .loadingScreenSplit.exiting {
+      opacity: 0 !important;
+      visibility: hidden !important; /* <<< ADDED: Hide completely after fade */
+      pointer-events: none !important; /* Reinforce non-interactive state */
+      transition: opacity 1.2s ease-out, visibility 1.2s ease-out !important; /* <<< UPDATED: transition visibility */
+      animation: none !important;
+    }
+  
+    /* Override desktop exit animations for halves (mostly redundant now) */
+    .exiting .loadingLeft,
+    .exiting .loadingRight {
+      animation: none !important;
+      transform: none !important;
+      opacity: 1 !important; /* Keep hidden parent structure intact during fade */
+      pointer-events: none !important;
+    }
+  
+     /* Ensure specific mobile fade transitions for children */
+     .exiting .loadingLeft .particleCanvas {
+       opacity: 0 !important;
+       transition: opacity 0.8s 0.1s ease-out !important;
+     }
+  
+     .exiting .loaderOverlay {
+       opacity: 0 !important;
+       transition: opacity 0.4s ease-out !important;
+     }
+  
+     .exiting .loadingText {
+         opacity: 0 !important;
+         transition: opacity 0.4s ease-out !important;
+     }
+  }

@@ -44,7 +44,7 @@ const sakuraColors = [
   new THREE.Color("#E37F95"), new THREE.Color("#CA6679"),
 ];
 
-const FloatingParticles = ({ count = 200 }) => {
+const FloatingParticles = ({ count = 250 }) => {
     const meshRef = useRef();
     const { viewport, size } = useThree(); // Use size for stable initial positioning if viewport isn't ready
     const petalGeometry = usePetalGeometry();
