@@ -31,34 +31,50 @@ const LOADING_DELAY_MS = 3500;
 const SAKURA_COUNT = 250;
 const FIREFLY_COUNT = 120;
 const SNOW_COUNT = 350;
-// Use a count suitable for the background rainfall effect
-const RAIN_COUNT = 350; // Adjusted from original 800 based on example, tune as needed
+const RAIN_COUNT = 350;
 const WEATHER_MODES = ['sakura', 'fireflies', 'snow', 'rain']; // Order for cycling
 
-// --- Rainfall Specific Configuration (Optional but good practice) ---
+// Day/Night thresholds (adjust as needed)
+const DAY_START_HOUR = 6; // 6 AM (inclusive)
+const DAY_END_HOUR = 18; // 6 PM (exclusive)
+
+// --- Rainfall Specific Configuration ---
 const RAIN_CONFIG = {
   areaWidth: 50,
   areaHeight: 40,
   areaDepth: 40,
   windStrength: 0.04,
   baseSpeed: 0.5,
-  opacity: 0.9, // Slightly increased opacity from example for visibility, tune as needed
+  opacity: 0.9,
   fogNear: 20,
   fogFar: 50,
 };
+
+// --- Helper Function ---
+const getInitialWeatherMode = () => {
+  // 1. Check localStorage first - respect user's last choice
+  const savedWeather = localStorage.getItem('weatherMode');
+  if (savedWeather && WEATHER_MODES.includes(savedWeather)) {
+    return savedWeather;
+  }
+
+  // 2. If no saved preference, determine based on time
+  const currentHour = new Date().getHours(); // 0-23
+  const isDayTime = currentHour >= DAY_START_HOUR && currentHour < DAY_END_HOUR;
+
+  // Default to Sakura for day, Fireflies for night
+  return isDayTime ? 'sakura' : 'fireflies';
+};
+
 
 function App() {
   // --- State ---
   const [isLoading, setIsLoading] = useState(true);
 
-  const [weatherMode, setWeatherMode] = useState(() => {
-    const savedWeather = localStorage.getItem('weatherMode');
-    if (savedWeather && WEATHER_MODES.includes(savedWeather)) {
-      return savedWeather;
-    }
-    return 'sakura';
-  });
+  // Use the helper function to determine the initial weather mode
+  const [weatherMode, setWeatherMode] = useState(getInitialWeatherMode);
 
+  // Determine dark mode based *solely* on whether 'fireflies' is active
   const isEffectivelyDarkMode = weatherMode === 'fireflies';
 
   // Refs
@@ -74,26 +90,36 @@ function App() {
   }, []);
 
   useEffect(() => {
+    // Determine theme class based on the current state
     const currentThemeClass = isEffectivelyDarkMode ? 'dark-mode' : 'light-mode';
     const oppositeThemeClass = isEffectivelyDarkMode ? 'light-mode' : 'dark-mode';
 
+    // Update body class
     document.body.classList.remove(oppositeThemeClass);
     document.body.classList.add(currentThemeClass);
 
+    // Update specific elements' classes (app container, fixed background)
     const elementsToUpdate = [appRef.current, fixedBgRef.current];
-    const weatherClass = `weather-${weatherMode}`;
+    const weatherClass = `weather-${weatherMode}`; // Class specific to the active weather effect
 
     elementsToUpdate.forEach(el => {
       if (el) {
+        // Remove all possible weather classes first
         WEATHER_MODES.forEach(mode => el.classList.remove(`weather-${mode}`));
+        // Add the current weather class
         el.classList.add(weatherClass);
+        // Remove the opposite theme class
         el.classList.remove(oppositeThemeClass);
+        // Add the current theme class
         el.classList.add(currentThemeClass);
       }
     });
 
+    // Save the *current* mode to localStorage whenever it changes
     localStorage.setItem('weatherMode', weatherMode);
-  }, [weatherMode, isEffectivelyDarkMode]);
+
+  }, [weatherMode, isEffectivelyDarkMode]); // Rerun when weatherMode or derived dark mode changes
+
 
   // --- Event Handlers ---
   const toggleWeatherMode = useCallback(() => {
@@ -102,7 +128,8 @@ function App() {
       const nextIndex = (currentIndex + 1) % WEATHER_MODES.length;
       return WEATHER_MODES[nextIndex];
     });
-  }, []);
+  }, []); // No dependencies needed as it only uses the setter function
+
 
   // --- Render Logic ---
 
@@ -116,10 +143,9 @@ function App() {
       case 'snow':
         return <Snowfall count={SNOW_COUNT} />;
       case 'rain':
-        // Use the new Rainfall component with specific background props
         return (
           <Rainfall
-            count={RAIN_COUNT} // Use the constant defined above
+            count={RAIN_COUNT}
             areaWidth={RAIN_CONFIG.areaWidth}
             areaHeight={RAIN_CONFIG.areaHeight}
             areaDepth={RAIN_CONFIG.areaDepth}
@@ -135,18 +161,23 @@ function App() {
     }
   };
 
-  // Determine initial classes based on state loaded from storage
-  const initialWeatherMode = weatherMode;
+  // Calculate initial classes based on the *initial* state determined by `getInitialWeatherMode`
+  // These are used for the very first render before useEffect runs
+  const initialWeatherMode = weatherMode; // Get the initially calculated mode
   const initialIsDarkMode = initialWeatherMode === 'fireflies';
   const initialThemeClass = initialIsDarkMode ? 'dark-mode' : 'light-mode';
   const initialWeatherClass = `weather-${initialWeatherMode}`;
 
+
   return (
     <>
+      {/* Pass the initial dark mode state to loading screen */}
       <LoadingScreen isLoading={isLoading} isInitiallyDark={initialIsDarkMode} />
 
+      {/* Apply initial classes to fixed background */}
       <div ref={fixedBgRef} className={`fixed-background ${initialThemeClass} ${initialWeatherClass}`}></div>
 
+      {/* Apply initial classes to main app container */}
       <div ref={appRef} className={`app ${initialThemeClass} ${initialWeatherClass}`}>
 
         <WeatherToggle weatherMode={weatherMode} toggleWeatherMode={toggleWeatherMode} />
@@ -154,8 +185,9 @@ function App() {
 
         {/* --- Background Particle Canvas --- */}
         <div className="canvas-container">
-          {/* key={weatherMode} is essential! */}
+           {/* Key change ensures component remounts on mode switch */}
           <Canvas camera={{ position: [0, 0, 12], fov: 55 }} key={weatherMode}>
+             {/* Adjust ambient light based on effective dark mode */}
             <ambientLight intensity={isEffectivelyDarkMode ? 0.15 : 0.5} />
             <Suspense fallback={null}>
               {renderParticles()}
@@ -166,8 +198,10 @@ function App() {
         {/* --- Scrollable Page Content --- */}
         {!isLoading && (
             <div className="content">
+               {/* Pass dark mode state to Navbar */}
               <Navbar isDarkMode={isEffectivelyDarkMode}/>
               <main className="sections">
+                {/* Pass loading state to Home if needed for animations */}
                 <section id="home"><Home isAppLoaded={!isLoading} /></section>
                 <section id="about"><About /></section>
                 <section id="skills"><Skills /></section>

@@ -895,43 +895,79 @@ section {
     background-color: transparent !important;
   }
 
-  /* Base rule - Updated for weather */
+  /* Base rule for fixed background element */
   .fixed-background {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background-size: cover; background-position: bottom center;
-    background-repeat: no-repeat; z-index: -1; /* Behind everything */
-    transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
-    /* Default background (e.g., dark mode fireflies) - will be overridden by specific weather class */
-    background-image: url("../public/ghibli-night.png"); /* Fallback */
-    background-color: #1a2a2a; /* Dark base color */
-  }
-/* eslint-disable */
-  /* Specific weather backgrounds for fixed */
-  .fixed-background.weather-sakura { /* Light mode default */
-    background-image: url("../public/ghibli-day.png");
-    background-color: #7FBCD8;
-  }
-  .fixed-background.weather-fireflies { /* Dark mode default */
-    background-image: url("../public/ghibli-night.png");
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -2; /* Behind ::after and content */
+    background-size: cover;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-image: url("../public/ghibli-night.png"); /* Base/Fallback */
     background-color: #1a2a2a;
+    /* --- Slightly longer transition for color --- */
+    transition: background-color 0.8s ease-in-out;
+    /* Hint for layer promotion */
+    will-change: background-color;
+    transform: translateZ(0); /* Force layer creation hint */
   }
-  .fixed-background.weather-snow { /* NEW */
+
+  /* Pseudo-element for cross-fading image */
+  .fixed-background::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; /* In front of parent, behind content */
+    background-size: cover;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-image: none; /* Start with no specific image */
+    opacity: 0; /* Start invisible */
+    /* --- Longer transition for opacity, delay image removal --- */
+    transition: opacity 0.8s ease-in-out, background-image 0s 0.8s;
+    /* Hint for layer promotion & opacity change */
+    will-change: opacity;
+    transform: translateZ(0); /* Force layer creation hint */
+    pointer-events: none; /* Ensure it doesn't interfere */
+  }
+
+  /* --- Weather-Specific Overrides --- */
+  /* (Color change on parent, image/opacity change on ::after) */
+
+  .fixed-background.weather-sakura { background-color: #7FBCD8; }
+  .fixed-background.weather-sakura::after {
+    background-image: url("../public/ghibli-day.png");
+    opacity: 1;
+    transition-delay: 0s; /* Override removal delay for fade-in */
+  }
+
+  .fixed-background.weather-fireflies { background-color: #1a2a2a; }
+  .fixed-background.weather-fireflies::after {
+    background-image: url("../public/ghibli-night.png");
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  .fixed-background.weather-snow { background-color: #5c7a8f; }
+  .fixed-background.weather-snow::after {
     background-image: url("../public/ghibli-snow.png");
-    background-color: #5c7a8f; /* Example snow base color */
+    opacity: 1;
+    transition-delay: 0s;
   }
-  .fixed-background.weather-rain { /* NEW */
+
+  .fixed-background.weather-rain { background-color: #4a5a6a; }
+  .fixed-background.weather-rain::after {
     background-image: url("../public/ghibli-rain.png");
-    background-color: #4a5a6a; /* Example rain base color */
+    opacity: 1;
+    transition-delay: 0s;
   }
 
-  /* App becomes transparent */
+  /* --- Remaining iOS structure --- */
   .app { background: none !important; position: relative; z-index: 1; min-height: 100vh; }
-
-  /* Canvas container z-index adjusted */
-  .canvas-container { z-index: 0; /* Behind .content, in front of .fixed-background */ }
-  .content { position: relative; z-index: 2; /* Above canvas */ }
+  .canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+  .content { position: relative; z-index: 2; background-color: transparent; }
   section { background: transparent !important; position: relative; z-index: 2; }
-}
+} /* End @supports (-webkit-touch-callout: none) */
 
 /* --- Non-iOS Fallback --- */
 @supports not (-webkit-touch-callout: none) {
@@ -1004,33 +1040,178 @@ section {
 
 } */
 
-/* --- NEW: WeatherToggle Button --- */
+/* === Weather Toggle Button Styles === */
+
+/* Keyframes (can be defined anywhere in App.css) */
+@keyframes fireflyPulse {
+  0%, 100% { text-shadow: 0 0 8px #f0e68c, 0 0 12px rgba(240, 230, 140, 0.5); }
+  50% { text-shadow: 0 0 12px #f8f0a0, 0 0 18px rgba(248, 240, 160, 0.7); }
+}
+
+@keyframes simpleRainDrop {
+    0% { transform: translateY(-20px) scaleY(1); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(20px) scaleY(1.5); opacity: 0; }
+}
+
+/* Main Button Styling */
 .weather-toggle-button {
   position: fixed;
-  top: 25px; /* Position below the dark mode toggle */
-  right: 25px;
-  left: auto;
-  z-index: 1000;
+  top: 40px; /* As requested */
+  right: 20px;  /* As requested */
+  z-index: 1001; /* Ensure visibility */
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  border: none;
   cursor: pointer;
-  font-size: 1.4rem; /* Adjust icon size if needed */
   padding: 0;
-  backdrop-filter: blur(5px);
-  background: var(--bg-overlay-medium); /* Use theme variable */
-  color: var(--text-light); /* Icon color */
-  border: 1px solid var(--grass-green-medium); /* Different border color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease,
               opacity 0.3s ease, visibility 0.3s ease;
+  background-color: #eee; /* Default background */
 }
+
 .weather-toggle-button:hover {
-  background: var(--bg-overlay-yellow); /* Different hover overlay */
-  border-color: var(--flower-yellow);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
 }
+
+.weather-toggle-button:active {
+  transform: scale(0.98);
+}
+
+/* Icon Container */
+.weather-toggle-button .toggle-icon-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Base Icon Styling (inside button) */
+.weather-toggle-button .icon {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0;
+  transform: scale(0.7) translateY(10px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, color 0.5s ease;
+  color: #333; /* Default icon color */
+}
+
+/* Active Icon Styling */
+.weather-toggle-button .icon.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Container for Background Pseudo-Elements */
+.weather-toggle-button .toggle-background-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* --- Mode Specific Styles --- */
+
+/* Sakura */
+.weather-toggle-button.sakura {
+  background: linear-gradient(135deg, #fadde1, #ffc4d0);
+}
+.weather-toggle-button.sakura .icon { /* More specific selector */
+  color: #d14a8a;
+}
+.weather-toggle-button.sakura::before,
+.weather-toggle-button.sakura::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.4s ease-out;
+    pointer-events: none;
+}
+.weather-toggle-button.sakura:hover::before {
+    opacity: 0.7; transform: translate(-15px, -10px) scale(1.2);
+}
+.weather-toggle-button.sakura:hover::after {
+    opacity: 0.6; transform: translate(10px, 15px) scale(0.8); transition-delay: 0.1s;
+}
+
+/* Fireflies */
+.weather-toggle-button.fireflies {
+  background: linear-gradient(135deg, #1a2a3a, #0f1720);
+  border: 1px solid rgba(180, 220, 255, 0.3);
+}
+.weather-toggle-button.fireflies .icon {
+  color: #f0e68c;
+  text-shadow: 0 0 8px #f0e68c, 0 0 12px rgba(240, 230, 140, 0.5);
+}
+.weather-toggle-button.fireflies .icon.active {
+  animation: fireflyPulse 2.5s infinite ease-in-out;
+}
+
+/* Snow */
+.weather-toggle-button.snow {
+  background: linear-gradient(135deg, #e0f2f7, #b3e0f2);
+}
+.weather-toggle-button.snow .icon {
+  color: #5a9bb0;
+}
+/* Target pseudo-elements on the background div when button is snow */
+.weather-toggle-button.snow .toggle-background-elements::before,
+.weather-toggle-button.snow .toggle-background-elements::after {
+    content: '❄';
+    position: absolute;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    transition: all 0.5s ease-out;
+}
+.weather-toggle-button.snow:hover .toggle-background-elements::before {
+    opacity: 1; transform: translate(-12px, -8px) rotate(30deg);
+}
+.weather-toggle-button.snow:hover .toggle-background-elements::after {
+    opacity: 1; transform: translate(10px, 12px) rotate(-45deg); transition-delay: 0.1s;
+}
+
+/* Rain */
+.weather-toggle-button.rain {
+  background: linear-gradient(135deg, #a8c0d1, #7e9aaa);
+}
+.weather-toggle-button.rain .icon {
+  color: #3e5f7a;
+}
+/* Target pseudo-element on the background div when button is rain */
+.weather-toggle-button.rain .toggle-background-elements::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 8px;
+    background: rgba(220, 235, 245, 0.7);
+    border-radius: 0 0 2px 2px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+.weather-toggle-button.rain:hover .toggle-background-elements::before {
+    opacity: 1;
+    animation: simpleRainDrop 1s ease-out infinite;
+    animation-delay: 0.2s;
+}
+
+/* === End Weather Toggle Button Styles === */
 
 
 /* --- Loading Screen --- */
