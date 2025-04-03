@@ -846,11 +846,7 @@ section {
   border-top: 1px solid color-mix(in srgb, var(--text-light, #fff) 10%, transparent); /* Dynamic border */
   transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
 }
-.light-mode .footer {
-   /* Darker green mixed with white */
-   background: color-mix(in srgb, var(--tree-green-dark) 90%, #FFFFFF);
-   border-top: 1px solid color-mix(in srgb, var(--text-light, #000) 15%, transparent); /* Use light mode text color */
-}
+
 
 .footer-content { max-width: 1200px; margin: 0 auto; margin-bottom: 2rem; }
 .footer-left-container { margin-bottom: 2rem; }
