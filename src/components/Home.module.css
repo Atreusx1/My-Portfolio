@@ -7,22 +7,21 @@
 
 /* Keyframe for the main "assemble" effect */
 @keyframes assembleAnimation {
-    0% {
-      opacity: 0;
-      /* Start state: defined per element using CSS variables */
-      transform: var(--initial-transform, translate(0, 50px) scale(0.8)); /* Default fallback */
-    }
-    60% {
-      /* Optional intermediate step for a slight bounce/overshoot */
-      opacity: 1;
-      /* transform: scale(1.05) rotate(-2deg); Example overshoot */
-    }
-    100% {
-      opacity: 1;
-      /* Final state: Reset transform */
-      transform: translate(0, 0) rotate(0) scale(1);
-    }
+  0% {
+    opacity: 0;
+    /* Start state: defined per element using CSS variables */
+    transform: var(--initial-transform, translate(0, 50px) scale(0.8)); /* Default fallback */
   }
+  60% {
+    /* Optional intermediate step */
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    /* Final state: Reset transform */
+    transform: translate(0, 0) rotate(0) scale(1);
+  }
+}
   
   /* --- Base Container --- */
   .homeContainer {
@@ -41,6 +40,7 @@
     padding-bottom: 2rem;
      /* Set a minimum height consistent with other sections */
      min-height: calc(100vh - 80px); /* Example: Full viewport height minus navbar */
+     
   }
   
   /* --- Content Alignment --- */
@@ -196,6 +196,11 @@
     background: rgba(var(--sky-blue-rgb, 85, 166, 224), 0.15); /* Use RGB for alpha */
     transform: translateY(-4px) scale(1.03); /* Add subtle scale */
     border-color: var(--flower-yellow);
+  }
+
+
+  :global(.dud) {
+    color: #1aca40; 
   }
   
   /* --- Media Queries for Responsive Adjustments --- */
