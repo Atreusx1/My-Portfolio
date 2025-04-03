@@ -1,138 +1,166 @@
-// rainfall.jsx
+// src/components/Rainfall.jsx
 import React, { useRef, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-// Create reusable objects outside the component
+// Reusable objects
 const tempObject = new THREE.Object3D();
-const tempColor = new THREE.Color(); // Reusable color object
+const tempVec3 = new THREE.Vector3();
+const tempEuler = new THREE.Euler();
 
 // --- Memoized Hook for Raindrop Geometry ---
 const useRaindropGeometry = () => {
     return useMemo(() => {
-        // Use a thin cylinder for rain streaks
-        const radius = 0.008; // Very thin
-        const height = 0.4;   // Length of the streak
-        const radialSegments = 4; // Low detail is fine for thin streaks
-        const geometry = new THREE.CylinderGeometry(radius, radius, height, radialSegments);
-        // No need to center, cylinder is already centered vertically
+        // Slightly larger dimensions for better visibility
+        const topRadius = 0.0015;    // Increased
+        const bottomRadius = 0.004; // Increased
+        const height = 0.35;      // Slightly increased
+        const radialSegments = 4;  // Keep low for performance
+        const geometry = new THREE.CylinderGeometry(topRadius, bottomRadius, height, radialSegments);
+        geometry.translate(0, -height / 3, 0); // Offset remains useful
         return geometry;
     }, []);
 };
 
-// --- Rain Colors ---
+// --- Rain Colors (Slightly Brighter) ---
 const raindropColors = [
-  new THREE.Color("#a0b0c0"), // Light grey-blue
-  new THREE.Color("#b0c0d0"),
-  new THREE.Color("#c0d0e0"),
-  new THREE.Color("#9ab0c8"),
+    new THREE.Color("#c8d1e0").multiplyScalar(0.9), // Increased brightness scalar
+    new THREE.Color("#d2dae6").multiplyScalar(0.9),
+    new THREE.Color("#bcc7d7").multiplyScalar(0.9),
+    new THREE.Color("#d8e0ea").multiplyScalar(0.9),
 ];
 
-const Rainfall = ({ count = 800 }) => { // Adjust count for desired density
+const Rainfall = ({
+    count = 700, // Maybe slightly increase default count
+    windStrength = 0.05,
+    areaWidth = 40,
+    areaHeight = 30,
+    areaDepth = 30,
+    baseSpeed = 0.8,
+    fogNear = 18,     // Start fog slightly further away
+    fogFar = 45,      // End fog slightly further away
+    opacity = 0.55    // Increased default opacity significantly
+}) => {
     const meshRef = useRef();
-    const { viewport, size } = useThree();
-    const raindropGeometry = useRaindropGeometry();
+    const { camera } = useThree();
+    const raindropGeometry = useRaindropGeometry(); // Use the updated geometry hook
+
+    const rainAreaCenter = useRef(new THREE.Vector3(0, areaHeight / 2, 0));
+
+    const windEffect = useRef({
+        direction: new THREE.Vector2(0.1, 0),
+        strength: windStrength,
+        noiseTime: Math.random() * 100,
+    });
 
     // --- Generate Initial Per-Instance Data ---
     const particles = useMemo(() => {
         const temp = [];
-        const R = 15; // Depth spread range
-        const initialViewportWidth = size.width > 0 ? (size.width / (size.height / viewport.height)) : 20;
-        const initialViewportHeight = size.height > 0 ? viewport.height : 10;
+        const halfWidth = areaWidth / 2;
+        const halfDepth = areaDepth / 2;
+        const center = rainAreaCenter.current;
 
         for (let i = 0; i < count; i++) {
-            const x = (Math.random() - 0.5) * initialViewportWidth * 1.8;
-            const y = (Math.random() - 0.5) * initialViewportHeight * 1.3; // Start spread out vertically
-            const z = (Math.random() - 0.5) * R;
+            const x = (Math.random() - 0.5) * areaWidth + center.x;
+            const y = Math.random() * areaHeight + center.y - areaHeight / 2;
+            const z = (Math.random() - 0.5) * areaDepth + center.z;
 
-            // Initial rotation (can be minimal for cylinders unless angled rain is desired)
-            const rx = 0; // Math.random() * 0.1; // Minimal rotation
-            const ry = Math.random() * Math.PI * 2; // Random rotation around Y
-            const rz = 0; // Math.random() * 0.1;
+            const rx = Math.PI;
+            const ry = 0;
+            const rz = 0;
 
-            // --- CHANGE: Raindrop Scale ---
-            // Scale can slightly vary thickness and length
-            const scale = 0.8 + Math.random() * 0.5;
+            // Slightly larger base scale, maintain variation
+            const scale = 0.4 + Math.random() * 0.5; // Increased base scale slightly
+            const dropLengthFactor = 0.8 + Math.random() * 0.4;
 
-            // --- CHANGE: Rain Movement Parameters ---
-            const factorY = 1.8 + Math.random() * 1.2; // Much faster base downward speed
-            const speedFactor = 0.012 + Math.random() * 0.008; // Faster overall speed multiplier
-            const swayFactorX = (Math.random() - 0.5) * 0.05; // Very minimal sideways sway
+            const speedFactor = baseSpeed * (0.8 + Math.random() * 0.4);
+            const depthRatio = THREE.MathUtils.inverseLerp(center.z - halfDepth, center.z + halfDepth, z);
+            const depthSpeedFactor = 0.8 + depthRatio * 0.4;
 
-            // Rotation speeds (negligible for rain streaks)
-            const rotSpeedX = (Math.random() - 0.5) * 0.001;
-            const rotSpeedY = (Math.random() - 0.5) * 0.001;
-            const rotSpeedZ = (Math.random() - 0.5) * 0.001;
+            const windInfluence = (1.0 - scale) * (0.8 + Math.random() * 0.4);
+            const wobbleFactor = 0.005 + Math.random() * 0.01;
+            const phase = Math.random() * Math.PI * 2;
 
-            // --- CHANGE: Rain Color ---
-            const baseColor = raindropColors[Math.floor(Math.random() * raindropColors.length)].clone();
-             // Optional: Slight brightness variation
-            const brightnessVariation = (Math.random() - 0.5) * 0.1;
-            baseColor.r = Math.max(0, Math.min(1, baseColor.r + brightnessVariation));
-            baseColor.g = Math.max(0, Math.min(1, baseColor.g + brightnessVariation));
-            baseColor.b = Math.max(0, Math.min(1, baseColor.b + brightnessVariation));
+            const baseColor = raindropColors[Math.floor(Math.random() * raindropColors.length)].clone(); // Use brighter colors
 
+            // Alpha factor remains, modulates brightness/fog
+            const alphaFactor = 0.7 + Math.random() * 0.3; // Slightly higher base alpha factor
 
             temp.push({
                 initialPosition: new THREE.Vector3(x, y, z),
                 initialRotation: new THREE.Euler(rx, ry, rz),
                 scale,
-                factorY,
+                dropLengthFactor,
                 speedFactor,
-                swayFactorX,
-                rotSpeedX,
-                rotSpeedY,
-                rotSpeedZ,
-                initialColor: baseColor
+                depthSpeedFactor,
+                windInfluence,
+                wobbleFactor,
+                phase,
+                baseColor,
+                alphaFactor,
+                initialZ: z
             });
         }
         return temp;
-    }, [count, viewport.height, viewport.width, size.width, size.height]);
-
+    }, [count, areaWidth, areaHeight, areaDepth, baseSpeed]);
 
     // --- Set Initial Transforms and Colors ---
     useEffect(() => {
         if (!meshRef.current || !particles || particles.length === 0 || !raindropGeometry) return;
-
         const mesh = meshRef.current;
-        const colorArray = new Float32Array(count * 3);
+
+        let colorAttribute = mesh.geometry.getAttribute('color');
+        if (!colorAttribute || colorAttribute.count !== count) {
+             colorAttribute = new THREE.InstancedBufferAttribute(new Float32Array(count * 3), 3);
+             mesh.geometry.setAttribute('color', colorAttribute);
+        }
+        const colorArray = colorAttribute.array;
 
         particles.forEach((p, i) => {
             tempObject.position.copy(p.initialPosition);
             tempObject.rotation.copy(p.initialRotation);
-            tempObject.scale.setScalar(p.scale); // Uniform scale usually fine for streaks
+            tempObject.scale.set(p.scale, p.scale * p.dropLengthFactor, p.scale);
             tempObject.updateMatrix();
             mesh.setMatrixAt(i, tempObject.matrix);
-
-            p.initialColor.toArray(colorArray, i * 3);
+            p.baseColor.toArray(colorArray, i * 3);
         });
 
-        if (!mesh.geometry.attributes.color) {
-            raindropGeometry.setAttribute('color', new THREE.InstancedBufferAttribute(colorArray, 3));
-        } else {
-            mesh.geometry.attributes.color.copyArray(colorArray);
-            mesh.geometry.attributes.color.needsUpdate = true;
-        }
-
         mesh.instanceMatrix.needsUpdate = true;
+        colorAttribute.needsUpdate = true;
 
-    }, [particles, count, raindropGeometry, size.width, size.height]);
-
+    }, [particles, count, raindropGeometry]);
 
     // --- Animation Logic ---
     useFrame((state, delta) => {
         if (!meshRef.current?.instanceMatrix || !particles || particles.length === 0) return;
-
         const mesh = meshRef.current;
+        if (!mesh.geometry.attributes.color) { // Guard clause
+             // console.warn("Rainfall: Color attribute not found. Skipping frame.");
+             return;
+        }
+
         const time = state.clock.elapsedTime;
-        const currentViewport = state.viewport;
-        const topEdge = currentViewport.height / 2;
-        const bottomEdge = -topEdge;
-        const currentViewportWidth = currentViewport.width;
+        const camPos = camera.position;
+        const colorArray = mesh.geometry.attributes.color.array;
 
-        // Boundary slightly below the visible edge
-        const boundaryY = bottomEdge - 3; // Increase buffer slightly as rain is faster
+        // --- Update Wind --- (No changes needed here for visibility)
+        windEffect.current.noiseTime += delta * 0.1;
+        const noiseX = (Math.sin(windEffect.current.noiseTime * 0.5) + Math.sin(windEffect.current.noiseTime * 1.5)) * 0.5;
+        const noiseZ = (Math.sin(windEffect.current.noiseTime * 0.7) + Math.sin(windEffect.current.noiseTime * 1.2)) * 0.5;
+        const targetWindX = noiseX * windEffect.current.strength;
+        const targetWindZ = noiseZ * windEffect.current.strength * 0.3;
+        windEffect.current.direction.lerp(tempVec3.set(targetWindX, targetWindZ, 0), delta * 0.5);
+        const windX = windEffect.current.direction.x;
+        const windZ = windEffect.current.direction.y;
 
+        // --- Define World Boundaries --- (No changes needed here)
+        const center = rainAreaCenter.current;
+        const worldYTop = center.y + areaHeight / 2;
+        const worldYBottom = center.y - areaHeight / 2;
+        const worldXMin = center.x - areaWidth / 2;
+        const worldZMin = center.z - areaDepth / 2;
+
+        // --- Particle Update Loop ---
         for (let i = 0; i < count; i++) {
             if (!particles[i]) continue;
             const p = particles[i];
@@ -140,57 +168,74 @@ const Rainfall = ({ count = 800 }) => { // Adjust count for desired density
             mesh.getMatrixAt(i, tempObject.matrix);
             tempObject.matrix.decompose(tempObject.position, tempObject.quaternion, tempObject.scale);
 
-            // --- Update Position (Rain Movement) ---
-            tempObject.position.y -= p.factorY * p.speedFactor * 60 * delta;
-            // Minimal sway
-            tempObject.position.x += Math.sin(time * 0.1 + i * 0.5) * p.swayFactorX * p.speedFactor * 30 * delta;
+            // --- Update Position --- (No changes needed here)
+            const fallSpeed = p.speedFactor * p.depthSpeedFactor * 60 * delta;
+            tempObject.position.y -= fallSpeed;
+            tempObject.position.x += windX * p.windInfluence * 40 * delta;
+            tempObject.position.z += windZ * p.windInfluence * 40 * delta;
+            tempObject.position.x += Math.sin(time * 1.5 + p.phase) * p.wobbleFactor;
+            tempObject.position.z += Math.cos(time * 1.5 + p.phase) * p.wobbleFactor * 0.5;
 
-            // --- Update Rotation (Minimal/None) ---
-            // Rotation update is largely unnecessary for visual streaks, but kept for structure
-             tempObject.rotation.setFromQuaternion(tempObject.quaternion);
-             tempObject.rotation.x += p.rotSpeedX * 60 * delta;
-             tempObject.rotation.y += p.rotSpeedY * 60 * delta;
-             tempObject.rotation.z += p.rotSpeedZ * 60 * delta;
-             tempObject.quaternion.setFromEuler(tempObject.rotation);
+            // --- Update Rotation --- (No changes needed here)
+            tempVec3.set(
+                windX * p.windInfluence * 40 * delta,
+                -fallSpeed,
+                windZ * p.windInfluence * 40 * delta
+            ).normalize();
+            const angleX = Math.atan2(tempVec3.x, -tempVec3.y);
+            const angleZ = Math.atan2(tempVec3.z, -tempVec3.y);
+            tempEuler.set(Math.PI - angleZ * 0.3, 0, angleX * 0.8, 'XYZ');
+            tempObject.quaternion.setFromEuler(tempEuler);
 
-            // --- Boundary Check and Reset ---
-            if (tempObject.position.y < boundaryY) {
-                // Reset position above the top edge
-                tempObject.position.y = topEdge + 1 + Math.random() * 4; // Start slightly higher
+            // --- Distance Fading (Fog) --- ADJUSTED ---
+            const distanceZ = Math.abs(tempObject.position.z - camPos.z);
+            const fadeFactor = THREE.MathUtils.smoothstep(distanceZ, fogNear, fogFar);
+            // Reduced the dimming effect: fadeFactor * 0.5 instead of 0.7
+            const effectiveBrightness = (1.0 - fadeFactor * 0.5) * p.alphaFactor;
 
-                // Reset horizontal position randomly
-                tempObject.position.x = (Math.random() - 0.5) * currentViewportWidth * 1.6;
-                // Reset depth
-                tempObject.position.z = (Math.random() - 0.5) ;
+            colorArray[i * 3] = p.baseColor.r * effectiveBrightness;
+            colorArray[i * 3 + 1] = p.baseColor.g * effectiveBrightness;
+            colorArray[i * 3 + 2] = p.baseColor.b * effectiveBrightness;
 
-                 // Reset rotation (optional, minimal impact)
-                 // tempObject.rotation.set(0, Math.random() * Math.PI * 2, 0);
-                 // tempObject.quaternion.setFromEuler(tempObject.rotation);
-            }
+            // --- Boundary Check and Reset --- (No changes needed here)
+             if (tempObject.position.y < worldYBottom - 5) {
+                 tempObject.position.y = worldYTop + Math.random() * 5;
+                 tempObject.position.x = worldXMin + Math.random() * areaWidth - windX * 5;
+                 tempObject.position.z = worldZMin + Math.random() * areaDepth - windZ * 5;
+                 // Optional rotation reset
+                 // const resetAngleX = Math.atan2(windX, -1);
+                 // const resetAngleZ = Math.atan2(windZ, -1);
+                 // tempEuler.set(Math.PI - resetAngleZ * 0.3, 0, resetAngleX * 0.8, 'XYZ');
+                 // tempObject.quaternion.setFromEuler(tempEuler);
+             }
 
             // --- Update Matrix ---
             tempObject.updateMatrix();
             mesh.setMatrixAt(i, tempObject.matrix);
+        } // End particle loop
+
+        // --- Flag Instance Updates ---
+        mesh.instanceMatrix.needsUpdate = true;
+        if (mesh.geometry.attributes.color) { // Check attribute exists
+             mesh.geometry.attributes.color.needsUpdate = true;
         }
 
-        mesh.instanceMatrix.needsUpdate = true;
-    });
+    }); // End useFrame
 
     // Render the InstancedMesh
     return (
         <instancedMesh
             ref={meshRef}
-            args={[raindropGeometry, undefined, count]} // Use raindrop geometry
+            args={[raindropGeometry, undefined, count]}
             key={count}
+            frustumCulled
         >
             <meshBasicMaterial
                 vertexColors={true}
                 transparent={true}
-                // --- CHANGE: Rain Opacity ---
-                opacity={0.65} // Adjust for desired rain visibility
+                opacity={opacity} // Use the updated default or passed prop
                 depthWrite={false}
-                // Optional: Blending mode can affect appearance
-                // blending={THREE.AdditiveBlending} // Might make rain brighter where overlapping
+                blending={THREE.NormalBlending}
             />
         </instancedMesh>
     );
