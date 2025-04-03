@@ -1,98 +1,53 @@
-/* GHIBLI THEME - Color Variables */
-
-/* --- DARK MODE (Current Colors - Default) --- */
 :root {
-  /* --- Core Palette (Vibrant Ghibli - Dark Mode) --- */
-  --sky-blue: #55a6e0;         /* Brighter, cleaner sky blue */
-  --grass-green-light: #A5CC6F;  /* More vibrant light green */
-  --grass-green-medium: #7CB556; /* Richer mid-tone green */
-  --tree-green-dark: #305A40;    /* Deep, slightly desaturated dark green */
-  --flower-yellow: #FDD835;     /* Bright, distinct golden yellow */
+  --sky-blue: #55a6e0;
+  --grass-green-light: #A5CC6F;
+  --grass-green-medium: #7CB556;
+  --tree-green-dark: #305A40;
+  --flower-yellow: #FDD835;
 
-  /* --- Text & Backgrounds (Contrast for Dark Mode) --- */
-  --text-light: #FFFFFF;        /* Pure white for high contrast on dark backgrounds */
-  --text-medium: #E0F2F7;       /* Very light cyan/off-white for secondary text */
-  --text-dark: #263238;         /* Dark Blue-Grey - Good contrast on light buttons/yellow accents */
+  --text-light: #FFFFFF;
+  --text-medium: #E0F2F7;
+  --text-dark: #263238;
 
-  /* --- Overlays (Subtle for Dark Mode) --- */
-  --bg-overlay-dark: rgba(48, 90, 64, 0.8);     /* Dark Tree Green, 80% opaque */
-  --bg-overlay-medium: rgba(255, 255, 255, 0.11); /* Semi-transparent white for subtle cards */
-  --bg-overlay-light: rgba(255, 255, 255, 0.05); /* Very subtle white overlay */
-  --bg-overlay-blue: rgba(85, 166, 224, 0.15);   /* Faint blue for hovers/accents */
-  --bg-overlay-yellow: rgba(253, 216, 53, 0.15); /* Faint yellow for hovers/accents */
-  --bg-overlay-selected: rgba(85, 166, 224, 0.25); /* Slightly stronger blue for selection */
+  --bg-overlay-dark: rgba(48, 90, 64, 0.8);
+  --bg-overlay-medium: rgba(255, 255, 255, 0.11);
+  --bg-overlay-light: rgba(255, 255, 255, 0.05);
+  --bg-overlay-blue: rgba(85, 166, 224, 0.15);
+  --bg-overlay-yellow: rgba(253, 216, 53, 0.15);
+  --bg-overlay-selected: rgba(85, 166, 224, 0.25);
 
-  /* --- Backgrounds --- */
-  --bg-primary: var(--tree-green-dark); /* Example: Dark background for sections if needed */
-  --bg-secondary: #2a3f34;             /* Slightly lighter dark green */
+  --bg-primary: var(--tree-green-dark);
+  --bg-secondary: #2a3f34;
 
-  /* Define bg-medium-transparent and bg-light-transparent based on existing overlays */
-  --bg-medium-transparent: var(--bg-overlay-medium);
-  --bg-light-transparent: var(--bg-overlay-light);
-}
-/* --- DARK MODE (Current Colors - Default) --- */
-:root {
-  /* --- Core Palette (Vibrant Ghibli - Dark Mode) --- */
-  --sky-blue: #55a6e0;         /* Brighter, cleaner sky blue */
-  --grass-green-light: #A5CC6F;  /* More vibrant light green */
-  --grass-green-medium: #7CB556; /* Richer mid-tone green */
-  --tree-green-dark: #305A40;    /* Deep, slightly desaturated dark green */
-  --flower-yellow: #FDD835;     /* Bright, distinct golden yellow */
-
-  /* --- Text & Backgrounds (Contrast for Dark Mode) --- */
-  --text-light: #FFFFFF;        /* Pure white for high contrast on dark backgrounds */
-  --text-medium: #E0F2F7;       /* Very light cyan/off-white for secondary text */
-  --text-dark: #263238;         /* Dark Blue-Grey - Good contrast on light buttons/yellow accents */
-
-  /* --- Overlays (Subtle for Dark Mode) --- */
-  --bg-overlay-dark: rgba(48, 90, 64, 0.8);     /* Dark Tree Green, 80% opaque */
-  --bg-overlay-medium: rgba(255, 255, 255, 0.11); /* Semi-transparent white for subtle cards */
-  --bg-overlay-light: rgba(255, 255, 255, 0.05); /* Very subtle white overlay */
-  --bg-overlay-blue: rgba(85, 166, 224, 0.15);   /* Faint blue for hovers/accents */
-  --bg-overlay-yellow: rgba(253, 216, 53, 0.15); /* Faint yellow for hovers/accents */
-  --bg-overlay-selected: rgba(85, 166, 224, 0.25); /* Slightly stronger blue for selection */
-
-  /* --- Backgrounds --- */
-  --bg-primary: var(--tree-green-dark); /* Example: Dark background for sections if needed */
-  --bg-secondary: #2a3f34;             /* Slightly lighter dark green */
-
-  /* Define bg-medium-transparent and bg-light-transparent based on existing overlays */
   --bg-medium-transparent: var(--bg-overlay-medium);
   --bg-light-transparent: var(--bg-overlay-light);
 }
 
-/* --- LIGHT MODE --- */
-/* Apply this class to body or html or .app when light mode is active */
-/* --- LIGHT MODE (REVISED) --- */
 .light-mode {
-  /* --- Core Palette (Vibrant Ghibli - Light Mode) --- */
-  --sky-blue: #9fe1ff;         /* Very light blue for the main background */
-  --grass-green-light: #9ccc65; /* Brighter green that stands out */
-  --grass-green-medium: #80c536; /* Medium green with good contrast */
-  --tree-green-dark: #33691e;    /* Dark green that pops against light backgrounds */
-  --flower-yellow: #ffd600;     /* Bright yellow that stands out */
+  --sky-blue: #9fe1ff;
+  --grass-green-light: #9ccc65;
+  --grass-green-medium: #80c536;
+  --tree-green-dark: #33691e;
+  --flower-yellow: #ffd600;
 
-  /* --- Text & Backgrounds --- */
-  --text-light: #e7ffe3;        /* White text for dark backgrounds */
+  --text-light: #e7ffe3;
   --text-medium: linear-gradient(135deg, #263238 0%, #455a64 100%);
-    --text-dark: #000a12;         /* Near-black for emphasis */     /* Very dark teal-gray for emphasis */
+  --text-dark: #000a12;
 
-  /* --- O  verlays (Vibrant but Gentle for Light Mode) --- */
-  --bg-overlay-dark: rgba(27, 94, 32, 0.85);    /* Strong green overlay */
-  --bg-overlay-medium: rgba(27, 94, 32, 0.12);  /* Subtle green tint */
-  --bg-overlay-light: rgba(27, 94, 32, 0.05);   /* Very subtle green hint */
-  --bg-overlay-blue: rgba(26, 140, 255, 0.15);  /* Subtle blue accent */
-  --bg-overlay-yellow: rgba(255, 192, 0, 0.2);  /* Warm golden accent */
-  --bg-overlay-selected: rgba(26, 140, 255, 0.25); /* Clear blue selection */
+  --bg-overlay-dark: rgba(27, 94, 32, 0.85);
+  --bg-overlay-medium: rgba(27, 94, 32, 0.12);
+  --bg-overlay-light: rgba(27, 94, 32, 0.05);
+  --bg-overlay-blue: rgba(26, 140, 255, 0.15);
+  --bg-overlay-yellow: rgba(255, 192, 0, 0.2);
+  --bg-overlay-selected: rgba(26, 140, 255, 0.25);
 
-  /* --- Backgrounds --- */
-  --bg-primary: #bbecec;        /* Very pale cyan - softer than pure white */
-  --bg-secondary: #ffffff;      /* Pure white */
+  --bg-primary: #bbecec;
+  --bg-secondary: #ffffff;
 
-  /* Transparent backgrounds */
-  --bg-medium-transparent: rgba(240, 247, 247, 0.082); /* Semi-transparent light cyan */
-  --bg-light-transparent: rgba(255, 255, 255, 0.322);  /* Semi-transparent white */
+  --bg-medium-transparent: rgba(240, 247, 247, 0.082);
+  --bg-light-transparent: rgba(255, 255, 255, 0.322);
 }
+
 
 /* --- Global Styles & Resets --- */
 * {
@@ -213,6 +168,7 @@ section {
 .light-mode .section-title1,
 .light-mode .section-title2 {
    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+   color: var(--text-light); /* Ensure light mode text color is applied */
 }
 
 .section-title:after {
@@ -302,7 +258,6 @@ section {
 
 /* Light Mode Button Styles */
 .light-mode .primary-button {
-  /* Dark background, light text */
   background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue)); /* Dark Green/Teal gradient */
   color: #FFFFFF; /* White text */
 }
@@ -413,9 +368,12 @@ section {
   padding: 2rem;
   border-radius: 10px;
   /* Dynamic shadow and border */
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* TODO: Adjust shadow per theme? */
-  border: 1px solid color-mix(in srgb, var(--text-light) 20%, transparent);
-  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
+  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Default to white if variable undefined */
+  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease;
+}
+.light-mode .skill-category {
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Lighter shadow in light mode */
 }
 
 .category-title {
@@ -436,7 +394,7 @@ section {
 .skill-bar {
   height: 8px;
   /* Bar background based on text color */
-  background: color-mix(in srgb, var(--text-light) 15%, transparent);
+  background: color-mix(in srgb, var(--text-light, #fff) 15%, transparent); /* Default to white if variable undefined */
   border-radius: 4px;
   overflow: hidden;
   transition: background-color 0.5s ease-in-out;
@@ -477,14 +435,22 @@ section {
   background: var(--bg-medium-transparent); /* Uses variable */
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* TODO: Adjust shadow per theme? */
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
   transition: all 0.3s ease;
-  border: 1px solid color-mix(in srgb, var(--text-light) 20%, transparent); /* Dynamic border */
+  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
 }
+.light-mode .project-card {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
 .project-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 10px 20px rgba(74, 68, 58, 0.25); /* TODO: Adjust shadow per theme? */
+  box-shadow: 0 10px 20px rgba(74, 68, 58, 0.25);
 }
+.light-mode .project-card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
 
 .project-image { width: 100%; height: 200px; overflow: hidden; }
 .project-image .image-placeholder { /* Reuses image placeholder style */
@@ -619,7 +585,12 @@ section {
   justify-content: center;
   align-items: center;
   font-size: 16px;
-  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease; /* Add transitions */
+  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease, color 0.5s ease-in-out;
+}
+/* Marker text/icon color */
+.light-mode .timeline-marker {
+    background: var(--tree-green-dark); /* Dark background in light mode */
+    color: var(--text-light); /* Light text/icon in light mode */
 }
 
 .timeline-marker-icon {
@@ -627,8 +598,9 @@ section {
     transition: color 0.5s ease-in-out;
 }
 .light-mode .timeline-marker-icon {
-    color: var(--text-light); /* Dark text in light mode */
+    color: var(--text-light); /* Ensure this matches .timeline-marker text color */
 }
+
 
 /* Specific Marker Borders */
 .experience-marker { border-color: var(--grass-green-medium); }
@@ -666,10 +638,13 @@ section {
     background: var(--bg-medium-transparent); /* Box background - uses variable */
     padding: 2rem; /* Padding inside the box */
     border-radius: 10px;
-    border: 1px solid color-mix(in srgb, var(--text-light) 20%, transparent); /* Dynamic border */
-    box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* TODO: Adjust shadow */
+    border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
+    box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
     margin-top: 0; /* Align with subsection title */
-    transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
+    transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease;
+}
+.light-mode .experience-details-list {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .details-title { /* If you add title/company back */
@@ -704,7 +679,7 @@ section {
 }
 /* Remove hover effect from individual points */
 .details-point:hover {
-    background: none; transform: none; border-color: none; box-shadow: none;
+    background: none; transform: none; border-color: transparent; box-shadow: none;
 }
 .details-point:last-child {
     margin-bottom: 0; /* Remove margin from last point */
@@ -731,7 +706,7 @@ section {
     background: var(--bg-medium-transparent); /* Uses variable */
     padding: 2rem;
     border-radius: 10px;
-    border: 1px solid color-mix(in srgb, var(--text-light) 20%, transparent); /* Dynamic border */
+    border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
     transition: all 0.5s ease-in-out;
 }
 
@@ -741,16 +716,24 @@ section {
   display: flex; gap: 1.5rem; align-items: center;
   background: var(--bg-medium-transparent); /* Uses variable */
   padding: 1.5rem; border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--text-light) 20%, transparent); /* Dynamic border */
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* TODO: Adjust shadow */
+  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
   transition: all 0.3s ease;
 }
+.light-mode .certification-item {
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
 .certification-item:hover {
   background: var(--bg-light-transparent); /* Uses variable */
   transform: translateX(8px);
   border-color: var(--flower-yellow); /* Uses variable */
-  box-shadow: 0 6px 18px rgba(74, 68, 58, 0.15); /* TODO: Adjust shadow */
+  box-shadow: 0 6px 18px rgba(74, 68, 58, 0.15);
 }
+.light-mode .certification-item:hover {
+   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
 .certification-icon {
   width: 50px; height: 50px; border-radius: 50%;
   background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue)); /* Uses variables */
@@ -793,7 +776,7 @@ section {
   background: var(--bg-overlay-light); /* Use a subtle overlay */
   color: var(--text-light); /* Main text color */
   border-radius: 4px; text-decoration: none;
-  border: 1px solid color-mix(in srgb, var(--text-light) 20%, transparent); /* Dynamic border */
+  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
   transition: all 0.3s ease;
 }
 .social-link:hover {
@@ -805,17 +788,21 @@ section {
 .contact-form-container {
   background: var(--bg-medium-transparent); /* Uses variable */
   padding: 2rem; border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* TODO: Adjust shadow */
-  border: 1px solid color-mix(in srgb, var(--text-light) 20%, transparent); /* Dynamic border */
-  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
+  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
+  transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease;
 }
+.light-mode .contact-form-container {
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
 
 .form-group { margin-bottom: 1.5rem; }
 .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-light); transition: color 0.5s ease-in-out; } /* Uses variable */
 .form-group input, .form-group textarea {
   width: 100%; padding: 1rem;
   background: var(--bg-overlay-medium); /* Uses variable */
-  border: 1px solid color-mix(in srgb, var(--text-light) 30%, transparent); /* Dynamic border */
+  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 30%, transparent); /* Dynamic border */
   border-radius: 6px;
   color: var(--text-light); /* Text color for input */
   font-family: inherit;
@@ -845,7 +832,10 @@ section {
   box-shadow: 0 8px 15px color-mix(in srgb, var(--flower-yellow) 30%, transparent); /* Dynamic shadow */
 }
 .submit-button.sending { background: #B0BEC5; cursor: not-allowed; } /* Needs theme adjustment? */
+.light-mode .submit-button.sending { background: #546E7A; color: #ECEFF1; }
+
 .submit-button.success { background: #66BB6A; } /* Needs theme adjustment? */
+.light-mode .submit-button.success { background: #2E7D32; color: #fff;}
 
 
 /* --- Footer Styles --- */
@@ -853,13 +843,13 @@ section {
   /* Dynamic background based on dark green variable */
   background: color-mix(in srgb, var(--tree-green-dark) 80%, transparent);
   padding: 3rem 1rem 1rem;
-  border-top: 1px solid color-mix(in srgb, var(--text-light) 10%, transparent); /* Dynamic border */
+  border-top: 1px solid color-mix(in srgb, var(--text-light, #fff) 10%, transparent); /* Dynamic border */
   transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
 }
 .light-mode .footer {
    /* Darker green mixed with white */
    background: color-mix(in srgb, var(--tree-green-dark) 90%, #FFFFFF);
-   border-top: 1px solid color-mix(in srgb, var(--text-light) 15%, transparent);
+   border-top: 1px solid color-mix(in srgb, var(--text-light, #000) 15%, transparent); /* Use light mode text color */
 }
 
 .footer-content { max-width: 1200px; margin: 0 auto; margin-bottom: 2rem; }
@@ -890,7 +880,7 @@ section {
 .footer-bottom {
   max-width: 1200px; margin: 0 auto; text-align: center;
   padding-top: 1.5rem;
-  border-top: 1px solid color-mix(in srgb, var(--text-light) 10%, transparent); /* Dynamic border */
+  border-top: 1px solid color-mix(in srgb, var(--text-light, #fff) 10%, transparent); /* Dynamic border */
   transition: border-color 0.5s ease-in-out;
 }
 .footer-bottom p {
@@ -909,21 +899,33 @@ section {
     background-color: transparent !important;
   }
 
-  /* Base rule - comes FIRST */
+  /* Base rule - Updated for weather */
   .fixed-background {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-size: cover; background-position: bottom center;
     background-repeat: no-repeat; z-index: -1; /* Behind everything */
     transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
-    /* Default state (dark mode) */
-    background-image: url('ghibli-night.png');
+    /* Default background (e.g., dark mode fireflies) - will be overridden by specific weather class */
+    background-image: url("../public/ghibli-night.png"); /* Fallback */
     background-color: #1a2a2a; /* Dark base color */
   }
-
-  /* Light mode state */
-  .fixed-background.light-mode {
-    background-image: url('ghibli-day.png');
-    background-color: #7FBCD8; /* Light base color matching image sky */
+/* eslint-disable */
+  /* Specific weather backgrounds for fixed */
+  .fixed-background.weather-sakura { /* Light mode default */
+    background-image: url("../public/ghibli-day.png");
+    background-color: #7FBCD8;
+  }
+  .fixed-background.weather-fireflies { /* Dark mode default */
+    background-image: url("../public/ghibli-night.png");
+    background-color: #1a2a2a;
+  }
+  .fixed-background.weather-snow { /* NEW */
+    background-image: url("../public/ghibli-snow.png");
+    background-color: #5c7a8f; /* Example snow base color */
+  }
+  .fixed-background.weather-rain { /* NEW */
+    background-image: url("../public/ghibli-rain.png");
+    background-color: #4a5a6a; /* Example rain base color */
   }
 
   /* App becomes transparent */
@@ -942,13 +944,28 @@ section {
     background-size: cover; background-position: center center;
     background-repeat: no-repeat; background-attachment: fixed;
     transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
-    /* Default state (dark mode) */
-    background-image: url('ghibli-night.png');
+  
+    /* Default background (e.g., dark mode fireflies) - will be overridden by specific weather class */
+    background-image: url("../public/ghibli-night.png"); /* Fallback */
     background-color: #1a2a2a; /* Dark base color */
   }
-  .app.light-mode {
-    background-image: url('ghibli-day.png');
-    background-color: #7FBCD8; /* Light base color matching image sky */
+
+  /* Specific weather backgrounds for app */
+   .app.weather-sakura { /* Light mode default */
+    background-image: url("../public/ghibli-day.png");
+    background-color: #7FBCD8;
+  }
+   .app.weather-fireflies { /* Dark mode default */
+    background-image: url("../public/ghibli-night.png");
+    background-color: #1a2a2a;
+  }
+   .app.weather-snow { /* NEW */
+    background-image: url("../public/ghibli-snow.png");
+    background-color: #5c7a8f; /* Example snow base color */
+  }
+   .app.weather-rain { /* NEW */
+    background-image: url("../public/ghibli-rain.png");
+    background-color: #4a5a6a; /* Example rain base color */
   }
 
   /* Canvas container layering */
@@ -959,8 +976,8 @@ section {
    .fixed-background { display: none; }
 }
 
-/* --- DarkModeToggle Button --- */
-/* Position and base styles */
+
+/* 
 .dark-mode-toggle-button {
   position: fixed;
   top: 25px;
@@ -975,22 +992,50 @@ section {
   align-items: center;
   cursor: pointer;
   font-size: 1.4rem;
-  padding: 0; /* Reset default button padding */
-  backdrop-filter: blur(5px); /* Optional nice effect */
-  /* Use variables for theme switching */
+  padding: 0; 
+  backdrop-filter: blur(5px); 
+
   background: var(--bg-overlay-medium);
-  color: var(--text-light); /* Icon color */
+  color: var(--text-light); 
   border: 1px solid var(--sky-blue);
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease,
               opacity 0.3s ease, visibility 0.3s ease;
 }
-/* Hover state using variables */
+
 .dark-mode-toggle-button:hover {
-  background: var(--bg-overlay-blue); /* Faint blue/cyan overlay */
-  border-color: var(--flower-yellow); /* Yellow/Amber border */
-  /* Optional: Change icon color on hover */
-  /* color: var(--flower-yellow); */
+  background: var(--bg-overlay-blue); 
+  border-color: var(--flower-yellow); 
+
+} */
+
+/* --- NEW: WeatherToggle Button --- */
+.weather-toggle-button {
+  position: fixed;
+  top: 25px; /* Position below the dark mode toggle */
+  right: 25px;
+  left: auto;
+  z-index: 1000;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1.4rem; /* Adjust icon size if needed */
+  padding: 0;
+  backdrop-filter: blur(5px);
+  background: var(--bg-overlay-medium); /* Use theme variable */
+  color: var(--text-light); /* Icon color */
+  border: 1px solid var(--grass-green-medium); /* Different border color */
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease,
+              opacity 0.3s ease, visibility 0.3s ease;
 }
+.weather-toggle-button:hover {
+  background: var(--bg-overlay-yellow); /* Different hover overlay */
+  border-color: var(--flower-yellow);
+}
+
 
 /* --- Loading Screen --- */
 .loading-screen {
@@ -1000,6 +1045,10 @@ section {
   z-index: 9999;
   transition: background-color 0.5s ease-in-out; /* Smooth transition if theme changes while loading */
 }
+.light-mode .loading-screen {
+    background: var(--sky-blue); /* Lighter background in light mode */
+}
+
 .loader {
   width: 40px; height: 40px;
   border: 3px solid rgba(250, 240, 230, 0.3); /* Base border */
@@ -1007,6 +1056,10 @@ section {
   border-top-color: var(--flower-yellow); /* Spinner color using variable */
   animation: spin 1s linear infinite; margin-bottom: 1rem;
   transition: border-top-color 0.5s ease-in-out;
+}
+.light-mode .loader {
+    border: 3px solid rgba(0, 10, 18, 0.2); /* Darker base border */
+    border-top-color: var(--flower-yellow); /* Keep spinner color */
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
@@ -1017,17 +1070,23 @@ section {
   opacity: 0.95;
   border: 1.7px solid var(--grass-green-light); /* Uses variable */
   text-align: center; border-radius: 8px;
-  box-shadow: 4px 5px 8px rgba(74, 68, 58, 0.15); /* TODO: Adjust shadow */
+  box-shadow: 4px 5px 8px rgba(74, 68, 58, 0.15);
   transition: all 0.4s ease 0s; cursor: pointer;
   background-color: var(--bg-overlay-light); /* Uses variable */
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   color: var(--text-light); /* Uses variable */
 }
+.light-mode .tech-icons {
+    box-shadow: 4px 5px 8px rgba(0, 0, 0, 0.1);
+}
 .tech-icons:hover {
   transform: scale(1.06);
   border-color: var(--flower-yellow); /* Uses variable */
   background-color: var(--bg-overlay-medium); /* Uses variable */
-  box-shadow: 4px 5px 12px rgba(74, 68, 58, 0.25); /* TODO: Adjust shadow */
+  box-shadow: 4px 5px 12px rgba(74, 68, 58, 0.25);
+}
+.light-mode .tech-icons:hover {
+    box-shadow: 4px 5px 12px rgba(0, 0, 0, 0.15);
 }
 .tech-icons .icon-element {
    font-size: 4em;
@@ -1061,16 +1120,19 @@ section {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  /* background-color: var(--tree-green-dark); */ /* Base, overridden by inline style/JS */
-  box-shadow: 0 4px 8px rgba(74, 68, 58, 0.3); /* TODO: Adjust shadow */
+  /* background-color set by inline style */
+  box-shadow: 0 4px 8px rgba(74, 68, 58, 0.3);
   background-clip: padding-box;
   border: none;
   padding: 3px;
-  transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease; /* Add opacity/visibility */
+  transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease, box-shadow 0.3s ease;
   z-index: 999;
   opacity: 0; /* Start hidden */
   visibility: hidden; /* Start hidden */
   pointer-events: none; /* Start non-interactive */
+}
+.light-mode .scroll-up-button {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Class to show the button */
@@ -1110,7 +1172,6 @@ section {
 @media screen and (max-width: 1024px) {
   .contact-content, .about-content { grid-template-columns: 1fr; }
   .about-image { margin-bottom: 3rem; }
-  /* .certification-section { margin-top: 3rem; } /* This class doesn't exist */
   .footer-content { text-align: center; }
   .footer-links, .footer-social { justify-content: center; }
 
@@ -1146,11 +1207,13 @@ section {
   .footer-bottom p { font-size: 0.9rem; }
 
   /* Dark Mode Toggle Button Position */
-  .dark-mode-toggle-button {
+  /* .dark-mode-toggle-button {
     right: auto; left: 20px; top: 20px;
-    /* Optional size adjustments */
-    /* width: 40px; height: 40px; font-size: 1.2rem; */
-  }
+  } */
+   /* Weather Toggle Button Position */
+   .weather-toggle-button {
+    left: 20px; top: 20px; right: auto; /* Below dark mode toggle on mobile */
+   }
 
   /* Scroll Up Button */
   .scroll-up-button { width: 45px; height: 45px; padding: 2px; bottom: 20px; right: 20px; z-index: 999; /* Ensure z-index */}

@@ -161,7 +161,7 @@ const Rainfall = ({ count = 800 }) => { // Adjust count for desired density
                 // Reset horizontal position randomly
                 tempObject.position.x = (Math.random() - 0.5) * currentViewportWidth * 1.6;
                 // Reset depth
-                tempObject.position.z = (Math.random() - 0.5) * R;
+                tempObject.position.z = (Math.random() - 0.5) ;
 
                  // Reset rotation (optional, minimal impact)
                  // tempObject.rotation.set(0, Math.random() * Math.PI * 2, 0);
