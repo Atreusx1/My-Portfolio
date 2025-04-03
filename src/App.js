@@ -10,7 +10,7 @@ import DarkModeToggle from './components/DarkModeToggle';
 import LoadingScreen from './components/Loading'; // Your enhanced loading screen
 
 // Section Components
-import Home from './components/Home';
+import Home from './components/Home'; // Updated import
 import About from './components/About';
 import Skills from './components/Skills';
 import Education from './components/Education';
@@ -109,7 +109,7 @@ function App() {
             <div className="content">
               <Navbar isDarkMode={isDarkMode}/>
               <main className="sections">
-                <section id="home"><Home /></section>
+                <section id="home"><Home isAppLoaded={!isLoading} /></section> {/* Pass isAppLoaded prop */}
                 <section id="about"><About /></section>
                 <section id="skills"><Skills /></section>
                 <section id="education"><Education /></section>
