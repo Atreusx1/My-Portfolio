@@ -11,7 +11,7 @@
     display: flex; /* Default: Desktop uses flex for split */
     overflow: hidden;
     background-color: transparent; /* Parent is see-through */
-    z-index: 9999; /* High z-index */
+    z-index: 1; /* High z-index */
     perspective: 1000px; /* For 3D transforms on desktop */
     /* Default transition for mobile fade (overridden by desktop animation) */
     transition: opacity 1.2s ease-out, visibility 1.2s step-end; /* Default visibility transition */
