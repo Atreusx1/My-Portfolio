@@ -3,17 +3,20 @@ const path = require('path');
 const { execSync } = require('child_process');
 const glob = require('glob');
 const chalk = require('chalk');
-const url = require('url'); // <-- Add URL module
-const zlib = require('zlib'); // <-- Add Zlib module
-const { pipeline } = require('stream/promises'); // <-- For async stream handling
+// const url = require('url'); // No longer needed for Vercel path fix
+const zlib = require('zlib');
+const { pipeline } = require('stream/promises');
 
 // Project structure paths
 const PROJECT_ROOT = path.resolve(__dirname);
-const DEV_APP_DIR = PROJECT_ROOT;
-const BUILD_DIR = path.join(DEV_APP_DIR, 'build');
-const JS_DIR = path.join(BUILD_DIR, 'static', 'js');
-const CSS_DIR = path.join(BUILD_DIR, 'static', 'css');
-const MEDIA_DIR = path.join(BUILD_DIR, 'static', 'media');
+const DEV_APP_DIR = PROJECT_ROOT; // DEV_APP_DIR might be redundant now, consider using PROJECT_ROOT directly
+const BUILD_DIR = path.join(PROJECT_ROOT, 'build'); // Already absolute
+const JS_DIR = path.join(BUILD_DIR, 'static', 'js'); // Already absolute
+const CSS_DIR = path.join(BUILD_DIR, 'static', 'css'); // Already absolute
+const MEDIA_DIR = path.join(BUILD_DIR, 'static', 'media'); // Already absolute
+// Define path for temporary obfuscated JS files - Already absolute
+const OBFUSCATED_JS_DIR = path.join(BUILD_DIR, 'obfuscated_js');
+
 
 // Log with colors and timestamps
 function log(message, type = 'info') {
@@ -39,23 +42,21 @@ function log(message, type = 'info') {
 function runCommand(command, options = {}) {
     try {
         log(`Running: ${command}`);
-        execSync(command, { stdio: 'inherit', ...options, cwd: options.cwd || DEV_APP_DIR });
+        // Ensure command runs from project root for consistency
+        execSync(command, { stdio: 'inherit', ...options, cwd: PROJECT_ROOT });
         return true;
     } catch (error) {
         log(`Command failed: ${command}`, 'error');
-        // Don't log the full error message by default, it can be verbose
-        // log(error.message, 'error');
         return false;
     }
 }
 
-// Check if a command exists (less reliable on Windows for non-.exe/.cmd)
+// Check if a command exists
 function commandExists(command) {
     const cmd = command.split(' ')[0];
     try {
         if (process.platform === 'win32') {
-            // `where` is more reliable on Windows
-            execSync(`where ${cmd}`, { stdio: 'ignore' });
+             execSync(`where ${cmd}`, { stdio: 'ignore' });
         } else {
             execSync(`command -v ${cmd}`, { stdio: 'ignore' });
         }
@@ -67,19 +68,20 @@ function commandExists(command) {
 
 // Ensure a directory exists
 function ensureDirectoryExists(directory) {
+    // Expect absolute path here
     if (!fs.existsSync(directory)) {
         try {
             fs.mkdirSync(directory, { recursive: true });
-            log(`Created directory: ${directory}`, 'success');
+            log(`Created directory: ${path.relative(PROJECT_ROOT, directory)}`, 'success'); // Log relative path
         } catch (err) {
-            log(`Failed to create directory: ${directory}`, 'error');
+            log(`Failed to create directory: ${path.relative(PROJECT_ROOT, directory)}`, 'error');
             log(err.message, 'error');
-            process.exit(1); // Exit if we can't create essential directories
+            process.exit(1);
         }
     }
 }
 
-// Step 1: Build the React application with production optimizations
+// Step 1: Build the React application
 function buildReactApp() {
     log('Starting React build process');
     process.env.NODE_ENV = 'production';
@@ -93,78 +95,35 @@ function buildReactApp() {
 }
 
 // Step 2: Optimize CSS with PurgeCSS
+// Step 2: Optimize CSS with PurgeCSS
 function purgeCss() {
-    log('Purging unused CSS');
-    const configFileName = 'purgecss.config.js';
-    const configPath = path.join(DEV_APP_DIR, configFileName);
+    log('Purging unused CSS (using config from package.json)');
 
-    if (!fs.existsSync(configPath)) {
-        log(`PurgeCSS config (${configFileName}) not found. Creating default...`, 'warn');
-        const defaultConfig = `module.exports = {
-  content: [
-    './build/**/*.html',
-    './build/static/js/**/*.js',
-    // Add src files for better class detection
-    './src/**/*.html',
-    './src/**/*.js',
-    './src/**/*.jsx',
-    './src/**/*.ts',
-    './src/**/*.tsx',
-    './public/**/*.html'
-  ],
-  css: ['./build/static/css/**/*.css'],
-  output: './build/static/css/', // Output purged files to the same directory
-  safelist: {
-    standard: [
-        /^(modal|fade|show|collapse|collapsing|carousel|dropdown|offcanvas|tooltip|popover|alert)/, // Common Bootstrap patterns
-        /^(Toastify)/, // React-Toastify if used
-        /^(leaflet-)/, // Leaflet classes
-        /^(Mui)/,      // Material UI if used
-        /^(ant-)/,     // Ant Design if used
-        /^(rc-)/       // rc- components (often used by libraries)
-    ],
-    deep: [/^(modal|fade|show|collapse|collapsing|carousel|dropdown|offcanvas)/], // Match nested classes
-    greedy: [] // Avoid greedy unless necessary
-  },
-  // Important: Specify extractors if needed for special characters or syntax
-  // defaultExtractor: content => content.match(/[^\\s"'<>:\`]+/g) || []
-};`;
-        try {
-            fs.writeFileSync(configPath, defaultConfig);
-            log('Created default PurgeCSS configuration.', 'success');
-        } catch (err) {
-            log(`Failed to create PurgeCSS config: ${err.message}`, 'error');
-            log('Skipping CSS purging.', 'warn');
-            return;
-        }
-    }
+    // --- REMOVE CONFIG FILE CHECK AND PATH LOGIC ---
+    // No separate config file needed when using package.json
 
-    // --- FIX for Windows path issue ---
-    // Convert the config path to a file URL
-    const configUrl = url.pathToFileURL(configPath).toString();
-    // --- End Fix ---
+    const purgecssCmd = 'npx purgecss'; // Use locally installed version
 
-    const purgecssCmd = 'npx purgecss'; // Prefer npx to use local version
-
-    // Run purgecss command using the file URL
-    if (!runCommand(`${purgecssCmd} --config "${configUrl}"`)) {
+    // --- REMOVE --config FLAG FROM COMMAND ---
+    if (!runCommand(`${purgecssCmd}`)) { // Just run 'npx purgecss'
+    // --- END REMOVAL ---
          log('PurgeCSS command failed.', 'error');
+         // Consider if this should be a fatal error
     } else {
-        log('CSS purging potentially completed (check PurgeCSS output above).', 'success');
+        log('CSS purging potentially completed.', 'success');
     }
 }
-
-
-// Helper function for globbing with logging
-function findFiles(pattern, description) {
-    // Normalize path separators for glob consistency
+// Helper function for globbing with logging - accepts optional baseDir
+function findFiles(pattern, description, baseDir = BUILD_DIR) { // Default to BUILD_DIR (absolute)
     const normalizedPattern = pattern.replace(/\\/g, '/');
-    log(`Searching for ${description} using pattern: ${normalizedPattern}`);
+    // baseDir should already be absolute here
+    const searchDir = baseDir;
+    log(`Searching for ${description} in ${path.relative(PROJECT_ROOT, searchDir)} using pattern: ${normalizedPattern}`);
     try {
-      const files = glob.sync(normalizedPattern, { cwd: BUILD_DIR, absolute: true, nodir: true });        
+        const files = glob.sync(normalizedPattern, { cwd: searchDir, absolute: true, nodir: true });
         log(`Found ${files.length} ${description}.`);
-        if (files.length === 0) {
-             log(`No ${description} found. Check the build output and pattern.`, 'warn');
+        if (files.length === 0 && !description.includes('temporary')) {
+             log(`No ${description} found. Check pattern and directory.`, 'warn');
         }
         return files;
     } catch(error) {
@@ -173,367 +132,376 @@ function findFiles(pattern, description) {
     }
 }
 
-// Step 3: Optimize JavaScript
+// Step 3: Optimize JavaScript (Vercel-safe strategy)
 function optimizeJavaScript() {
     log('Optimizing JavaScript files (using javascript-obfuscator)');
-
-    // Use helper function to find JS files
-    const jsFiles = findFiles('static/js/*.js', 'JavaScript files');
+    const jsFiles = findFiles('static/js/*.js', 'JavaScript files to obfuscate', BUILD_DIR); // Uses absolute BUILD_DIR
 
     if (jsFiles.length === 0) {
-        return; // Warning already logged by findFiles
+        return;
     }
 
-    // Check for javascript-obfuscator installation
-     const obfuscatorCmd = fs.existsSync(path.join(DEV_APP_DIR, 'node_modules', '.bin', 'javascript-obfuscator'))
-        ? 'npx javascript-obfuscator'
-        : 'javascript-obfuscator';
-
-    if (obfuscatorCmd === 'javascript-obfuscator' && !commandExists('javascript-obfuscator')) {
-         log('javascript-obfuscator command not found globally.', 'warn');
-         log('Attempting to install locally: npm install javascript-obfuscator --save-dev');
-         if (!runCommand('npm install javascript-obfuscator --save-dev')) {
-            log('Failed to install javascript-obfuscator. Skipping JS optimization.', 'error');
-            return;
-         }
-         // Now use npx after potential install
-         obfuscatorCmd = 'npx javascript-obfuscator';
+    // 1. Ensure the temporary output directory exists and is empty
+    try {
+        // Use the already absolute OBFUSCATED_JS_DIR directly
+        const tempDirFullPath = OBFUSCATED_JS_DIR; // Already absolute
+        if (fs.existsSync(tempDirFullPath)) {
+            log(`Removing existing temporary obfuscation directory: ${path.relative(PROJECT_ROOT, tempDirFullPath)}`);
+            fs.rmSync(tempDirFullPath, { recursive: true, force: true });
+        }
+        ensureDirectoryExists(tempDirFullPath); // ensureDirectory expects absolute path
+        log(`Created temporary directory for obfuscated JS: ${path.relative(PROJECT_ROOT, tempDirFullPath)}`);
+    } catch (dirError) {
+        log(`Failed to prepare temporary obfuscation directory: ${dirError.message}`, 'error');
+        return; // Cannot proceed
     }
 
+    const obfuscatorCmdPath = path.join(PROJECT_ROOT, 'node_modules', '.bin', 'javascript-obfuscator');
+    const obfuscatorCmd = fs.existsSync(obfuscatorCmdPath)
+        ? `"${obfuscatorCmdPath}"` // Quote path in case of spaces
+        : (commandExists('javascript-obfuscator') ? 'javascript-obfuscator' : null);
 
-    // Lighter obfuscation settings to minimize runtime impact
-    const obfuscationOptions = {
+    if (!obfuscatorCmd) {
+         log('javascript-obfuscator command not found (checked node_modules/.bin and global). Skipping JS optimization.', 'error');
+         return;
+    }
+
+    const obfuscationOptions = { /* ... your options ... */
         'compact': 'true',
-        'control-flow-flattening': 'false', // Can impact performance
-        'dead-code-injection': 'false',     // Can impact performance & size
+        'control-flow-flattening': 'false',
+        'dead-code-injection': 'false',
         'string-array': 'true',
-        'string-array-encoding': 'base64', // 'none' or 'base64' are usually safe
-        'string-array-threshold': '0.75',   // Apply less often
-        'unicode-escape-sequence': 'false', // Avoid unless needed
-        // Added options:
-        'numbers-to-expressions': 'false', // Avoid potential perf issues
-        'simplify': 'true',               // Generally safe
-        'split-strings': 'false',         // Avoid potential perf issues
-        'rename-globals': 'false'         // Safer, avoids breaking external dependencies
+        'string-array-encoding': 'base64',
+        'string-array-threshold': '0.75',
+        'unicode-escape-sequence': 'false',
+        'numbers-to-expressions': 'false',
+        'simplify': 'true',
+        'split-strings': 'false',
+        'rename-globals': 'false'
     };
-
     const optionsStr = Object.entries(obfuscationOptions)
         .map(([key, value]) => `--${key} ${value}`)
         .join(' ');
 
     let successCount = 0;
-    jsFiles.forEach(file => {
-        // Exclude source map files if any accidentally slipped through
-        if (file.endsWith('.map')) return;
+    let failedFiles = [];
 
-        const fileName = path.basename(file);
-        // Use a temporary file in the same directory
-        const tempFile = file + '.tmp';
-        log(`Optimizing JS: ${fileName}`);
+    // 2. Obfuscate each file into the temporary directory
+    jsFiles.forEach(inputFileAbs => { // inputFileAbs is absolute path from findFiles
+        if (inputFileAbs.endsWith('.map')) return;
 
-        // Ensure output path is quoted if it contains spaces
-        const command = `${obfuscatorCmd} "${file}" --output "${tempFile}" ${optionsStr}`;
+        const fileName = path.basename(inputFileAbs);
+        // Ensure outputFile path is absolute for the command
+        const outputFileAbs = path.join(OBFUSCATED_JS_DIR, fileName); // Already absolute
+
+        log(`Optimizing JS: ${path.relative(PROJECT_ROOT, inputFileAbs)} -> ${path.relative(PROJECT_ROOT, outputFileAbs)}`);
+
+        // Ensure paths with spaces are quoted for the command line
+        const command = `${obfuscatorCmd} "${inputFileAbs}" --output "${outputFileAbs}" ${optionsStr}`;
 
         if (runCommand(command)) {
-            try {
-                // Replace original with optimized version
-                fs.renameSync(tempFile, file);
-                log(`Successfully optimized JS: ${fileName}`, 'success');
+            if (fs.existsSync(outputFileAbs)) {
                 successCount++;
-            } catch (renameError) {
-                log(`Failed to replace original file ${fileName} after optimization: ${renameError.message}`, 'error');
-                // Clean up temp file if rename failed
-                if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile);
+            } else {
+                 log(`Obfuscation command seemed to succeed for ${fileName}, but output file ${outputFileAbs} was not created.`, 'error');
+                 failedFiles.push(fileName);
             }
         } else {
-            log(`Failed to optimize JS: ${fileName}`, 'error');
-            // Clean up temp file if command failed
-            if (fs.existsSync(tempFile)) {
-                 try { fs.unlinkSync(tempFile); } catch (_) {}
-            }
+            failedFiles.push(fileName);
         }
     });
-    log(`JavaScript optimization finished. ${successCount}/${jsFiles.length} files processed.`);
+
+    const totalToProcess = jsFiles.filter(f => !f.endsWith('.map')).length;
+    log(`JavaScript obfuscation to temporary directory finished. ${successCount}/${totalToProcess} files processed.`);
+
+    // 3. Copy optimized files back ONLY if ALL were successful
+    if (failedFiles.length > 0) {
+        log(`Skipping copy-back step due to ${failedFiles.length} obfuscation failures: ${failedFiles.join(', ')}`, 'warn');
+    } else if (successCount > 0) {
+        log('Copying optimized files back to build/static/js...');
+        // Search for optimized files within the temporary directory (absolute path)
+        const optimizedFiles = findFiles('*.js', 'optimized JS files in temp dir', OBFUSCATED_JS_DIR); // baseDir is absolute
+        let copySuccessCount = 0;
+
+        optimizedFiles.forEach(optimizedFileAbs => { // optimizedFileAbs is absolute
+            const fileName = path.basename(optimizedFileAbs);
+            // Final destination is also absolute
+            const finalDestinationAbs = path.join(JS_DIR, fileName);
+            try {
+                log(`Copying ${path.relative(PROJECT_ROOT, optimizedFileAbs)} -> ${path.relative(PROJECT_ROOT, finalDestinationAbs)}`);
+                fs.copyFileSync(optimizedFileAbs, finalDestinationAbs); // Overwrites original
+                copySuccessCount++;
+            } catch (copyError) {
+                log(`Failed to copy optimized file ${fileName} back: ${copyError.message}`, 'error');
+            }
+        });
+        log(`Finished copying back ${copySuccessCount}/${optimizedFiles.length} optimized files.`, 'success');
+        if (copySuccessCount !== optimizedFiles.length) {
+            log('Some optimized files failed to copy back!', 'error');
+        }
+    } else {
+         log('No JS files were successfully obfuscated, skipping copy-back.');
+    }
+
+    // 4. Clean up the temporary directory (always attempt this)
+    try {
+        const tempDirFullPath = OBFUSCATED_JS_DIR; // Already absolute
+        if (fs.existsSync(tempDirFullPath)) {
+            log(`Cleaning up temporary obfuscation directory: ${path.relative(PROJECT_ROOT, tempDirFullPath)}`);
+            fs.rmSync(tempDirFullPath, { recursive: true, force: true });
+            log('Temporary directory cleaned up.', 'success');
+        }
+    } catch (cleanupError) {
+        log(`Failed to clean up temporary obfuscation directory: ${cleanupError.message}`, 'warn');
+    }
 }
 
 // Step 4: Optimize images
 function optimizeImages() {
     log('Optimizing images in build directory');
+    let totalProcessed = 0;
+    let totalFound = 0;
 
-    const imagePatterns = [
-        'static/media/**/*.png',
-        'static/media/**/*.{jpg,jpeg}',
-        'static/media/**/*.svg',
-        // Add other formats if needed, like gif, webp
-    ];
-
-    let totalImagesFound = 0;
-    let processedCount = 0;
-
-    // Process PNGs
-    const pngFiles = findFiles('static/media/**/*.png', 'PNG images');
-    totalImagesFound += pngFiles.length;
+    // Get absolute paths from findFiles using absolute BUILD_DIR
+    const pngFiles = findFiles('static/media/**/*.png', 'PNG images', BUILD_DIR);
+    totalFound += pngFiles.length;
     if (pngFiles.length > 0) {
         const optipngCmd = commandExists('optipng') ? 'optipng' : null;
         if (optipngCmd) {
-            pngFiles.forEach(file => {
-                log(`Optimizing PNG: ${path.basename(file)}`);
-                if (runCommand(`${optipngCmd} -o2 "${file}"`)) { // Use level 2 for balance
-                    processedCount++;
-                } else {
-                    log(`Failed to optimize PNG: ${path.basename(file)}`, 'warn');
-                }
+            pngFiles.forEach(fileAbs => {
+                log(`Optimizing PNG: ${path.relative(PROJECT_ROOT, fileAbs)}`);
+                if (runCommand(`${optipngCmd} -o2 "${fileAbs}"`)) { totalProcessed++; } // Pass absolute path
             });
         } else {
             log('optipng command not found. Skipping PNG optimization.', 'warn');
-            log('Install optipng or ensure it is in your PATH.', 'warn');
         }
     }
 
-    // Process JPGs
-    const jpgFiles = findFiles('static/media/**/*.{jpg,jpeg}', 'JPEG images');
-    totalImagesFound += jpgFiles.length;
+    const jpgFiles = findFiles('static/media/**/*.{jpg,jpeg}', 'JPEG images', BUILD_DIR);
+    totalFound += jpgFiles.length;
     if (jpgFiles.length > 0) {
-        // Prefer mozjpeg if available, otherwise try ImageMagick's convert
-        let jpegToolCmd = null;
-        if (fs.existsSync(path.join(DEV_APP_DIR, 'node_modules', '.bin', 'mozjpeg'))) {
-            jpegToolCmd = `npx mozjpeg -quality 80 -outfile "{output}" "{input}"`; // mozjpeg syntax
+        let jpegToolCmdStr = null;
+        const mozjpegPath = path.join(PROJECT_ROOT, 'node_modules', '.bin', 'mozjpeg');
+        if (fs.existsSync(mozjpegPath)) {
+             // Quote paths in command string for robustness
+            jpegToolCmdStr = `"${mozjpegPath}" -quality 80 -outfile "{output}" "{input}"`;
         } else if (commandExists('convert')) {
-             jpegToolCmd = `convert "{input}" -quality 85 "{output}"`; // ImageMagick syntax
-             log('Using ImageMagick convert for JPEGs. Consider installing mozjpeg for potentially better results (npm install mozjpeg --save-dev).', 'info')
+            jpegToolCmdStr = `convert "{input}" -quality 85 "{output}"`;
+            log('Using ImageMagick convert for JPEGs. mozjpeg (devDependency) recommended.', 'info');
         } else if (commandExists('magick')) {
-             jpegToolCmd = `magick convert "{input}" -quality 85 "{output}"`; // Newer ImageMagick syntax
-             log('Using ImageMagick (magick) convert for JPEGs. Consider installing mozjpeg for potentially better results (npm install mozjpeg --save-dev).', 'info')
+            jpegToolCmdStr = `magick convert "{input}" -quality 85 "{output}"`;
+            log('Using ImageMagick (magick) convert for JPEGs. mozjpeg (devDependency) recommended.', 'info');
         }
 
-
-        if (jpegToolCmd) {
-            jpgFiles.forEach(file => {
-                log(`Optimizing JPG: ${path.basename(file)}`);
-                // Command needs input and output placeholders replaced
-                const cmd = jpegToolCmd.replace("{input}", file).replace("{output}", file);
-                if (runCommand(cmd)) {
-                    processedCount++;
-                } else {
-                     log(`Failed to optimize JPG: ${path.basename(file)}`, 'warn');
-                }
+        if (jpegToolCmdStr) {
+            jpgFiles.forEach(fileAbs => {
+                log(`Optimizing JPG: ${path.relative(PROJECT_ROOT, fileAbs)}`);
+                // Replace placeholders with quoted absolute paths
+                const cmd = jpegToolCmdStr.replace("{input}", `"${fileAbs}"`).replace("{output}", `"${fileAbs}"`);
+                if (runCommand(cmd)) { totalProcessed++; }
             });
         } else {
-            log('No suitable JPEG optimizer found (mozjpeg, convert/magick). Skipping JPG optimization.', 'warn');
-            log('Install mozjpeg (npm install mozjpeg --save-dev), ImageMagick, or ensure they are in your PATH.', 'warn');
+            log('No suitable JPEG optimizer found (mozjpeg, convert/magick). Skipping.', 'warn');
         }
     }
 
-    // Process SVGs
-    const svgFiles = findFiles('static/media/**/*.svg', 'SVG images');
-    totalImagesFound += svgFiles.length;
+    const svgFiles = findFiles('static/media/**/*.svg', 'SVG images', BUILD_DIR);
+    totalFound += svgFiles.length;
     if (svgFiles.length > 0) {
-        const svgoCmd = fs.existsSync(path.join(DEV_APP_DIR, 'node_modules', '.bin', 'svgo')) ? 'npx svgo' : (commandExists('svgo') ? 'svgo' : null);
+        const svgoPath = path.join(PROJECT_ROOT, 'node_modules', '.bin', 'svgo');
+        const svgoCmd = fs.existsSync(svgoPath) ? `"${svgoPath}"` : (commandExists('svgo') ? 'svgo' : null);
         if (svgoCmd) {
-             svgFiles.forEach(file => {
-                log(`Optimizing SVG: ${path.basename(file)}`);
-                // SVGO modifies in place by default with -o same as -i
-                if (runCommand(`${svgoCmd} -i "${file}" -o "${file}"`)) {
-                    processedCount++;
-                } else {
-                     log(`Failed to optimize SVG: ${path.basename(file)}`, 'warn');
-                }
+             svgFiles.forEach(fileAbs => {
+                log(`Optimizing SVG: ${path.relative(PROJECT_ROOT, fileAbs)}`);
+                 // Quote paths for command
+                if (runCommand(`${svgoCmd} -i "${fileAbs}" -o "${fileAbs}"`)) { totalProcessed++; }
             });
         } else {
-            log('svgo command not found. Skipping SVG optimization.', 'warn');
-             log('Install svgo (npm install svgo --save-dev) or ensure it is in your PATH.', 'warn');
+            log('svgo command not found (checked node_modules and global). Skipping.', 'warn');
         }
     }
-
-    log(`Image optimization finished. ${processedCount}/${totalImagesFound} images processed.`);
+    log(`Image optimization finished. ${totalProcessed}/${totalFound} images processed.`);
 }
 
 
-// Step 5: Gzip compression for static assets using Node.js zlib
+// Step 5: Gzip compression for static assets
 async function compressAssets() {
     log('Compressing assets using Node.js zlib');
-
     const assetPatterns = [
-        'static/js/*.js',
-        'static/css/*.css',
-        '*.html',
-        '*.json',
-        '*.ico',
-        'manifest.json' // Common CRA files
-        // Add other text-based assets if needed (e.g., 'static/media/**/*.svg')
+        'static/js/*.js', 'static/css/*.css', '*.html', '*.json', '*.ico',
+        'manifest.json', 'static/media/**/*.svg'
     ];
+    // Find assets relative to BUILD_DIR (absolute), get absolute paths
+    const assets = assetPatterns.flatMap(pattern => findFiles(pattern, 'assets for compression', BUILD_DIR));
 
-    const assets = assetPatterns.flatMap(pattern => findFiles(pattern, 'assets for compression'));
-
-    if (assets.length === 0) {
-        log('No assets found for compression.', 'warn');
-        return;
-    }
-
+    if (assets.length === 0) { /* ... */ return; }
     log(`Found ${assets.length} assets to compress.`);
     let successCount = 0;
     let failCount = 0;
 
-    // Process files concurrently
-    const compressionPromises = assets.map(async (file) => {
-        const sourcePath = file;
-        const destinationPath = `${file}.gz`;
-        const fileName = path.basename(file);
-
+    const compressionPromises = assets.map(async (sourcePathAbs) => {
+        const destinationPathAbs = `${sourcePathAbs}.gz`;
+        const fileName = path.basename(sourcePathAbs);
         try {
-            log(`Compressing: ${fileName}`);
-            const sourceStream = fs.createReadStream(sourcePath);
-            const destinationStream = fs.createWriteStream(destinationPath);
-            const gzipStream = zlib.createGzip({ level: zlib.constants.Z_BEST_COMPRESSION }); // Max compression
-
-            // Use pipeline for robust stream handling
+            const sourceStream = fs.createReadStream(sourcePathAbs);
+            const destinationStream = fs.createWriteStream(destinationPathAbs);
+            const gzipStream = zlib.createGzip({ level: zlib.constants.Z_BEST_COMPRESSION });
             await pipeline(sourceStream, gzipStream, destinationStream);
-
-            // Optional: Verify compression ratio
-            const originalSize = fs.statSync(sourcePath).size;
-            const compressedSize = fs.statSync(destinationPath).size;
-            const ratio = compressedSize / originalSize;
-            log(`Compressed ${fileName} (${formatBytes(originalSize)} -> ${formatBytes(compressedSize)}, ratio: ${ratio.toFixed(2)})`, 'success');
-
+            const originalSize = fs.statSync(sourcePathAbs).size;
+            const compressedSize = fs.statSync(destinationPathAbs).size;
+            log(`Compressed ${fileName} (${formatBytes(originalSize)} -> ${formatBytes(compressedSize)}, ratio: ${(compressedSize / originalSize).toFixed(2)})`, 'success');
             successCount++;
         } catch (error) {
             log(`Failed to compress ${fileName}: ${error.message}`, 'error');
             failCount++;
-            // Clean up partial .gz file if compression failed
-            if (fs.existsSync(destinationPath)) {
-                try { fs.unlinkSync(destinationPath); } catch (_) {}
-            }
+            if (fs.existsSync(destinationPathAbs)) { try { fs.unlinkSync(destinationPathAbs); } catch (_) {} }
         }
     });
-
-    // Wait for all compressions to complete
     await Promise.all(compressionPromises);
-
     log(`Asset compression completed. ${successCount} successful, ${failCount} failed.`, failCount > 0 ? 'warn' : 'success');
 }
 
 
 // Helper to format bytes
 function formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
+    if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    const i = Math.max(0, Math.floor(Math.log(bytes) / Math.log(k))); // Ensure i is >= 0
+    const index = Math.min(i, sizes.length - 1);
+    return parseFloat((bytes / Math.pow(k, index)).toFixed(dm)) + ' ' + sizes[index];
 }
 
 
 // Create a report file with optimization details
 function createOptimizationReport(startTime, endTime) {
-    const reportPath = path.join(BUILD_DIR, 'optimization-report.json');
+    // Use absolute path for report file
+    const reportPathAbs = path.join(BUILD_DIR, 'optimization-report.json');
     log(`Generating optimization report...`);
 
     try {
-        const jsFiles = findFiles('static/js/*.js', 'JS files for report')
-            .map(file => ({
-                name: path.basename(file),
-                size: fs.statSync(file).size,
-                sizeFormatted: formatBytes(fs.statSync(file).size),
-                gzippedSize: fs.existsSync(`${file}.gz`) ? fs.statSync(`${file}.gz`).size : null,
-                gzippedSizeFormatted: fs.existsSync(`${file}.gz`) ? formatBytes(fs.statSync(`${file}.gz`).size) : null,
-            }));
+        // Use absolute BUILD_DIR path for findFiles baseDir
+        const jsFileStats = findFiles('static/js/*.js', 'JS files for report', BUILD_DIR)
+            .map(fileAbs => { /* ... map logic using fileAbs ... */
+                if (!fs.existsSync(fileAbs)) return null; // Skip if file missing
+                const stats = fs.statSync(fileAbs);
+                const gzPath = `${fileAbs}.gz`;
+                const gzStats = fs.existsSync(gzPath) ? fs.statSync(gzPath) : null;
+                return {
+                    name: path.basename(fileAbs),
+                    size: stats.size, sizeFormatted: formatBytes(stats.size),
+                    gzippedSize: gzStats?.size, gzippedSizeFormatted: formatBytes(gzStats?.size),
+                };
+            }).filter(Boolean); // Remove null entries if files were missing
 
-        const cssFiles = findFiles('static/css/*.css', 'CSS files for report')
-             .map(file => ({
-                name: path.basename(file),
-                size: fs.statSync(file).size,
-                sizeFormatted: formatBytes(fs.statSync(file).size),
-                gzippedSize: fs.existsSync(`${file}.gz`) ? fs.statSync(`${file}.gz`).size : null,
-                gzippedSizeFormatted: fs.existsSync(`${file}.gz`) ? formatBytes(fs.statSync(`${file}.gz`).size) : null,
-            }));
+        const cssFileStats = findFiles('static/css/*.css', 'CSS files for report', BUILD_DIR)
+             .map(fileAbs => { /* ... map logic using fileAbs ... */
+                 if (!fs.existsSync(fileAbs)) return null;
+                 const stats = fs.statSync(fileAbs);
+                 const gzPath = `${fileAbs}.gz`;
+                 const gzStats = fs.existsSync(gzPath) ? fs.statSync(gzPath) : null;
+                 return {
+                    name: path.basename(fileAbs),
+                    size: stats.size, sizeFormatted: formatBytes(stats.size),
+                    gzippedSize: gzStats?.size, gzippedSizeFormatted: formatBytes(gzStats?.size),
+                 };
+             }).filter(Boolean);
 
+        // ... (calculate totals) ...
+        const totalJsSize = jsFileStats.reduce((acc, file) => acc + file.size, 0);
+        const totalCssSize = cssFileStats.reduce((acc, file) => acc + file.size, 0);
+        const totalGzippedJsSize = jsFileStats.reduce((acc, file) => acc + (file.gzippedSize || 0), 0);
+        const totalGzippedCssSize = cssFileStats.reduce((acc, file) => acc + (file.gzippedSize || 0), 0);
 
-        const totalJsSize = jsFiles.reduce((acc, file) => acc + file.size, 0);
-        const totalCssSize = cssFiles.reduce((acc, file) => acc + file.size, 0);
-        const totalGzippedJsSize = jsFiles.reduce((acc, file) => acc + (file.gzippedSize || 0), 0);
-        const totalGzippedCssSize = cssFiles.reduce((acc, file) => acc + (file.gzippedSize || 0), 0);
-
-
-        const report = {
+        const report = { /* ... report data ... */
             optimizationDate: new Date().toISOString(),
             durationSeconds: ((endTime - startTime) / 1000).toFixed(2),
             totalJsSize: formatBytes(totalJsSize),
             totalCssSize: formatBytes(totalCssSize),
             totalGzippedJsSize: formatBytes(totalGzippedJsSize),
             totalGzippedCssSize: formatBytes(totalGzippedCssSize),
-            jsFiles: jsFiles,
-            cssFiles: cssFiles
+            jsFiles: jsFileStats,
+            cssFiles: cssFileStats
         };
 
-        fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-        log(`Optimization report created at: ${reportPath}`, 'success');
+        fs.writeFileSync(reportPathAbs, JSON.stringify(report, null, 2));
+        log(`Optimization report created at: ${path.relative(PROJECT_ROOT, reportPathAbs)}`, 'success');
     } catch (error) {
         log(`Failed to generate optimization report: ${error.message}`, 'error');
+        console.error(error.stack);
     }
 }
 
-// Clean up temporary files
+// Clean up temporary files and directories
 function cleanupTempFiles() {
-    log('Cleaning up temporary files');
-    // Add .tmp extension used by JS obfuscation
+    log('Cleaning up temporary files and directories...');
     const tempPatterns = [
-        'static/js/*.tmp',
-        'static/css/*.tmp',
-        'static/media/**/*.tmp',
-        '*.tmp'
+        'static/js/*.tmp', 'static/css/*.tmp', 'static/media/**/*.tmp', '*.tmp',
+        'obfuscated_js' // The temp JS dir name relative to BUILD_DIR
     ];
     let cleanedCount = 0;
 
     tempPatterns.forEach(pattern => {
-        const tempFiles = findFiles(pattern, 'temporary files');
-        tempFiles.forEach(file => {
+        // Search relative to BUILD_DIR (absolute), get absolute paths
+        const tempItems = glob.sync(pattern, { cwd: BUILD_DIR, absolute: true });
+
+        tempItems.forEach(itemPathAbs => {
             try {
-                log(`Removing temp file: ${path.basename(file)}`);
-                fs.unlinkSync(file);
-                cleanedCount++;
+                if (!fs.existsSync(itemPathAbs)) return;
+                const stats = fs.statSync(itemPathAbs);
+                const itemName = path.relative(PROJECT_ROOT, itemPathAbs);
+                if (stats.isDirectory()) {
+                    log(`Removing temporary directory: ${itemName}`);
+                    fs.rmSync(itemPathAbs, { recursive: true, force: true });
+                    cleanedCount++;
+                } else if (stats.isFile()) {
+                    log(`Removing temporary file: ${itemName}`);
+                    fs.unlinkSync(itemPathAbs);
+                    cleanedCount++;
+                }
             } catch (error) {
-                log(`Failed to remove temporary file: ${path.basename(file)} - ${error.message}`, 'warn');
+                 if (error.code !== 'ENOENT') {
+                    log(`Failed to remove temporary item: ${path.basename(itemPathAbs)} - ${error.message}`, 'warn');
+                 }
             }
         });
     });
 
     if (cleanedCount > 0) {
-         log(`Removed ${cleanedCount} temporary files.`, 'success');
+         log(`Cleaned up ${cleanedCount} temporary items.`, 'success');
     } else {
-         log('No temporary files found to clean up.');
+         log('No temporary files or directories found to clean up.');
     }
 }
 
 // Main optimization function
 async function runOptimization() {
     const startTime = Date.now();
-    log('Starting React build and optimization process');
-
-    // Ensure build directory exists before build
-    // ensureDirectoryExists(BUILD_DIR); // Build command usually handles this
+    log(`Starting build & optimization in: ${PROJECT_ROOT}`);
+    log(`Node version: ${process.version}, Platform: ${process.platform}`);
 
     // Step 1: Build
     buildReactApp(); // Exits on failure
 
-    // Ensure build directory and subdirectories exist AFTER build
+    // Ensure build subdirectories exist AFTER build
+    // Use the already absolute path variables directly
     ensureDirectoryExists(BUILD_DIR);
     ensureDirectoryExists(JS_DIR);
     ensureDirectoryExists(CSS_DIR);
     ensureDirectoryExists(MEDIA_DIR);
 
-
     // Step 2: Purge CSS
     purgeCss();
 
     // Step 3: Optimize JS
-    optimizeJavaScript(); // Contains internal error handling
+    optimizeJavaScript(); // Uses Vercel-safe strategy
 
     // Step 4: Optimize Images
-    optimizeImages(); // Contains internal error handling
+    optimizeImages();
 
     // Step 5: Compress Assets (Async)
-    await compressAssets(); // Contains internal error handling
+    await compressAssets();
 
     // Step 6: Clean up
     cleanupTempFiles();
@@ -544,12 +512,12 @@ async function runOptimization() {
     createOptimizationReport(startTime, endTime);
 
     const duration = ((endTime - startTime) / 1000).toFixed(2);
-    log(`React build and optimization process finished in ${duration} seconds`, 'success');
+    log(`Build & optimization process finished in ${duration} seconds`, 'success');
 }
 
 // Execute the optimization process
 runOptimization().catch(error => {
     log(`Unhandled error during optimization: ${error.message}`, 'error');
-    console.error(error.stack); // Print stack trace for debugging
+    console.error(error.stack);
     process.exit(1);
 });
