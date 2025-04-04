@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 import ScrollButton from './components/ScrollUpButton';
 import WeatherToggle from './components/WeatherToggle';
 import LoadingScreen from './components/Loading';
-
+import { SpeedInsights } from "@vercel/speed-insights/react"
 // Section Components
 import Home from './components/Home';
 import About from './components/About';
@@ -172,6 +172,7 @@ function App() {
   return (
     <>
       {/* Pass the initial dark mode state to loading screen */}
+      <SpeedInsights/>
       <LoadingScreen isLoading={isLoading} isInitiallyDark={initialIsDarkMode} />
 
       {/* Apply initial classes to fixed background */}
