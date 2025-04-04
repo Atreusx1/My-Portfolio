@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Yuji+Mai&display=swap');
+
 :root {
   --sky-blue: #55a6e0;
   --grass-green-light: #A5CC6F;
@@ -59,7 +61,7 @@
 /* --- Body & HTML --- */
 /* Apply transitions to elements that change color */
 body, html {
-  font-family: 'Nunito', 'Poppins', sans-serif; /* Soft, rounded font */
+  font-family: 'Sawarabi Mincho', serif; /* Base font */
   scroll-behavior: smooth;
   /* background-color will be handled by .app or .fixed-background */
   background-color: transparent;
@@ -73,7 +75,7 @@ body, html {
 button {
   /* Optional: change cursor for buttons too */
    cursor: pointer; /* Using standard pointer for simplicity */
-   font-family: 'Nunito', 'Poppins', sans-serif; /* Ensure button font matches */
+   font-family: inherit; /* Inherit Sawarabi Mincho from body */
    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Add transitions */
 }
 
@@ -149,6 +151,15 @@ section {
 }
 .section-container1.animate-in { display: contents; } /* Keep this */
 
+/* --- HEADING FONT --- */
+.section-title, .section-title1, .section-title2,
+.name, .title, .category-title, .project-title,
+.subsection-title, .timeline-title, .details-title,
+.certification-title, .contact-info h3, .footer-logo {
+  font-family: 'Yuji Mai', serif; /* Heading font */
+}
+
+
 .section-title, .section-title1, .section-title2 {
   font-size: 2.8rem; /* Slightly larger */
   margin-bottom: 3.5rem;
@@ -206,6 +217,7 @@ section {
 }
 
 .name {
+  /* font-family handled by common heading rule */
   font-size: 4rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -214,6 +226,7 @@ section {
 }
 
 .title {
+  /* font-family handled by common heading rule */
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 2rem;
@@ -242,6 +255,7 @@ section {
   text-decoration: none;
   transition: all 0.3s ease;
   border: none;
+  /* font-family inherits from button -> body */
 }
 
 /* Dark Mode Button Styles (Default) */
@@ -350,6 +364,7 @@ section {
   border-radius: 6px;
   text-decoration: none;
   transition: all 0.3s ease;
+  /* font-family inherits from button -> body */
 }
 /* Ensure readable text color in light mode */
 .light-mode .resume-button {
@@ -377,6 +392,7 @@ section {
 }
 
 .category-title {
+  /* font-family handled by common heading rule */
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   color: var(--text-light); /* Uses variable */
@@ -418,6 +434,7 @@ section {
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
+  /* font-family inherits from button -> body */
 }
 .project-filters button.active, .project-filters button:hover {
   background: linear-gradient(45deg, var(--flower-yellow), var(--sky-blue)); /* Uses variables */
@@ -461,6 +478,7 @@ section {
 
 .project-content { padding: 1.5rem; }
 .project-title {
+  /* font-family handled by common heading rule */
   font-size: 1.3rem; margin-bottom: 1rem; color: var(--text-light); /* Uses variable */
   transition: color 0.5s ease-in-out;
 }
@@ -510,7 +528,7 @@ section {
   border: 2px solid var(--sky-blue); /* Use a theme color for border */
   background-color: transparent; /* Default transparent */
   color: var(--text-light); /* Default text color */
-  font-family: 'Nunito', 'Poppins', sans-serif; /* Ensure font */
+  font-family: inherit; /* Ensure font inherits from button -> body */
 }
 
 .tab-button:hover {
@@ -540,6 +558,7 @@ section {
 
 /* --- Experience/Education Styles --- */
 .subsection-title {
+  /* font-family handled by common heading rule */
   font-size: 1.8rem; margin-bottom: 2rem; color: var(--grass-green-light); /* Uses variable */
   transition: color 0.5s ease-in-out;
 }
@@ -614,7 +633,9 @@ section {
   border-radius: 15px; font-size: 0.9rem; margin-bottom: 1rem; font-weight: 500;
   transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
 }
-.timeline-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); transition: color 0.5s ease-in-out;} /* Uses variable */
+.timeline-title {
+  /* font-family handled by common heading rule */
+  font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); transition: color 0.5s ease-in-out;} /* Uses variable */
 .timeline-institution {
   font-size: 1rem; color: var(--grass-green-light); margin-bottom: 1rem; font-weight: 500; /* Uses variable */
   transition: color 0.5s ease-in-out;
@@ -648,6 +669,7 @@ section {
 }
 
 .details-title { /* If you add title/company back */
+    /* font-family handled by common heading rule */
     font-size: 1.2rem;
     color: var(--text-light); /* Uses variable */
     margin-bottom: 1rem;
@@ -746,13 +768,16 @@ section {
     transition: color 0.5s ease-in-out;
 }
 .certification-details { /* Container for title/issuer */ }
-.certification-title { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light); margin-top: 0; transition: color 0.5s ease-in-out; } /* Uses variable */
+.certification-title {
+  /* font-family handled by common heading rule */
+  font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light); margin-top: 0; transition: color 0.5s ease-in-out; } /* Uses variable */
 .certification-issuer { font-size: 0.9rem; color: var(--grass-green-light); margin: 0; transition: color 0.5s ease-in-out; } /* Uses variable */
 
 /* --- Contact Section Styles --- */
 .contact-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
 .contact-info { padding-right: 2rem; }
 .contact-info h3 {
+  /* font-family handled by common heading rule */
   font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--grass-green-light); /* Uses variable */
   transition: color 0.5s ease-in-out;
 }
@@ -805,7 +830,7 @@ section {
   border: 1px solid color-mix(in srgb, var(--text-light, #fff) 30%, transparent); /* Dynamic border */
   border-radius: 6px;
   color: var(--text-light); /* Text color for input */
-  font-family: inherit;
+  font-family: inherit; /* Inherit Sawarabi Mincho from body */
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 .form-group input:focus, .form-group textarea:focus {
@@ -819,7 +844,7 @@ section {
   background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium)); /* Uses variables */
   color: var(--text-dark); /* Dark text default */
   border: none; border-radius: 6px;
-  font-family: 'Nunito', 'Poppins', sans-serif;
+  font-family: inherit; /* Inherit Sawarabi Mincho from body */
   font-weight: bold; font-size:medium; cursor: pointer;
   transition: all 0.3s ease; width: 100%;
 }
@@ -851,6 +876,7 @@ section {
 .footer-content { max-width: 1200px; margin: 0 auto; margin-bottom: 2rem; }
 .footer-left-container { margin-bottom: 2rem; }
 .footer-logo {
+  /* font-family handled by common heading rule */
   font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem;
   /* Gradient text uses variables */
   background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue), var(--flower-yellow));
@@ -976,7 +1002,7 @@ section {
     background-size: cover; background-position: center center;
     background-repeat: no-repeat; background-attachment: fixed;
     transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
-  
+
     /* Default background (e.g., dark mode fireflies) - will be overridden by specific weather class */
     background-image: url("../public/ghibli-night.png"); /* Fallback */
     background-color: #1a2a2a; /* Dark base color */
@@ -1008,37 +1034,6 @@ section {
    .fixed-background { display: none; }
 }
 
-
-/* 
-.dark-mode-toggle-button {
-  position: fixed;
-  top: 25px;
-  right: 25px;
-  left: auto;
-  z-index: 1000;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  font-size: 1.4rem;
-  padding: 0; 
-  backdrop-filter: blur(5px); 
-
-  background: var(--bg-overlay-medium);
-  color: var(--text-light); 
-  border: 1px solid var(--sky-blue);
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease,
-              opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.dark-mode-toggle-button:hover {
-  background: var(--bg-overlay-blue); 
-  border-color: var(--flower-yellow); 
-
-} */
 
 /* === Weather Toggle Button Styles === */
 
@@ -1383,10 +1378,6 @@ section {
   .footer-social { gap: 0.8rem; }
   .footer-bottom p { font-size: 0.9rem; }
 
-  /* Dark Mode Toggle Button Position */
-  /* .dark-mode-toggle-button {
-    right: auto; left: 20px; top: 20px;
-  } */
    /* Weather Toggle Button Position */
    .weather-toggle-button {
     left: 20px; top: 20px; right: auto; /* Below dark mode toggle on mobile */
