@@ -37,7 +37,7 @@
   }
   
   .loadingLeft {
-    background-image: url('../../public/ghibli-day.png');
+    background-image: url('../../public/ghibli-day.webp');
     background-position: left center;
     background-color: #87CEEB; /* Fallback */
     transform-origin: right center;
@@ -47,7 +47,7 @@
   }
   
   .loadingRight {
-    background-image: url('../../public/ghibli-night.png');
+    background-image: url('../../public/ghibli-night.webp');
     background-position: right center;
     background-color: #1a2a2a; /* Fallback */
     transform-origin: left center;
@@ -168,7 +168,7 @@
     .loadingScreenSplit {
       display: block;
       position: fixed;
-      background-image: url('../../public/ghibli-day.png');
+      background-image: url('../../public/ghibli-day.webp');
       background-size: cover;
       background-position: center center;
       background-color: var(--sky-blue);

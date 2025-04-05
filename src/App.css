@@ -929,7 +929,7 @@ section {
     background-size: cover;
     background-position: bottom center;
     background-repeat: no-repeat;
-    background-image: url("../public/ghibli-night.png"); /* Base/Fallback */
+    background-image: url("../public/ghibli-night.webp"); /* Base/Fallback */
     background-color: #1a2a2a;
     /* --- Slightly longer transition for color --- */
     transition: background-color 0.8s ease-in-out;
@@ -962,28 +962,28 @@ section {
 
   .fixed-background.weather-sakura { background-color: #7FBCD8; }
   .fixed-background.weather-sakura::after {
-    background-image: url("../public/ghibli-day.png");
+    background-image: url("../public/ghibli-day.webp");
     opacity: 1;
     transition-delay: 0s; /* Override removal delay for fade-in */
   }
 
   .fixed-background.weather-fireflies { background-color: #1a2a2a; }
   .fixed-background.weather-fireflies::after {
-    background-image: url("../public/ghibli-night.png");
+    background-image: url("../public/ghibli-night.webp");
     opacity: 1;
     transition-delay: 0s;
   }
 
   .fixed-background.weather-snow { background-color: #5c7a8f; }
   .fixed-background.weather-snow::after {
-    background-image: url("../public/ghibli-snow.png");
+    background-image: url("../public/ghibli-snow.webp");
     opacity: 1;
     transition-delay: 0s;
   }
 
   .fixed-background.weather-rain { background-color: #4a5a6a; }
   .fixed-background.weather-rain::after {
-    background-image: url("../public/ghibli-rain.png");
+    background-image: url("../public/ghibli-rain.webp");
     opacity: 1;
     transition-delay: 0s;
   }
@@ -1004,25 +1004,25 @@ section {
     transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
 
     /* Default background (e.g., dark mode fireflies) - will be overridden by specific weather class */
-    background-image: url("../public/ghibli-night.png"); /* Fallback */
+    background-image: url("../public/ghibli-night.webp"); /* Fallback */
     background-color: #1a2a2a; /* Dark base color */
   }
 
   /* Specific weather backgrounds for app */
    .app.weather-sakura { /* Light mode default */
-    background-image: url("../public/ghibli-day.png");
+    background-image: url("../public/ghibli-day.webp");
     background-color: #7FBCD8;
   }
    .app.weather-fireflies { /* Dark mode default */
-    background-image: url("../public/ghibli-night.png");
+    background-image: url("../public/ghibli-night.webp");
     background-color: #1a2a2a;
   }
    .app.weather-snow { /* NEW */
-    background-image: url("../public/ghibli-snow.png");
+    background-image: url("../public/ghibli-snow.webp");
     background-color: #5c7a8f; /* Example snow base color */
   }
    .app.weather-rain { /* NEW */
-    background-image: url("../public/ghibli-rain.png");
+    background-image: url("../public/ghibli-rain.webp");
     background-color: #4a5a6a; /* Example rain base color */
   }
 
