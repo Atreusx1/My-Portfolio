@@ -1,6 +1,5 @@
 // src/App.jsx
-import React, { useState, useEffect, Suspense, useRef, useCallback } from 'react'; // Removed lazy
-import loadable from '@loadable/component'; // Added loadable
+import React, { useState, useEffect, Suspense, useRef, useCallback, lazy } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import './App.css'; // Your main CSS file
@@ -11,23 +10,23 @@ import Navbar from './components/Navbar'; // Assuming you have this
 import ScrollButton from './components/ScrollUpButton';
 import LoadingScreen from './components/Loading';
 
-// --- Lazy Loaded Components using @loadable/component ---
-const WeatherToggle = loadable(() => import('./components/WeatherToggle'));
+// --- Lazy Loaded Components ---
+const WeatherToggle = lazy(() => import('./components/WeatherToggle'));
 
-// Section Components (Lazy Loaded using @loadable/component)
-const Home = loadable(() => import('./components/Home'));
-const About = loadable(() => import('./components/About'));
-const Skills = loadable(() => import('./components/Skills'));
-const Education = loadable(() => import('./components/Education'));
-const Projects = loadable(() => import('./components/Projects'));
-const Contact = loadable(() => import('./components/Contact'));
+// Section Components (Lazy Loaded)
+const Home = lazy(() => import('./components/Home'));
+const About = lazy(() => import('./components/About'));
+const Skills = lazy(() => import('./components/Skills'));
+const Education = lazy(() => import('./components/Education'));
+const Projects = lazy(() => import('./components/Projects'));
+const Contact = lazy(() => import('./components/Contact'));
 
-// Particle Effect Components (Lazy Loaded using @loadable/component)
-const FloatingParticles = loadable(() => import('./components/FloatingParticles')); // Sakura
-const Fireflies = loadable(() => import('./components/Fireflies'));
-const Snowfall = loadable(() => import('./components/Snowfall'));
-const Rainfall = loadable(() => import('./components/Rainfall'));
-const AutumnLeaves = loadable(() => import('./components/AutumnLeaves'));
+// Particle Effect Components (Lazy Loaded)
+const FloatingParticles = lazy(() => import('./components/FloatingParticles')); // Sakura
+const Fireflies = lazy(() => import('./components/Fireflies'));
+const Snowfall = lazy(() => import('./components/Snowfall'));
+const Rainfall = lazy(() => import('./components/Rainfall'));
+const AutumnLeaves = lazy(() => import('./components/AutumnLeaves'));
 
 // --- Constants ---
 const LOADING_DELAY_MS = 3500; // Adjust as needed
@@ -199,7 +198,7 @@ function App() {
         className={`app ${initialThemeClassGlobal} ${initialWeatherClassGlobal}`}
       >
 
-        {/* Weather Toggle Button - Lazy loaded via @loadable/component */}
+        {/* Weather Toggle Button - Lazy loaded */}
         {/* Suspense provides fallback while the component loads */}
         <Suspense fallback={
           // Simple placeholder div while toggle loads
@@ -220,17 +219,16 @@ function App() {
         <ScrollButton />
 
         {/* Background Particle Canvas Container */}
-        <div className="canvas-container" aria-hidden="true">
-          {!isLoading && ( // <-- Condition remains the same
-            <Canvas camera={{ position: [0, 0, 12], fov: 55 }}>
-              <ambientLight intensity={isEffectivelyDarkMode ? 0.15 : 0.5} />
-              <Suspense fallback={null}> {/* Suspense for particles */}
-                {renderParticles()}
-              </Suspense>
-            </Canvas>
-          )}
-        </div>
-
+<div className="canvas-container" aria-hidden="true">
+  {!isLoading && ( // <-- Add this condition
+    <Canvas camera={{ position: [0, 0, 12], fov: 55 }}>
+      <ambientLight intensity={isEffectivelyDarkMode ? 0.15 : 0.5} />
+      <Suspense fallback={null}>
+        {renderParticles()}
+      </Suspense>
+    </Canvas>
+  )}
+</div>
         {/* --- Scrollable Page Content --- */}
         {/* Only render content after the loading screen is done */}
         {!isLoading && (
@@ -245,7 +243,7 @@ function App() {
                   Loading Content...
                 </div>
               }>
-                {/* Sections loaded via @loadable/component */}
+                {/* Add role="region" and aria-labelledby for better structure if needed */}
                 <section id="home" aria-labelledby="home-heading"><Home isAppLoaded={!isLoading} /></section>
                 <section id="about" aria-labelledby="about-heading"><About /></section>
                 <section id="skills" aria-labelledby="skills-heading"><Skills /></section>
