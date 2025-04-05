@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 // You might want to rename this import and the file if you have Anish's image
-import anish from '../Assets/images/anish.png'; // Keeping the original import name as requested
+import anish from '../Assets/images/anish.webp'; // Keeping the original import name as requested
 
 const About = () => {
   const aboutRef = useRef(null);

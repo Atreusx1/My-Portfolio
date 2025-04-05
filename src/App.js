@@ -26,7 +26,7 @@ const FloatingParticles = lazy(() => import('./components/FloatingParticles')); 
 const Fireflies = lazy(() => import('./components/Fireflies'));
 const Snowfall = lazy(() => import('./components/Snowfall'));
 const Rainfall = lazy(() => import('./components/Rainfall'));
-const AutumnLeaves = lazy(() => import('./components/AutumnLeaves')); // Added
+const AutumnLeaves = lazy(() => import('./components/AutumnLeaves'));
 
 // --- Constants ---
 const LOADING_DELAY_MS = 3500; // Adjust as needed
@@ -34,10 +34,14 @@ const SAKURA_COUNT = 250;
 const FIREFLY_COUNT = 120;
 const SNOW_COUNT = 350;
 const RAIN_COUNT = 350;
-const AUTUMN_LEAVES_COUNT = 300; // Count for autumn leaves
-const WEATHER_MODES = ['sakura', 'fireflies', 'snow', 'rain', 'autumn']; // Added 'autumn'
-const DAY_START_HOUR = 6; // 6 AM
-const DAY_END_HOUR = 18; // 6 PM
+const AUTUMN_LEAVES_COUNT = 300;
+const WEATHER_MODES = ['sakura', 'fireflies', 'snow', 'rain', 'autumn'];
+
+// Time definitions (24-hour format)
+const MORNING_START_HOUR = 6; // 6 AM
+const AFTERNOON_START_HOUR = 12; // 12 PM (Noon)
+const EVENING_START_HOUR = 17; // 6 PM
+const NIGHT_START_HOUR = 19; // 9 PM
 
 // Configuration for Rainfall component
 const RAIN_CONFIG = {
@@ -48,15 +52,36 @@ const RAIN_CONFIG = {
 
 // --- Helper Function: Get Initial Weather Mode ---
 const getInitialWeatherMode = () => {
+  // Priority 1: Check localStorage for user's explicit choice
   const savedWeather = localStorage.getItem('weatherMode');
   if (savedWeather && WEATHER_MODES.includes(savedWeather)) {
+    console.log(`Using saved weather mode from localStorage: ${savedWeather}`);
     return savedWeather;
   }
-  // Default based on time if nothing saved
+
+  // Priority 2: Determine default based on time of day
   const currentHour = new Date().getHours();
-  const isDayTime = currentHour >= DAY_START_HOUR && currentHour < DAY_END_HOUR;
-  // Default to Sakura for day, Fireflies for night initially
-  return isDayTime ? 'sakura' : 'fireflies';
+  let timeBasedMode;
+
+  if (currentHour >= MORNING_START_HOUR && currentHour < AFTERNOON_START_HOUR) {
+    // Morning (6am - 11:59am): Randomly Snow or Rain
+    timeBasedMode = Math.random() < 0.5 ? 'snow' : 'rain';
+    console.log(`Initial weather mode (Morning): Randomly selected ${timeBasedMode}`);
+  } else if (currentHour >= AFTERNOON_START_HOUR && currentHour < EVENING_START_HOUR) {
+    // Afternoon (12pm - 5:59pm): Sakura
+    timeBasedMode = 'sakura';
+    console.log(`Initial weather mode (Afternoon): ${timeBasedMode}`);
+  } else if (currentHour >= EVENING_START_HOUR && currentHour < NIGHT_START_HOUR) {
+    // Evening (6pm - 8:59pm): Autumn
+    timeBasedMode = 'autumn';
+    console.log(`Initial weather mode (Evening): ${timeBasedMode}`);
+  } else {
+    // Night (9pm - 5:59am): Fireflies
+    timeBasedMode = 'fireflies';
+    console.log(`Initial weather mode (Night): ${timeBasedMode}`);
+  }
+
+  return timeBasedMode;
 };
 
 // --- Determine initial state outside component (runs once on load) ---
@@ -114,8 +139,9 @@ function App() {
     updateElementClasses(appRef.current);
     updateElementClasses(fixedBgRef.current);
 
-    // Save the current weather mode choice to localStorage
+    // Save the *current* weather mode choice to localStorage whenever it changes
     localStorage.setItem('weatherMode', weatherMode);
+    console.log(`Saved weather mode to localStorage: ${weatherMode}`);
 
     // Dependencies: Run this effect when weatherMode or the derived dark mode state changes
   }, [weatherMode, isEffectivelyDarkMode]);
@@ -128,7 +154,9 @@ function App() {
     setWeatherMode(prevMode => {
       const currentIndex = WEATHER_MODES.indexOf(prevMode);
       const nextIndex = (currentIndex + 1) % WEATHER_MODES.length; // Cycle using modulo
-      return WEATHER_MODES[nextIndex];
+      const nextMode = WEATHER_MODES[nextIndex];
+      console.log(`Toggled weather mode from ${prevMode} to ${nextMode}`);
+      return nextMode;
     });
   }, []); // No dependencies needed for this callback
 
@@ -141,7 +169,7 @@ function App() {
       case 'fireflies': return <Fireflies count={FIREFLY_COUNT} />;
       case 'snow':      return <Snowfall count={SNOW_COUNT} />;
       case 'rain':      return <Rainfall count={RAIN_COUNT} {...RAIN_CONFIG} />; // Spread config props
-      case 'autumn':    return <AutumnLeaves totalCount={AUTUMN_LEAVES_COUNT} />; // Added Autumn case
+      case 'autumn':    return <AutumnLeaves totalCount={AUTUMN_LEAVES_COUNT} />;
       default:          return null; // Fallback if mode is invalid
     }
   };
@@ -160,6 +188,7 @@ function App() {
       <div
         ref={fixedBgRef}
         className={`fixed-background ${initialThemeClassGlobal} ${initialWeatherClassGlobal}`}
+        aria-hidden="true" // Hide from screen readers as it's decorative
       ></div>
 
       {/* Main App Container */}
@@ -176,8 +205,11 @@ function App() {
           <div style={{
               position: 'fixed', top: '40px', right: '20px',
               width: '55px', height: '55px', borderRadius: '50%',
-              backgroundColor: '#ccc', zIndex: 1001
+              backgroundColor: 'rgba(150, 150, 150, 0.5)', // Semi-transparent placeholder
+              zIndex: 1001,
+              boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
              }}
+             aria-label="Loading weather toggle"
           />
         }>
           <WeatherToggle weatherMode={weatherMode} toggleWeatherMode={toggleWeatherMode} />
@@ -187,7 +219,7 @@ function App() {
         <ScrollButton />
 
         {/* Background Particle Canvas Container */}
-        <div className="canvas-container">
+        <div className="canvas-container" aria-hidden="true">
           {/*
             IMPORTANT: The Canvas component itself does NOT have a key={weatherMode}.
             This keeps the WebGL context alive across weather changes,
@@ -220,12 +252,13 @@ function App() {
                   Loading Content...
                 </div>
               }>
-                <section id="home"><Home isAppLoaded={!isLoading} /></section>
-                <section id="about"><About /></section>
-                <section id="skills"><Skills /></section>
-                <section id="education"><Education /></section>
-                <section id="projects"><Projects /></section>
-                <section id="contact"><Contact /></section>
+                {/* Add role="region" and aria-labelledby for better structure if needed */}
+                <section id="home" aria-labelledby="home-heading"><Home isAppLoaded={!isLoading} /></section>
+                <section id="about" aria-labelledby="about-heading"><About /></section>
+                <section id="skills" aria-labelledby="skills-heading"><Skills /></section>
+                <section id="education" aria-labelledby="education-heading"><Education /></section>
+                <section id="projects" aria-labelledby="projects-heading"><Projects /></section>
+                <section id="contact" aria-labelledby="contact-heading"><Contact /></section>
               </Suspense>
             </main>
             {/* <Footer /> */} {/* Uncomment if you have and use a Footer component */}
