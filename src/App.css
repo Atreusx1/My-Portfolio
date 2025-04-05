@@ -1,61 +1,59 @@
-/* src/App.css */
-
-/* --- FONT IMPORTS --- */
 @import url('https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&family=Yuji+Mai&display=swap');
 
-/* --- CSS VARIABLES (THEMES - Original) --- */
 :root {
   --sky-blue: #55a6e0;
   --grass-green-light: #A5CC6F;
   --grass-green-medium: #7CB556;
   --tree-green-dark: #305A40;
   --flower-yellow: #FDD835;
-  
+
   --text-light: #FFFFFF;
   --text-medium: #E0F2F7;
   --text-dark: #263238;
-  
+
   --bg-overlay-dark: rgba(48, 90, 64, 0.8);
   --bg-overlay-medium: rgba(255, 255, 255, 0.11);
   --bg-overlay-light: rgba(255, 255, 255, 0.05);
   --bg-overlay-blue: rgba(85, 166, 224, 0.15);
   --bg-overlay-yellow: rgba(253, 216, 53, 0.15);
   --bg-overlay-selected: rgba(85, 166, 224, 0.25);
-  
-  --bg-primary: var(--tree-green-dark);
-  --bg-secondary: #2a3f34;
+
   --autumn-orange: #d67d0e; /* Slightly adjusted for light mode? */
   --autumn-brown: #a04d18; /* Slightly adjusted for light mode? */
+  --bg-primary: var(--tree-green-dark);
+  --bg-secondary: #2a3f34;
+
   --bg-medium-transparent: var(--bg-overlay-medium);
   --bg-light-transparent: var(--bg-overlay-light);
-  }
-  
-  .light-mode {
+}
+
+.light-mode {
   --sky-blue: #9fe1ff;
   --grass-green-light: #9ccc65;
   --grass-green-medium: #80c536;
   --tree-green-dark: #33691e;
   --flower-yellow: #ffd600;
-  
+
   --text-light: #e7ffe3;
   --text-medium: linear-gradient(135deg, #263238 0%, #455a64 100%);
   --text-dark: #000a12;
-  
+
   --bg-overlay-dark: rgba(27, 94, 32, 0.85);
   --bg-overlay-medium: rgba(27, 94, 32, 0.12);
   --bg-overlay-light: rgba(27, 94, 32, 0.05);
   --bg-overlay-blue: rgba(26, 140, 255, 0.15);
   --bg-overlay-yellow: rgba(255, 192, 0, 0.2);
   --bg-overlay-selected: rgba(26, 140, 255, 0.25);
-  
+
   --bg-primary: #bbecec;
   --bg-secondary: #ffffff;
-  
+
   --bg-medium-transparent: rgba(240, 247, 247, 0.082);
   --bg-light-transparent: rgba(255, 255, 255, 0.322);
-  }
+}
 
-/* --- GLOBAL STYLES & RESETS --- */
+
+/* --- Global Styles & Resets --- */
 * {
   margin: 0;
   padding: 0;
@@ -63,13 +61,12 @@
 }
 
 /* --- Body & HTML --- */
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden; /* Prevent horizontal scroll */
-}
-body, html { /* Combined for font */
+/* Apply transitions to elements that change color */
+body, html {
   font-family: 'Sawarabi Mincho', serif; /* Base font */
-  background-color: transparent; /* Handled by .app or .fixed-background */
+  scroll-behavior: smooth;
+  /* background-color will be handled by .app or .fixed-background */
+  background-color: transparent;
   color: var(--text-light); /* Will switch based on light/dark mode */
   overflow-x: hidden;
   width: 100%;
@@ -78,93 +75,83 @@ body, html { /* Combined for font */
 
 /* --- Buttons --- */
 button {
-   cursor: pointer;
-   font-family: inherit; /* Inherit base font */
-   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  /* Optional: change cursor for buttons too */
+   cursor: pointer; /* Using standard pointer for simplicity */
+   font-family: inherit; /* Inherit Sawarabi Mincho from body */
+   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Add transitions */
 }
 
-
-/* --- MAIN LAYOUT CONTAINERS --- */
-
-/* App Container (non-iOS uses this for background) */
+/* --- App Container --- */
 .app {
   position: relative;
   width: 100%;
   min-height: 100vh;
-  /* Background handled by @supports rules */
+  /* Background handled by @supports rules below */
   background-size: cover;
-  background-position: center center; /* Keep original positioning */
+  background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
 
-/* Fixed Background (for iOS fix) */
-.fixed-background {
-  /* Defined within @supports rule later */
-}
-
-/* Canvas Container (holds the 3D particle effect) */
+/* --- Canvas Container --- */
 .canvas-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 0; /* Behind content, potentially above .fixed-background */
+  z-index: 0; /* Behind content, but in front of .app background (or .fixed-background) */
   overflow: hidden;
-  background-color: transparent !important;
+  background-color: transparent !important; /* Ensure canvas itself doesn't block the image */
 }
+
 /* Fix viewport height issue on mobile */
 @supports (height: 100dvh) {
   .canvas-container {
     height: 100dvh;
   }
 }
-canvas { /* Ensure the canvas itself is transparent */
+
+canvas {
   width: 100% !important;
   height: 100% !important;
-  display: block; /* Avoid potential extra space */
-  background-color: transparent !important;
+  background-color: transparent !important; /* Ensure canvas is transparent */
 }
 
-/* Content Wrapper (Scrollable Area) */
+/* --- Content Wrapper --- */
 .content {
   position: relative;
-  z-index: 1; /* Ensure content is above canvas and fixed background */
-  background-color: transparent; /* Ensure no blocking background */
+  z-index: 1; /* Ensure content is above canvas */
 }
 
 
-/* --- COMMON SECTION STYLES --- */
+/* --- Section Styles --- */
 .sections { width: 100%; }
-
 section {
-  padding: 90px 5.5rem; /* Default padding */
-  min-height: 100vh; /* Ensure sections fill viewport height */
+  padding: 90px 5.5rem; /* Slightly more padding */
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: transparent; /* Sections transparent by default */
-  position: relative; /* Needed for z-index */
-  z-index: 1; /* Above canvas */
+  /* Sections themselves should likely be transparent */
+  background-color: transparent;
+  position: relative; /* Needed for z-index stacking */
+  z-index: 1; /* Ensure section content is above canvas */
 }
 
-/* Inner container for section content */
 .section-container, .section-container1 {
-  max-width: 1200px; /* Max width for content */
-  margin: 0 auto; /* Center content */
-  opacity: 0; /* For fade-in animation */
-  transform: translateY(50px); /* Start position for animation */
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  max-width: 1200px;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.8s ease;
 }
-/* Animation trigger class */
 .section-container.animate-in, .section-container1.animate-in {
   opacity: 1;
   transform: translateY(0);
 }
-/* Special case for container1 if needed */
-.section-container1.animate-in { display: contents; }
+.section-container1.animate-in { display: contents; } /* Keep this */
 
 /* --- HEADING FONT --- */
 .section-title, .section-title1, .section-title2,
@@ -174,30 +161,29 @@ section {
   font-family: 'Yuji Mai', serif; /* Heading font */
 }
 
-/* Section Titles */
+
 .section-title, .section-title1, .section-title2 {
-  font-size: 2.8rem;
+  font-size: 2.8rem; /* Slightly larger */
   margin-bottom: 3.5rem;
   position: relative;
   display: inline-block;
-  color: var(--text-light); /* Uses variable */
-  font-weight: 700;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  color: var(--text-light); /* Switches text color */
+  font-weight: 700; /* Bolder */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
   transition: color 0.5s ease-in-out;
 }
 /* Specific titles */
 .section-title1 { display: flex; justify-content: center; font-weight: 800;}
 .section-title2 { font-size: 1.8rem; }
 
-/* Light mode title adjustments */
+/* Optional: Adjust shadow in light mode */
 .light-mode .section-title,
 .light-mode .section-title1,
 .light-mode .section-title2 {
    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Lighter shadow */
-   /* Color is handled by the base rule using --text-light */
+   color: var(--text-light); /* Ensure light mode text color is applied */
 }
 
-/* Underline for main section titles */
 .section-title:after {
   content: '';
   position: absolute;
@@ -205,13 +191,13 @@ section {
   left: 0;
   width: 70px;
   height: 5px;
-  background: linear-gradient(90deg, var(--flower-yellow), var(--sky-blue)); /* Gradient uses variables */
+  /* Vibrant underline gradient - uses variables */
+  background: linear-gradient(90deg, var(--flower-yellow), var(--sky-blue));
   border-radius: 3px;
   transition: background 0.5s ease-in-out;
 }
 
-
-/* --- HOME SECTION --- */
+/* --- Home Section Styles --- */
 .home-container {
   /* Inherits padding/min-height from section */
   max-width: 1200px;
@@ -233,6 +219,7 @@ section {
 }
 
 .name {
+  /* font-family handled by common heading rule */
   font-size: 4rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -241,11 +228,12 @@ section {
 }
 
 .title {
+  /* font-family handled by common heading rule */
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 2rem;
   color: var(--grass-green-light); /* Uses variable */
-  height: 2.5rem; /* Reserve space for typewriter effect */
+  height: 2.5rem; /* Keep for typewriter effect maybe */
   transition: color 0.5s ease-in-out;
 }
 
@@ -253,38 +241,81 @@ section {
   font-size: 1.2rem;
   max-width: 600px;
   margin-bottom: 3rem;
-  line-height: 1.7;
+  line-height: 1.7; /* Slightly more spacing */
   color: var(--text-light); /* Uses variable */
   transition: color 0.5s ease-in-out;
 }
 
-/* Button Container */
 .button-container { display: flex; gap: 1.5rem; }
 
-/* --- ABOUT SECTION --- */
-.about-content {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 3rem;
-  align-items: center;
+/* Buttons Base */
+.primary-button, .secondary-button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  /* font-family inherits from button -> body */
 }
 
-.about-image {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+/* Dark Mode Button Styles (Default) */
+.primary-button {
+  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue));
+  color: var(--text-dark); /* Dark text for contrast */
+  font-weight: bold;
 }
+.secondary-button {
+  background: transparent;
+  color: var(--text-light); /* Light text */
+  border: 2px solid var(--sky-blue); /* Blue border */
+}
+
+/* Light Mode Button Styles */
+.light-mode .primary-button {
+  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue)); /* Dark Green/Teal gradient */
+  color: #FFFFFF; /* White text */
+}
+.light-mode .secondary-button {
+  background: transparent;
+  color: var(--text-light); /* Dark text */
+  border: 2px solid var(--sky-blue); /* Dark Cyan/Teal border */
+}
+
+/* Button Hover Effects */
+.primary-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 15px rgba(74, 68, 58, 0.3);
+}
+.light-mode .primary-button:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Darker shadow */
+}
+
+.secondary-button:hover {
+  color: var(--flower-yellow);
+  background: var(--bg-overlay-blue); /* Faint blue/cyan overlay */
+  transform: translateY(-4px);
+  border-color: var(--flower-yellow);
+}
+/* Light mode secondary hover is handled correctly by variables */
+
+
+/* --- About Section Styles --- */
+.about-content { display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: center; }
+.about-image { display: flex; justify-content: center; align-items: center; }
 
 .image-placeholder {
   width: 280px;
   height: 280px;
   border-radius: 20px;
-  background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue)); /* Gradient uses variables */
+  /* Gradient for image bg - uses variables */
+  background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue));
   display: flex; justify-content: center; align-items: center;
   font-size: 5rem; font-weight: 700;
-  color: var(--text-light); /* Text inside placeholder */
+  color: var(--text-light); /* Text inside placeholder changes */
   position: relative; overflow: hidden;
-  animation: float 3.5s ease-in-out infinite;
+  animation: float 3.5s ease-in-out infinite; /* Slightly slower float */
   perspective: 1000px;
   transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
 }
@@ -293,40 +324,30 @@ section {
   50% { transform: translateY(-10px) rotateX(8deg); }
   100% { transform: translateY(0) rotateX(0deg); }
 }
-/* Light mode placeholder text */
+/* Ensure placeholder text is readable in light mode */
 .light-mode .image-placeholder {
-   color: #FFFFFF; /* White text on light gradient? Original was var(--text-light) which is light green */
+   color: #FFFFFF; /* White text on dark gradient */
 }
 
 .image-placeholder img {
-  width: 100%; height: 100%; object-fit: cover;
-  border-radius: 15px; /* Slightly smaller radius than container */
+  border-radius: 15px;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
   box-shadow: 0px 8px 12px rgba(74, 68, 58, 0.3);
+  width: 100%; height: 100%; object-fit: cover;
 }
 .image-placeholder:hover img {
   transform: scale(1.04) rotateX(3deg);
   box-shadow: 0px 12px 18px rgba(74, 68, 58, 0.4);
-}
-.light-mode .image-placeholder img {
-   box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.15); /* Lighter shadow */
-}
-.light-mode .image-placeholder:hover img {
-   box-shadow: 0px 12px 18px rgba(0, 0, 0, 0.2); /* Lighter shadow */
 }
 
 .about-text p {
   margin-bottom: 1.5rem;
   line-height: 1.8;
   color: var(--text-light); /* Uses variable */
+  transition: color 0.5s ease-in-out;
 }
 
-.personal-info {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin: 2rem 0;
-}
+.personal-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin: 2rem 0; }
 .info-item { display: flex; flex-direction: column; }
 .info-label {
   font-weight: 600;
@@ -336,20 +357,36 @@ section {
 }
 .info-value { color: var(--text-light); transition: color 0.5s ease-in-out; } /* Uses variable */
 
-
-/* --- SKILLS SECTION --- */
-.skills-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+.resume-button {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium)); /* Uses variables */
+  color: var(--text-dark); /* Dark text default */
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  /* font-family inherits from button -> body */
+}
+/* Ensure readable text color in light mode */
+.light-mode .resume-button {
+  color: #FFFFFF; /* Light text on dark gradient */
+}
+.resume-button:hover {
+  transform: translateY(-3px);
+  /* Dynamic shadow color */
+  box-shadow: 0 8px 15px color-mix(in srgb, var(--flower-yellow) 40%, transparent);
 }
 
+/* --- Skills Section Styles --- */
+.skills-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 .skill-category {
   background: var(--bg-medium-transparent); /* Uses variable */
   padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Original shadow */
-  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
+  /* Dynamic shadow and border */
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
+  border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Default to white if variable undefined */
   transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease;
 }
 .light-mode .skill-category {
@@ -357,6 +394,7 @@ section {
 }
 
 .category-title {
+  /* font-family handled by common heading rule */
   font-size: 1.5rem;
   margin-bottom: 1.5rem;
   color: var(--text-light); /* Uses variable */
@@ -373,83 +411,76 @@ section {
 
 .skill-bar {
   height: 8px;
-  background: color-mix(in srgb, var(--text-light, #fff) 15%, transparent); /* Bar background based on text color */
+  /* Bar background based on text color */
+  background: color-mix(in srgb, var(--text-light, #fff) 15%, transparent); /* Default to white if variable undefined */
   border-radius: 4px;
   overflow: hidden;
   transition: background-color 0.5s ease-in-out;
 }
 .skill-progress {
   height: 100%;
-  background: linear-gradient(to right, var(--sky-blue), var(--grass-green-light)); /* Progress gradient uses variables */
+  /* Progress gradient uses variables */
+  background: linear-gradient(to right, var(--sky-blue), var(--grass-green-light));
   border-radius: 4px;
-  transition: background 0.5s ease-in-out, width 1s ease-in-out; /* Animate width change */
+  transition: background 0.5s ease-in-out, width 1s ease-in-out;
 }
 
-
-/* --- PROJECTS SECTION --- */
-.project-filters {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 3rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
+/* --- Projects Section Styles --- */
+.project-filters { display: flex; justify-content: center; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
 .project-filters button {
   padding: 0.6rem 1.5rem;
   background: transparent;
   color: var(--text-light); /* Uses variable */
   border: 2px solid var(--grass-green-light); /* Uses variable */
-  border-radius: 30px; /* Pill shape */
+  border-radius: 30px;
   cursor: pointer;
   font-weight: 500;
   transition: all 0.3s ease;
+  /* font-family inherits from button -> body */
 }
 .project-filters button.active, .project-filters button:hover {
   background: linear-gradient(45deg, var(--flower-yellow), var(--sky-blue)); /* Uses variables */
   border-color: transparent;
-  color: var(--text-dark); /* Dark text for contrast */
+  color: var(--text-dark); /* Dark text default */
 }
-/* Light mode active/hover filter button */
+/* Ensure readable text color in light mode */
 .light-mode .project-filters button.active,
 .light-mode .project-filters button:hover {
-  color: #FFFFFF; /* White text */
+  color: #FFFFFF; /* Light text on dark gradient */
 }
 
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
-}
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2rem; }
 .project-card {
   background: var(--bg-medium-transparent); /* Uses variable */
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Original shadow */
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
   transition: all 0.3s ease;
   border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
 }
 .light-mode .project-card {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
 .project-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 10px 20px rgba(74, 68, 58, 0.25); /* Original hover shadow */
+  box-shadow: 0 10px 20px rgba(74, 68, 58, 0.25);
 }
 .light-mode .project-card:hover {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
+
 .project-image { width: 100%; height: 200px; overflow: hidden; }
-.project-image .image-placeholder { /* Reuse style */
+.project-image .image-placeholder { /* Reuses image placeholder style */
   width: 100%; height: 100%; border-radius: 0; font-size: 3rem;
   background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue)); /* Uses variables */
   transition: background 0.5s ease-in-out;
-  animation: none; /* Disable float animation */
-  color: #FFFFFF; /* White text */
 }
 
 .project-content { padding: 1.5rem; }
 .project-title {
+  /* font-family handled by common heading rule */
   font-size: 1.3rem; margin-bottom: 1rem; color: var(--text-light); /* Uses variable */
   transition: color 0.5s ease-in-out;
 }
@@ -481,61 +512,67 @@ section {
 .project-link:hover { color: var(--flower-yellow); } /* Uses variable */
 
 
-/* --- EDUCATION / EXPERIENCE SECTION (Tabs & Timeline) --- */
-
-/* Tab Buttons */
+/* --- Tab Styles --- */
 .tabs-container {
   display: flex;
-  justify-content: center;
-  margin-bottom: 3rem;
-  gap: 1rem;
+  justify-content: center; /* Or flex-start */
+  margin-bottom: 3rem; /* Space between tabs and content */
+  gap: 1rem; /* Space between tab buttons */
 }
+
 .tab-button {
-  padding: 0.8rem 2rem;
-  font-size: 1.1rem;
+  padding: 0.8rem 2rem; /* Generous padding */
+  font-size: 1.1rem; /* Slightly larger font */
   font-weight: 600;
   border-radius: 30px; /* Pill shape */
   cursor: pointer;
   transition: all 0.3s ease;
-  border: 2px solid var(--sky-blue); /* Uses variable */
-  background-color: transparent;
-  color: var(--text-light); /* Uses variable */
+  border: 2px solid var(--sky-blue); /* Use a theme color for border */
+  background-color: transparent; /* Default transparent */
+  color: var(--text-light); /* Default text color */
+  font-family: inherit; /* Ensure font inherits from button -> body */
 }
+
 .tab-button:hover {
-  background-color: var(--bg-overlay-blue); /* Uses variable */
-  border-color: var(--sky-blue);
+  background-color: var(--bg-overlay-blue); /* Use a theme overlay on hover */
+  border-color: var(--sky-blue); /* Keep border color consistent on hover */
 }
+
 .tab-button.active {
-  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue)); /* Uses variables */
-  color: var(--text-dark); /* Dark text for contrast */
-  border-color: transparent;
+  /* Use a vibrant gradient for active tab */
+  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue));
+  color: var(--text-dark); /* Dark text default */
+  border-color: transparent; /* Hide border when filled */
   box-shadow: 0 4px 10px color-mix(in srgb, var(--sky-blue) 30%, transparent); /* Dynamic shadow */
 }
-/* Light mode active tab button */
+/* Ensure readable text color in light mode */
 .light-mode .tab-button.active {
-  color: #FFFFFF; /* White text */
+  color: #FFFFFF; /* Light text on dark gradient */
 }
 
-/* Content Grid (holds Timeline and Details) */
+/* --- Content Grid --- */
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Two columns */
-  gap: 3rem;
+  grid-template-columns: 1fr 1fr; /* Keep the two-column layout */
+  gap: 3rem; /* Keep the gap */
 }
 
-/* Subsection Title (Experience/Education) */
+
+/* --- Experience/Education Styles --- */
 .subsection-title {
+  /* font-family handled by common heading rule */
   font-size: 1.8rem; margin-bottom: 2rem; color: var(--grass-green-light); /* Uses variable */
   transition: color 0.5s ease-in-out;
 }
 
-/* Timeline */
+/* --- Timeline Adjustments --- */
 .timeline-section {
-    /* Container for the timeline column */
+    /* Adjust padding/margin if needed */
 }
+
 .timeline { position: relative; }
 .timeline:before { /* The vertical line */
-  content: ''; position: absolute; top: 0; left: 15px; /* Aligns with center of marker */ height: 100%; width: 3px;
+  content: ''; position: absolute; top: 0; left: 15px; height: 100%; width: 3px;
   background: var(--sky-blue); /* Uses variable */
   border-radius: 2px;
   transition: background-color 0.5s ease-in-out;
@@ -544,40 +581,47 @@ section {
   position: relative;
   padding-left: 45px; /* Space for marker */
   margin-bottom: 3rem;
-  transition: background-color 0.3s ease, border-radius 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 8px;
-  padding-top: 10px; padding-bottom: 10px; padding-right: 15px; /* Padding for selection highlight */
-  cursor: pointer;
+  transition: background-color 0.3s ease, border-radius 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow */
+  border-radius: 8px; /* Add slight rounding for background effect */
+  padding-top: 10px; /* Add some padding for background visibility */
+  padding-bottom: 10px;
+  padding-right: 15px; /* Padding on the right too */
+  cursor: pointer; /* Indicate clickability */
 }
-.timeline-item.selected { /* Highlight for selected item */
-    background-color: var(--bg-overlay-selected); /* Uses variable */
-    box-shadow: 0 0 15px color-mix(in srgb, var(--sky-blue) 40%, transparent); /* Soft glow */
+
+/* --- ENHANCED Timeline Selection Visibility --- */
+.timeline-item.selected {
+    background-color: var(--bg-overlay-selected); /* Use the defined selected overlay */
+    box-shadow: 0 0 15px color-mix(in srgb, var(--sky-blue) 40%, transparent); /* Soft glow using variable */
 }
 
 .timeline-marker {
-  position: absolute; top: 10px; left: 15px; /* Center marker on the line */
-  transform: translateX(-50%); /* Center marker horizontally */
+  position: absolute; top: 10px; left: 0; /* Align with top padding */
   width: 30px; height: 30px;
   border-radius: 50%;
-  background: var(--text-light); /* Original: White in dark, light green in light */
-  border: 4px solid var(--sky-blue); /* Uses variable for default border */
+  background: var(--text-light); /* White in dark, dark in light */
+  border: 4px solid var(--sky-blue); /* Uses variable for border */
   z-index: 1;
-  display: flex; justify-content: center; align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 16px;
   transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease, color 0.5s ease-in-out;
 }
-.light-mode .timeline-marker { /* Adjust marker background in light mode */
-    background: var(--tree-green-dark); /* Dark background */
-    color: var(--text-light); /* Light text/icon (original light green) */
+/* Marker text/icon color */
+.light-mode .timeline-marker {
+    background: var(--tree-green-dark); /* Dark background in light mode */
+    color: var(--text-light); /* Light text/icon in light mode */
 }
 
-.timeline-marker-icon { /* Icon inside marker */
+.timeline-marker-icon {
     color: var(--tree-green-dark); /* Dark green default */
     transition: color 0.5s ease-in-out;
 }
-.light-mode .timeline-marker-icon { /* Icon color in light mode marker */
-    color: var(--text-light); /* Original light green */
+.light-mode .timeline-marker-icon {
+    color: var(--text-light); /* Ensure this matches .timeline-marker text color */
 }
+
 
 /* Specific Marker Borders */
 .experience-marker { border-color: var(--grass-green-medium); }
@@ -592,6 +636,7 @@ section {
   transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out;
 }
 .timeline-title {
+  /* font-family handled by common heading rule */
   font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--text-light); transition: color 0.5s ease-in-out;} /* Uses variable */
 .timeline-institution {
   font-size: 1rem; color: var(--grass-green-light); margin-bottom: 1rem; font-weight: 500; /* Uses variable */
@@ -605,117 +650,140 @@ section {
   transition: color 0.5s ease-in-out;
 }
 
-/* Experience Details Box */
+
+/* --- Experience Details Section (Single Box) --- */
 .details-section {
-    /* Container for the details column */
+    /* Styles for the section containing the box */
 }
-.experience-details-list { /* The box itself */
-    background: var(--bg-medium-transparent); /* Uses variable */
-    padding: 2rem;
+
+/* Style the container div as the box */
+.experience-details-list {
+    background: var(--bg-medium-transparent); /* Box background - uses variable */
+    padding: 2rem; /* Padding inside the box */
     border-radius: 10px;
     border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
-    box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Original shadow */
-    margin-top: 0; /* Align with subsection title ideally */
+    box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
+    margin-top: 0; /* Align with subsection title */
     transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease;
 }
 .light-mode .experience-details-list {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Light mode shadow */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
-.details-title { /* Optional: Title inside the box */
+
+.details-title { /* If you add title/company back */
+    /* font-family handled by common heading rule */
     font-size: 1.2rem;
     color: var(--text-light); /* Uses variable */
     margin-bottom: 1rem;
     transition: color 0.5s ease-in-out;
 }
-.details-points { /* The UL */
-    list-style: none; padding: 0; margin: 0;
+
+/* Style the UL inside the box */
+.details-points {
+    list-style: none; /* Remove default bullets */
+    padding: 0; /* Reset default padding */
+    margin: 0; /* Reset default margin */
 }
-.details-point { /* Each LI */
+
+/* Style each LI (bullet point) inside the box */
+.details-point {
     font-size: 0.95rem;
     color: var(--text-light); /* Uses variable */
     opacity: 0.9;
-    line-height: 1.7;
-    margin-bottom: 1rem;
+    line-height: 1.7; /* Line height for the text */
+    margin-bottom: 1rem; /* Space between points */
     position: relative;
     padding-left: 25px; /* Space for custom bullet */
     transition: color 0.5s ease-in-out;
-    /* Reset any potentially inherited box styles */
-    background: none; border: none; box-shadow: none; border-radius: 0; display: block;
+
+    /* Reset styles from previous box attempt */
+    background: none; border: none; box-shadow: none;
+    padding: 0; padding-left: 25px; border-radius: 0;
+    display: block; /* Back to default block display */
 }
-.details-point:last-child { margin-bottom: 0; }
-.details-point::before { /* Custom bullet */
-    content: '▹'; position: absolute; left: 0; top: 0px;
+/* Remove hover effect from individual points */
+.details-point:hover {
+    background: none; transform: none; border-color: transparent; box-shadow: none;
+}
+.details-point:last-child {
+    margin-bottom: 0; /* Remove margin from last point */
+}
+
+/* Custom bullet point using ::before */
+.details-point::before {
+    content: '▹';
+    position: absolute;
+    left: 0;
+    top: 0px; /* Adjust vertical alignment if needed */
     color: var(--grass-green-light); /* Uses variable */
-    font-size: 1.2em; font-weight: bold; line-height: 1.7;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1.7; /* Match text line height */
     transition: color 0.5s ease-in-out;
 }
-.no-selection-message { /* Placeholder text */
-    color: var(--text-medium); /* Uses variable (was gradient in light) */
-    font-style: italic; text-align: center; margin-top: 3rem;
+
+.no-selection-message {
+    color: var(--text-medium); /* Uses variable */
+    font-style: italic;
+    text-align: center;
+    margin-top: 3rem;
     background: var(--bg-medium-transparent); /* Uses variable */
-    padding: 2rem; border-radius: 10px;
+    padding: 2rem;
+    border-radius: 10px;
     border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
     transition: all 0.5s ease-in-out;
 }
-/* If text-medium is gradient in light mode, this might need adjustment */
-.light-mode .no-selection-message {
-   color: #455a64; /* Fallback solid color for light mode */
-   /* background: var(--text-medium); */ /* Applying gradient to text background? */
-}
 
-
-/* --- CERTIFICATIONS SECTION --- */
+/* --- Certifications Styles --- */
 .certifications-list { display: flex; flex-direction: column; gap: 1.5rem; }
 .certification-item {
   display: flex; gap: 1.5rem; align-items: center;
   background: var(--bg-medium-transparent); /* Uses variable */
   padding: 1.5rem; border-radius: 10px;
   border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Original shadow */
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
   transition: all 0.3s ease;
 }
 .light-mode .certification-item {
-   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Light mode shadow */
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
 .certification-item:hover {
   background: var(--bg-light-transparent); /* Uses variable */
   transform: translateX(8px);
   border-color: var(--flower-yellow); /* Uses variable */
-  box-shadow: 0 6px 18px rgba(74, 68, 58, 0.15); /* Original hover shadow */
+  box-shadow: 0 6px 18px rgba(74, 68, 58, 0.15);
 }
 .light-mode .certification-item:hover {
-   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); /* Light mode hover shadow */
+   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
+
 .certification-icon {
   width: 50px; height: 50px; border-radius: 50%;
   background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue)); /* Uses variables */
   display: flex; justify-content: center; align-items: center; flex-shrink: 0;
   transition: background 0.5s ease-in-out;
 }
-.certification-icon .fa-trophy { /* Assuming FontAwesome */
+.certification-icon .fa-trophy {
     font-size: 24px;
     color: var(--flower-yellow); /* Uses variable */
     transition: color 0.5s ease-in-out;
 }
-.certification-details { /* Container for text */ }
+.certification-details { /* Container for title/issuer */ }
 .certification-title {
+  /* font-family handled by common heading rule */
   font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-light); margin-top: 0; transition: color 0.5s ease-in-out; } /* Uses variable */
 .certification-issuer { font-size: 0.9rem; color: var(--grass-green-light); margin: 0; transition: color 0.5s ease-in-out; } /* Uses variable */
 
-
-/* --- CONTACT SECTION --- */
-.contact-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-}
+/* --- Contact Section Styles --- */
+.contact-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
 .contact-info { padding-right: 2rem; }
 .contact-info h3 {
+  /* font-family handled by common heading rule */
   font-size: 1.8rem; margin-bottom: 1.5rem; color: var(--grass-green-light); /* Uses variable */
   transition: color 0.5s ease-in-out;
 }
 .contact-info p { margin-bottom: 2rem; line-height: 1.8; color: var(--text-light); transition: color 0.5s ease-in-out; } /* Uses variable */
-
 .contact-details { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
 .contact-item { display: flex; gap: 1.5rem; align-items: center; }
 .contact-icon {
@@ -729,32 +797,33 @@ section {
 .contact-text h4 { font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--sky-blue); transition: color 0.5s ease-in-out;} /* Uses variable */
 .contact-text p { font-size: 0.9rem; margin-bottom: 0; color: var(--text-light); transition: color 0.5s ease-in-out; } /* Uses variable */
 
-.social-links { display: flex; gap: 1rem; flex-wrap: wrap; } /* Container */
+.social-links { display: flex; gap: 1rem; } /* Container */
 .social-link { /* Individual link */
   padding: 0.5rem 1rem;
-  background: var(--bg-overlay-light); /* Uses variable */
-  color: var(--text-light); /* Uses variable */
+  background: var(--bg-overlay-light); /* Use a subtle overlay */
+  color: var(--text-light); /* Main text color */
   border-radius: 4px; text-decoration: none;
   border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
   transition: all 0.3s ease;
 }
 .social-link:hover {
-  background: var(--bg-overlay-yellow); /* Uses variable */
-  color: var(--flower-yellow); /* Uses variable */
-  border-color: var(--flower-yellow); /* Uses variable */
+  background: var(--bg-overlay-yellow); /* Faint yellow/amber overlay */
+  color: var(--flower-yellow); /* Yellow/amber text */
+  border-color: var(--flower-yellow); /* Yellow/amber border */
 }
 
-/* Contact Form */
 .contact-form-container {
   background: var(--bg-medium-transparent); /* Uses variable */
   padding: 2rem; border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15); /* Original shadow */
+  box-shadow: 0 4px 15px rgba(74, 68, 58, 0.15);
   border: 1px solid color-mix(in srgb, var(--text-light, #fff) 20%, transparent); /* Dynamic border */
   transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out, box-shadow 0.3s ease;
 }
 .light-mode .contact-form-container {
-   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Light mode shadow */
+   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
+
+
 .form-group { margin-bottom: 1.5rem; }
 .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-light); transition: color 0.5s ease-in-out; } /* Uses variable */
 .form-group input, .form-group textarea {
@@ -763,7 +832,7 @@ section {
   border: 1px solid color-mix(in srgb, var(--text-light, #fff) 30%, transparent); /* Dynamic border */
   border-radius: 6px;
   color: var(--text-light); /* Text color for input */
-  font-family: inherit; /* Inherit base font */
+  font-family: inherit; /* Inherit Sawarabi Mincho from body */
   transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 .form-group input:focus, .form-group textarea:focus {
@@ -771,36 +840,64 @@ section {
   border-color: var(--sky-blue); /* Accent color border on focus */
   background: var(--bg-overlay-light); /* Slightly different bg on focus */
 }
-textarea { resize: vertical; min-height: 120px; } /* Allow vertical resize */
+
+.submit-button {
+  padding: 1rem 2rem;
+  background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium)); /* Uses variables */
+  color: var(--text-dark); /* Dark text default */
+  border: none; border-radius: 6px;
+  font-family: inherit; /* Inherit Sawarabi Mincho from body */
+  font-weight: bold; font-size:medium; cursor: pointer;
+  transition: all 0.3s ease; width: 100%;
+}
+/* Ensure readable text color in light mode */
+.light-mode .submit-button {
+  color: #FFFFFF; /* Light text on dark gradient */
+}
+.submit-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px color-mix(in srgb, var(--flower-yellow) 30%, transparent); /* Dynamic shadow */
+}
+.submit-button.sending { background: #B0BEC5; cursor: not-allowed; } /* Needs theme adjustment? */
+.light-mode .submit-button.sending { background: #546E7A; color: #ECEFF1; }
+
+.submit-button.success { background: #66BB6A; } /* Needs theme adjustment? */
+.light-mode .submit-button.success { background: #2E7D32; color: #fff;}
 
 
-/* --- FOOTER --- */
+/* --- Footer Styles --- */
 .footer {
-  background: color-mix(in srgb, var(--tree-green-dark) 80%, transparent); /* Dynamic background */
+  /* Dynamic background based on dark green variable */
+  background: color-mix(in srgb, var(--tree-green-dark) 80%, transparent);
   padding: 3rem 1rem 1rem;
   border-top: 1px solid color-mix(in srgb, var(--text-light, #fff) 10%, transparent); /* Dynamic border */
   transition: background-color 0.5s ease-in-out, border-color 0.5s ease-in-out;
-  position: relative; /* Ensure footer content is above background */
-  z-index: 1;
 }
+
+
 .footer-content { max-width: 1200px; margin: 0 auto; margin-bottom: 2rem; }
-.footer-left-container { margin-bottom: 2rem; text-align: center;} /* Center logo container */
+.footer-left-container { margin-bottom: 2rem; }
 .footer-logo {
-  font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem; display: inline-block;
-  background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue), var(--flower-yellow)); /* Gradient uses variables */
+  /* font-family handled by common heading rule */
+  font-size: 1.8rem; font-weight: 700; margin-bottom: 1rem;
+  /* Gradient text uses variables */
+  background: linear-gradient(45deg, var(--grass-green-light), var(--sky-blue), var(--flower-yellow));
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
 }
-.footer-links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; }
+
+.footer-links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
 .footer-links a {
   color: var(--text-light); /* Uses variable */
-  opacity: 0.8; text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
+  opacity: 0.8;
+  text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
 }
 .footer-links a:hover { color: var(--flower-yellow); opacity: 1; } /* Uses variable */
 
-.footer-social { display: flex; gap: 1rem; justify-content: center; }
+.footer-social { display: flex; gap: 1rem; margin-top: 1rem; justify-content: center; }
 .social-icon {
   color: var(--text-light); /* Uses variable */
-  opacity: 0.8; text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease; font-size: 1.2rem;
+  opacity: 0.8;
+  text-decoration: none; transition: color 0.3s ease, opacity 0.3s ease;
 }
 .social-icon:hover { color: var(--flower-yellow); opacity: 1; } /* Uses variable */
 
@@ -812,121 +909,344 @@ textarea { resize: vertical; min-height: 120px; } /* Allow vertical resize */
 }
 .footer-bottom p {
   color: var(--text-light); /* Uses variable */
-  opacity: 0.7; font-size: 0.95rem;
+  opacity: 0.7;
+  font-size: 0.95rem;
   transition: color 0.5s ease-in-out;
 }
 
 
-/* --- BUTTON STYLES (Common & Specific) --- */
+/* --- iOS Fixed Background Fix --- */
+@supports (-webkit-touch-callout: none) {
+  html, body {
+    width: 100%; margin: 0; padding: 0; overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    background-color: transparent !important;
+  }
 
-/* Base Button Styles */
-.primary-button, .secondary-button, .resume-button, .submit-button {
-  padding: 1rem 2rem; font-size: 1rem; font-weight: 600;
-  border-radius: 6px; text-decoration: none;
-  transition: all 0.3s ease; border: none; cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center; /* Align icon/text */
-  gap: 0.5rem;
+  /* Base rule for fixed background element */
+  .fixed-background {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -2; /* Behind ::after and content */
+    background-size: cover;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-image: url("../public/ghibli-night.webp"); /* Base/Fallback */
+    background-color: #1a2a2a;
+    /* --- Slightly longer transition for color --- */
+    transition: background-color 0.8s ease-in-out;
+    /* Hint for layer promotion */
+    will-change: background-color;
+    transform: translateZ(0); /* Force layer creation hint */
+  }
+
+  /* Pseudo-element for cross-fading image */
+  .fixed-background::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: -1; /* In front of parent, behind content */
+    background-size: cover;
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-image: none; /* Start with no specific image */
+    opacity: 0; /* Start invisible */
+    /* --- Longer transition for opacity, delay image removal --- */
+    transition: opacity 0.8s ease-in-out, background-image 0s 0.8s;
+    /* Hint for layer promotion & opacity change */
+    will-change: opacity;
+    transform: translateZ(0); /* Force layer creation hint */
+    pointer-events: none; /* Ensure it doesn't interfere */
+  }
+
+  /* --- Weather-Specific Overrides --- */
+  /* (Color change on parent, image/opacity change on ::after) */
+
+  .fixed-background.weather-sakura { background-color: #7FBCD8; }
+  .fixed-background.weather-sakura::after {
+    background-image: url("../public/ghibli-day.webp");
+    opacity: 1;
+    transition-delay: 0s; /* Override removal delay for fade-in */
+  }
+
+  .fixed-background.weather-fireflies { background-color: #1a2a2a; }
+  .fixed-background.weather-fireflies::after {
+    background-image: url("../public/ghibli-night.webp");
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  .fixed-background.weather-snow { background-color: #5c7a8f; }
+  .fixed-background.weather-snow::after {
+    background-image: url("../public/ghibli-snow.webp");
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  .fixed-background.weather-rain { background-color: #4a5a6a; }
+  .fixed-background.weather-rain::after {
+    background-image: url("../public/ghibli-rain.webp");
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  .fixed-background.weather-autumn { background-color: #4a3a3a; } /* Example base color */
+  .fixed-background.weather-autumn::after {
+    background-image: url("../public/ghibli-evening.webp"); /* Your evening image */
+    opacity: 1;
+    transition-delay: 0s;
+  }
+
+  /* --- Remaining iOS structure --- */
+  .app { background: none !important; position: relative; z-index: 1; min-height: 100vh; }
+  .canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+  .content { position: relative; z-index: 2; background-color: transparent; }
+  section { background: transparent !important; position: relative; z-index: 2; }
+} /* End @supports (-webkit-touch-callout: none) */
+
+/* --- Non-iOS Fallback --- */
+@supports not (-webkit-touch-callout: none) {
+  .app {
+    position: relative; width: 100%; min-height: 100vh;
+    background-size: cover; background-position: center center;
+    background-repeat: no-repeat; background-attachment: fixed;
+    transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
+
+    /* Default background (e.g., dark mode fireflies) - will be overridden by specific weather class */
+    background-image: url("../public/ghibli-night.webp"); /* Fallback */
+    background-color: #1a2a2a; /* Dark base color */
+  }
+
+  /* Specific weather backgrounds for app */
+   .app.weather-sakura { /* Light mode default */
+    background-image: url("../public/ghibli-day.webp");
+    background-color: #7FBCD8;
+  }
+   .app.weather-fireflies { /* Dark mode default */
+    background-image: url("../public/ghibli-night.webp");
+    background-color: #1a2a2a;
+  }
+   .app.weather-snow { /* NEW */
+    background-image: url("../public/ghibli-snow.webp");
+    background-color: #5c7a8f; /* Example snow base color */
+  }
+   .app.weather-rain { /* NEW */
+    background-image: url("../public/ghibli-rain.webp");
+    background-color: #4a5a6a; /* Example rain base color */
+  }
+
+
+  
+  .app.weather-autumn {
+    background-image: url("../public/ghibli-evening.webp");
+    background-color: #4a3a3a; /* Example base color */
+  }
+  
+  /* Canvas container layering */
+   .canvas-container { z-index: 0; /* Behind content */ }
+   .content { position: relative; z-index: 1; /* Above canvas */ }
+   section { position: relative; z-index: 1; background-color: transparent !important; }
+   /* Hide the dedicated fixed-background div if not on iOS */
+   .fixed-background { display: none; }
 }
 
-/* Primary Button */
-.primary-button {
-  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue)); /* Default (Dark mode) */
-  color: var(--text-dark); /* Dark text for contrast */
-}
-.light-mode .primary-button { /* Light mode override */
-  /* Original had dark green/teal */
-  background: linear-gradient(45deg, var(--grass-green-medium), var(--sky-blue));
-  color: #FFFFFF; /* White text */
-}
-.primary-button:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 15px rgba(74, 68, 58, 0.3); /* Original shadow */
-}
-.light-mode .primary-button:hover {
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Lighter shadow */
+
+/* === Weather Toggle Button Styles === */
+
+/* Keyframes (can be defined anywhere in App.css) */
+@keyframes fireflyPulse {
+  0%, 100% { text-shadow: 0 0 8px #f0e68c, 0 0 12px rgba(240, 230, 140, 0.5); }
+  50% { text-shadow: 0 0 12px #f8f0a0, 0 0 18px rgba(248, 240, 160, 0.7); }
 }
 
-
-/* Secondary Button */
-.secondary-button {
-  background: transparent;
-  color: var(--text-light); /* Light text default */
-  border: 2px solid var(--sky-blue); /* Blue border */
-}
-.light-mode .secondary-button { /* Light mode override */
-  color: var(--text-light); /* Original was light green */
-  border: 2px solid var(--sky-blue); /* Original blue border */
-}
-.secondary-button:hover {
-  color: var(--flower-yellow);
-  background: var(--bg-overlay-blue); /* Faint overlay */
-  transform: translateY(-4px);
-  border-color: var(--flower-yellow);
+@keyframes simpleRainDrop {
+    0% { transform: translateY(-20px) scaleY(1); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(20px) scaleY(1.5); opacity: 0; }
 }
 
-/* Resume Button */
-.resume-button {
-  padding: 0.8rem 1.5rem; /* Slightly smaller */
-  background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium)); /* Default (Dark mode) */
-  color: var(--text-dark); /* Dark text */
-}
-.light-mode .resume-button { /* Light mode override */
-  color: #FFFFFF; /* White text */
-}
-.resume-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 15px color-mix(in srgb, var(--flower-yellow) 40%, transparent); /* Dynamic shadow */
+/* Main Button Styling */
+.weather-toggle-button {
+  position: fixed;
+  top: 40px; /* As requested */
+  right: 20px;  /* As requested */
+  z-index: 1001; /* Ensure visibility */
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease,
+              opacity 0.3s ease, visibility 0.3s ease;
+  background-color: #eee; /* Default background */
 }
 
-/* Submit Button (Contact Form) */
-.submit-button {
-  background: linear-gradient(45deg, var(--flower-yellow), var(--grass-green-medium)); /* Default (Dark mode) */
-  color: var(--text-dark); /* Dark text */
+.weather-toggle-button:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+}
+
+.weather-toggle-button:active {
+  transform: scale(0.98);
+}
+
+/* Icon Container */
+.weather-toggle-button .toggle-icon-container {
+  position: relative;
   width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.light-mode .submit-button { /* Light mode override */
-  color: #FFFFFF; /* White text */
-}
-.submit-button:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 15px color-mix(in srgb, var(--flower-yellow) 30%, transparent);
-}
-/* States for submit button */
-.submit-button.sending {
-  background: #B0BEC5; /* Grey */
-  color: var(--text-dark);
-  cursor: not-allowed;
-}
-.light-mode .submit-button.sending { background: #546E7A; color: #ECEFF1; }
 
-.submit-button.success {
-  background: #66BB6A; /* Green */
-  color: var(--text-dark);
+/* Base Icon Styling (inside button) */
+.weather-toggle-button .icon {
+  position: absolute;
+  font-size: 24px;
+  opacity: 0;
+  transform: scale(0.7) translateY(10px);
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out, color 0.5s ease;
+  color: #333; /* Default icon color */
 }
-.light-mode .submit-button.success { background: #2E7D32; color: #fff; }
+
+/* Active Icon Styling */
+.weather-toggle-button .icon.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Container for Background Pseudo-Elements */
+.weather-toggle-button .toggle-background-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* --- Mode Specific Styles --- */
+
+/* Sakura */
+.weather-toggle-button.sakura {
+  background: linear-gradient(135deg, #fadde1, #ffc4d0);
+}
+.weather-toggle-button.sakura .icon { /* More specific selector */
+  color: #d14a8a;
+}
+.weather-toggle-button.sakura::before,
+.weather-toggle-button.sakura::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    transition: all 0.4s ease-out;
+    pointer-events: none;
+}
+.weather-toggle-button.sakura:hover::before {
+    opacity: 0.7; transform: translate(-15px, -10px) scale(1.2);
+}
+.weather-toggle-button.sakura:hover::after {
+    opacity: 0.6; transform: translate(10px, 15px) scale(0.8); transition-delay: 0.1s;
+}
+
+/* Fireflies */
+.weather-toggle-button.fireflies {
+  background: linear-gradient(135deg, #1a2a3a, #0f1720);
+  border: 1px solid rgba(180, 220, 255, 0.3);
+}
+.weather-toggle-button.fireflies .icon {
+  color: #f0e68c;
+  text-shadow: 0 0 8px #f0e68c, 0 0 12px rgba(240, 230, 140, 0.5);
+}
+.weather-toggle-button.fireflies .icon.active {
+  animation: fireflyPulse 2.5s infinite ease-in-out;
+}
+
+/* Snow */
+.weather-toggle-button.snow {
+  background: linear-gradient(135deg, #e0f2f7, #b3e0f2);
+}
+.weather-toggle-button.snow .icon {
+  color: #5a9bb0;
+}
+/* Target pseudo-elements on the background div when button is snow */
+.weather-toggle-button.snow .toggle-background-elements::before,
+.weather-toggle-button.snow .toggle-background-elements::after {
+    content: '❄';
+    position: absolute;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    transition: all 0.5s ease-out;
+}
+.weather-toggle-button.snow:hover .toggle-background-elements::before {
+    opacity: 1; transform: translate(-12px, -8px) rotate(30deg);
+}
+.weather-toggle-button.snow:hover .toggle-background-elements::after {
+    opacity: 1; transform: translate(10px, 12px) rotate(-45deg); transition-delay: 0.1s;
+}
+
+/* Rain */
+.weather-toggle-button.rain {
+  background: linear-gradient(135deg, #a8c0d1, #7e9aaa);
+}
+.weather-toggle-button.rain .icon {
+  color: #3e5f7a;
+}
+/* Target pseudo-element on the background div when button is rain */
+.weather-toggle-button.rain .toggle-background-elements::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 8px;
+    background: rgba(220, 235, 245, 0.7);
+    border-radius: 0 0 2px 2px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+.weather-toggle-button.rain:hover .toggle-background-elements::before {
+    opacity: 1;
+    animation: simpleRainDrop 1s ease-out infinite;
+    animation-delay: 0.2s;
+}
+
+.weather-toggle-button.autumn { background: linear-gradient(135deg, var(--autumn-orange), var(--autumn-brown)); } /* Use variables */
+.weather-toggle-button.autumn .icon { color: #f5d68f; }
+.weather-toggle-button.autumn .toggle-background-elements::before,
 
 
-/* --- UTILITY COMPONENTS --- */
+/* === End Weather Toggle Button Styles === */
 
-/* Loading Screen */
+
+/* --- Loading Screen --- */
 .loading-screen {
   position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
   background: var(--grass-green-medium); /* Use variable */
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 9999; opacity: 1; visibility: visible;
-  transition: opacity 0.5s ease-in-out 0.5s, visibility 0s linear 1s, background-color 0.5s ease-in-out;
-}
-.loading-screen.hidden { /* Class to trigger fade out */
-    opacity: 0; visibility: hidden; transition-delay: 0s, 0.5s;
+  z-index: 9999;
+  transition: background-color 0.5s ease-in-out; /* Smooth transition if theme changes while loading */
 }
 .light-mode .loading-screen {
     background: var(--sky-blue); /* Lighter background in light mode */
 }
+
 .loader {
   width: 40px; height: 40px;
   border: 3px solid rgba(250, 240, 230, 0.3); /* Base border */
   border-radius: 50%;
-  border-top-color: var(--flower-yellow); /* Spinner color uses variable */
+  border-top-color: var(--flower-yellow); /* Spinner color using variable */
   animation: spin 1s linear infinite; margin-bottom: 1rem;
   transition: border-top-color 0.5s ease-in-out;
 }
@@ -934,310 +1254,144 @@ textarea { resize: vertical; min-height: 120px; } /* Allow vertical resize */
     border: 3px solid rgba(0, 10, 18, 0.2); /* Darker base border */
     border-top-color: var(--flower-yellow); /* Keep spinner color */
 }
+@keyframes spin { to { transform: rotate(360deg); } }
 
 
-
+/* --- Tech Icons Specific Styles --- */
 .tech-icons {
-margin: 15px; padding: 15px;
-opacity: 0.95;
-border: 1.7px solid var(--grass-green-light); 
-text-align: center; border-radius: 8px;
-box-shadow: 4px 5px 8px rgba(74, 68, 58, 0.15);
-transition: all 0.4s ease 0s; cursor: pointer;
-background-color: var(--bg-overlay-light); 
-display: flex; flex-direction: column; align-items: center; justify-content: center;
-color: var(--text-light); 
+  margin: 15px; padding: 15px;
+  opacity: 0.95;
+  border: 1.7px solid var(--grass-green-light); /* Uses variable */
+  text-align: center; border-radius: 8px;
+  box-shadow: 4px 5px 8px rgba(74, 68, 58, 0.15);
+  transition: all 0.4s ease 0s; cursor: pointer;
+  background-color: var(--bg-overlay-light); /* Uses variable */
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: var(--text-light); /* Uses variable */
 }
 .light-mode .tech-icons {
-box-shadow: 4px 5px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 5px 8px rgba(0, 0, 0, 0.1);
 }
 .tech-icons:hover {
-transform: scale(1.06);
-border-color: var(--flower-yellow); 
-background-color: var(--bg-overlay-medium); 
-box-shadow: 4px 5px 12px rgba(74, 68, 58, 0.25);
+  transform: scale(1.06);
+  border-color: var(--flower-yellow); /* Uses variable */
+  background-color: var(--bg-overlay-medium); /* Uses variable */
+  box-shadow: 4px 5px 12px rgba(74, 68, 58, 0.25);
 }
 .light-mode .tech-icons:hover {
-box-shadow: 4px 5px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 5px 12px rgba(0, 0, 0, 0.15);
 }
 .tech-icons .icon-element {
-font-size: 4em;
-margin-bottom: 10px;
-color: var(--text-medium); 
-transition: color 0.5s ease-in-out;
+   font-size: 4em;
+   margin-bottom: 10px;
+   color: var(--text-medium); /* Uses variable */
+   transition: color 0.5s ease-in-out;
 }
-.tech-icons .skill-name { 
-font-size: 1rem;
-font-weight: 500;
-color: var(--text-light); 
-margin-top: 0; line-height: 1.2;
-transition: color 0.5s ease-in-out;
+.tech-icons .skill-name { /* Reuses skill-name styles */
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-light); /* Uses variable */
+  margin-top: 0; line-height: 1.2;
+  transition: color 0.5s ease-in-out;
 }
 .tech-icons-grid {
-display: grid; grid-template-columns: repeat(6, 1fr);
-gap: 30px;
-justify-items: center;
+  display: grid; grid-template-columns: repeat(6, 1fr);
+  gap: 30px;
+  justify-items: center;
 }
 
-/* Scroll Up Button */
+
+/* --- Scroll Up Button --- */
 .scroll-up-button {
-  position: fixed; bottom: 25px; right: 25px;
-  width: 50px; height: 50px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  /* background-color set by inline style (conic gradient) */
-  box-shadow: 0 4px 8px rgba(74, 68, 58, 0.3); /* Original shadow */
-  background-clip: padding-box; border: none; padding: 3px;
-  transition: opacity 0.3s ease, visibility 0.3s ease, box-shadow 0.3s ease;
+  /* background-color set by inline style */
+  box-shadow: 0 4px 8px rgba(74, 68, 58, 0.3);
+  background-clip: padding-box;
+  border: none;
+  padding: 3px;
+  transition: background-color 0.3s ease, opacity 0.3s ease, visibility 0.3s ease, box-shadow 0.3s ease;
   z-index: 999;
-  opacity: 0; visibility: hidden; pointer-events: none; /* Start hidden */
+  opacity: 0; /* Start hidden */
+  visibility: hidden; /* Start hidden */
+  pointer-events: none; /* Start non-interactive */
 }
 .light-mode .scroll-up-button {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Lighter shadow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-.scroll-up-button.visible { /* Class to show */
-  opacity: 1; visibility: visible; pointer-events: auto;
+
+/* Class to show the button */
+.scroll-up-button.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
-.inner-circle { /* Solid color circle inside */
+
+.inner-circle {
   width: 100%; height: 100%; border-radius: 50%;
   background-color: var(--grass-green-medium); /* Uses variable */
   display: flex; align-items: center; justify-content: center;
   transition: background-color 0.3s ease;
 }
-.arrow { /* Arrow icon */
-  color: var(--text-light); /* Original white in dark, light green in light */
+.arrow {
+  color: var(--text-light); /* White in dark, dark in light */
   font-size: 24px;
   transition: color 0.3s ease;
 }
+/* Ensure arrow contrasts with circle in light mode */
 .light-mode .arrow {
-  color: #FFFFFF; /* Force white arrow for contrast */
+  color: #FFFFFF; /* Force white arrow on dark green circle */
 }
+
+.scroll-up-button:hover {
+  /* Hover effect managed by JS conic gradient or inner circle hover */
+}
+
 .scroll-up-button:hover .inner-circle {
-  background-color: var(--grass-green-light); /* Lighter green on hover */
+  background-color: var(--grass-green-light); /* Uses variable */
 }
 
 
-/* --- WEATHER TOGGLE BUTTON (Original Structure) --- */
-/* Main Button Styling */
-.weather-toggle-button {
-  position: fixed; top: 40px; right: 20px; z-index: 1001;
-  width: 55px; height: 55px; border-radius: 50%; border: none;
-  cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease,
-              opacity 0.3s ease, visibility 0.3s ease, transform 0.2s ease;
-  background-color: #eee; /* Default fallback */
-}
-.weather-toggle-button:hover {
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
-  transform: scale(1.05);
-}
-.weather-toggle-button:active { transform: scale(0.98); }
+/* --- MEDIA QUERIES --- */
 
-/* Icon container and icons inside button */
-.weather-toggle-button .toggle-icon-container {
-  position: relative; width: 100%; height: 100%;
-  display: flex; align-items: center; justify-content: center;
-}
-.weather-toggle-button .icon {
-  position: absolute; font-size: 24px; opacity: 0;
-  transform: scale(0.7) translateY(10px);
-  transition: opacity 0.5s ease-in-out 0.1s, transform 0.5s ease-in-out 0.1s, color 0.5s ease;
-  color: #333; /* Default icon color */
-}
-.weather-toggle-button .icon.active {
-  opacity: 1; transform: scale(1) translateY(0);
-}
-
-/* Div for background pseudo-elements */
-.weather-toggle-button .toggle-background-elements {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
-}
-
-/* Weather Mode Specific Styles (Original Only) */
-.weather-toggle-button.sakura { background: linear-gradient(135deg, #fadde1, #ffc4d0); }
-.weather-toggle-button.sakura .icon { color: #d14a8a; }
-.weather-toggle-button.sakura::before,
-.weather-toggle-button.sakura::after { /* Original effects */
-    content: ''; position: absolute; width: 5px; height: 5px; background: white; border-radius: 50%; opacity: 0; transition: all 0.4s ease-out; pointer-events: none;
-}
-.weather-toggle-button.sakura:hover::before { opacity: 0.7; transform: translate(-15px, -10px) scale(1.2); }
-.weather-toggle-button.sakura:hover::after { opacity: 0.6; transform: translate(10px, 15px) scale(0.8); transition-delay: 0.1s; }
-
-.weather-toggle-button.fireflies { background: linear-gradient(135deg, #1a2a3a, #0f1720); border: 1px solid rgba(180, 220, 255, 0.3); }
-.weather-toggle-button.fireflies .icon { color: #f0e68c; text-shadow: 0 0 8px #f0e68c, 0 0 12px rgba(240, 230, 140, 0.5); }
-.weather-toggle-button.fireflies .icon.active { animation: fireflyPulse 2.5s infinite ease-in-out; }
-
-.weather-toggle-button.snow { background: linear-gradient(135deg, #e0f2f7, #b3e0f2); }
-.weather-toggle-button.snow .icon { color: #5a9bb0; }
-.weather-toggle-button.snow .toggle-background-elements::before,
-.weather-toggle-button.snow .toggle-background-elements::after { /* Original effects */
-    content: '❄'; position: absolute; font-size: 10px; color: rgba(255, 255, 255, 0.6); opacity: 0; transition: all 0.5s ease-out;
-}
-.weather-toggle-button.snow:hover .toggle-background-elements::before { opacity: 1; transform: translate(-12px, -8px) rotate(30deg); }
-.weather-toggle-button.snow:hover .toggle-background-elements::after { opacity: 1; transform: translate(10px, 12px) rotate(-45deg); transition-delay: 0.1s; }
-
-.weather-toggle-button.rain { background: linear-gradient(135deg, #a8c0d1, #7e9aaa); }
-.weather-toggle-button.rain .icon { color: #3e5f7a; }
-.weather-toggle-button.rain .toggle-background-elements::before { /* Original effect */
-    content: ''; position: absolute; width: 2px; height: 8px; background: rgba(220, 235, 245, 0.7); border-radius: 0 0 2px 2px; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0;
-}
-.weather-toggle-button.rain:hover .toggle-background-elements::before { opacity: 1; animation: simpleRainDrop 1s ease-out infinite; animation-delay: 0.2s; }
-
-.weather-toggle-button.autumn { background: linear-gradient(135deg, var(--autumn-orange), var(--autumn-brown)); } /* Use variables */
-.weather-toggle-button.autumn .icon { color: #f5d68f; }
-.weather-toggle-button.autumn .toggle-background-elements::before,
-/* .weather-toggle-button.autumn .toggle-background-elements::after {
-    content: '🍁'; position: absolute; font-size: 10px; color: rgba(245, 214, 143, 0.5); opacity: 0; transition: all 0.5s ease-out;
-}
-.weather-toggle-button.autumn:hover .toggle-background-elements::before { opacity: 1; animation: simpleLeafFall 1.8s ease-in-out infinite; animation-delay: 0.1s; left: 15%; top: 20%; }
-.weather-toggle-button.autumn:hover .toggle-background-elements::after { opacity: 1; animation: simpleLeafFall 1.8s ease-in-out infinite; animation-delay: 0.5s; font-size: 8px; right: 20%; bottom: 25%; } */
-
-
-/* --- BACKGROUND IMAGE HANDLING --- */
-
-/* iOS Fixed Background Fix */
-@supports (-webkit-touch-callout: none) {
-  /* html, body styles already defined above */
-
-  .fixed-background {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; /* Deepest layer */
-    background-size: cover; background-position: bottom center; background-repeat: no-repeat; /* Adjusted position */
-    background-image: url("../public/ghibli-night.webp"); /* Default/Fallback */
-    background-color: #1a2a2a; /* Fallback color */
-    transition: background-color 0.8s ease-in-out;
-    will-change: background-color; transform: translateZ(0); /* Layer promotion hint */
-  }
-
-  .fixed-background::after { /* Cross-fade layer */
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; /* Above parent, below content */
-    background-size: cover; background-position: bottom center; background-repeat: no-repeat; /* Adjusted position */
-    background-image: none; opacity: 0; /* Start transparent */
-    transition: opacity 0.8s ease-in-out, background-image 0s 0.8s; /* Delay image removal */
-    will-change: opacity; transform: translateZ(0); pointer-events: none;
-  }
-
-  /* Weather Overrides for iOS */
-  .fixed-background.weather-sakura { background-color: #7FBCD8; }
-  .fixed-background.weather-sakura::after { background-image: url("../public/ghibli-day.webp"); opacity: 1; transition-delay: 0s; }
-
-  .fixed-background.weather-fireflies { background-color: #1a2a2a; }
-  .fixed-background.weather-fireflies::after { background-image: url("../public/ghibli-night.webp"); opacity: 1; transition-delay: 0s; }
-
-  .fixed-background.weather-snow { background-color: #5c7a8f; }
-  .fixed-background.weather-snow::after { background-image: url("../public/ghibli-snow.webp"); opacity: 1; transition-delay: 0s; }
-
-  .fixed-background.weather-rain { background-color: #4a5a6a; }
-  .fixed-background.weather-rain::after { background-image: url("../public/ghibli-rain.webp"); opacity: 1; transition-delay: 0s; }
-
-  /* --- ADDED: Autumn Background (iOS) --- */
-  .fixed-background.weather-autumn { background-color: #4a3a3a; } /* Example base color */
-  .fixed-background.weather-autumn::after {
-    background-image: url("../public/ghibli-evening.webp"); /* Your evening image */
-    opacity: 1;
-    transition-delay: 0s;
-  }
-  /* --- END ADDITION --- */
-
-  /* Ensure app structure works with fixed background */
-  .app { background: none !important; position: relative; z-index: 1; min-height: 100vh; }
-  /* Canvas and content z-index already set correctly */
-}
-
-/* Non-iOS Fallback (Uses .app for background) */
-@supports not (-webkit-touch-callout: none) {
-  .app {
-    /* Base styles already defined */
-    /* Default background (overridden by weather classes) */
-    background-image: url("../public/ghibli-night.webp");
-    background-color: #1a2a2a;
-    background-position: center center; /* Keep original */
-  }
-
-  /* Weather Overrides for Non-iOS */
-   .app.weather-sakura { background-image: url("../public/ghibli-day.webp"); background-color: #7FBCD8; }
-   .app.weather-fireflies { background-image: url("../public/ghibli-night.webp"); background-color: #1a2a2a; }
-   .app.weather-snow { background-image: url("../public/ghibli-snow.webp"); background-color: #5c7a8f; }
-   .app.weather-rain { background-image: url("../public/ghibli-rain.webp"); background-color: #4a5a6a; }
-   /* --- ADDED: Autumn Background (Non-iOS) --- */
-   .app.weather-autumn {
-     background-image: url("../public/ghibli-evening.webp");
-     background-color: #4a3a3a; /* Example base color */
-   }
-   /* --- END ADDITION --- */
-
-   /* Hide the dedicated fixed-background div if not on iOS */
-   .fixed-background { display: none; }
-}
-
-
-/* --- ANIMATIONS (KEYFRAMES - Original) --- */
-@keyframes float { /* For About image placeholder */
-  0% { transform: translateY(0) rotateX(0deg); }
-  50% { transform: translateY(-10px) rotateX(8deg); }
-  100% { transform: translateY(0) rotateX(0deg); }
-}
-@keyframes spin { /* For loader */
-  to { transform: rotate(360deg); }
-}
-@keyframes fireflyPulse { /* For toggle button icon */
-  0%, 100% { text-shadow: 0 0 8px #f0e68c, 0 0 12px rgba(240, 230, 140, 0.5); }
-  50% { text-shadow: 0 0 12px #f8f0a0, 0 0 18px rgba(248, 240, 160, 0.7); }
-}
-@keyframes simpleRainDrop { /* For toggle button effect */
-    0% { transform: translateY(-20px) scaleY(1); opacity: 0; }
-    50% { opacity: 0.8; }
-    100% { transform: translateY(20px) scaleY(1.5); opacity: 0; }
-}
-/* NOTE: No simpleLeafFall keyframes added */
-
-@keyframes animate-in { /* For section fade-in */
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-/* Utility class for section animation trigger */
-.animate-in { animation: animate-in 1s ease-out forwards; }
-
-
-/* --- MEDIA QUERIES (RESPONSIVE DESIGN - Original) --- */
-
-/* Tablet and Smaller Desktops */
 @media screen and (max-width: 1024px) {
-  section { padding: 80px 3rem; } /* Reduce padding */
-
   .contact-content, .about-content { grid-template-columns: 1fr; }
   .about-image { margin-bottom: 3rem; }
-
-  /* Stack Experience/Education columns */
-  .content-grid { grid-template-columns: 1fr; }
-  .details-section { margin-top: 3rem; } /* Space when stacked */
-
-  /* Tech Icons Grid - More flexible columns */
-  .tech-icons-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 20px; }
-
   .footer-content { text-align: center; }
   .footer-links, .footer-social { justify-content: center; }
+
+  /* Responsive Adjustments for the Grid */
+  .content-grid { grid-template-columns: 1fr; }
+  .details-section { margin-top: 3rem; } /* Space between timeline and details when stacked */
+  .timeline:before { /* Adjustments if needed */ }
+
+  /* Tech Icons Grid */
+  .tech-icons-grid { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); /* More flexible */ }
 }
 
-/* Mobile Devices (Portrait) */
 @media screen and (max-width: 768px) {
-  section { padding: 60px 1.5rem; } /* Further reduce padding */
+  section { padding: 80px 2rem; }
+  /* .menu-icon { display: block; } /* Assuming this is for a mobile nav */
 
-  /* Layout Stacking */
+  /* Layout Adjustments */
   .personal-info { grid-template-columns: 1fr; }
   .skills-content { grid-template-columns: 1fr; }
   .projects-grid { grid-template-columns: 1fr; }
-  .about-content { gap: 2rem; } /* Reduce gap when stacked */
-  .contact-content { gap: 2rem; }
 
   /* Typography Adjustments */
   .greeting { font-size: 1.2rem; }
   .name { font-size: 2.8rem; }
-  .title { font-size: 1.5rem; height: auto; } /* Remove fixed height */
-  .section-title { font-size: 2.2rem; margin-bottom: 2.5rem; }
+  .title { font-size: 1.5rem; }
 
-  /* Footer */
+  /* Footer Adjustments */
   .footer { padding: 2rem 1rem 1rem; }
   .footer-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
   .footer-logo { font-size: 1.5rem; }
@@ -1245,60 +1399,57 @@ justify-items: center;
   .footer-social { gap: 0.8rem; }
   .footer-bottom p { font-size: 0.9rem; }
 
-   /* Weather Toggle Button - Original Mobile Position */
+   /* Weather Toggle Button Position */
    .weather-toggle-button {
     left: 20px; top: 20px; right: auto; /* Below dark mode toggle on mobile */
    }
 
   /* Scroll Up Button */
-  .scroll-up-button { width: 45px; height: 45px; padding: 2px; bottom: 20px; right: 20px; }
+  .scroll-up-button { width: 45px; height: 45px; padding: 2px; bottom: 20px; right: 20px; z-index: 999; /* Ensure z-index */}
   .arrow { font-size: 21px; }
 
-  /* Tech Icons Grid - 3 columns */
-   .tech-icons { margin: 10px; padding: 10px; min-height: 100px; }
+  /* Tech Icons */
+   .tech-icons { margin: 10px; padding: 10px; }
    .tech-icons .icon-element { font-size: 3em; margin-bottom: 6px; }
    .tech-icons .skill-name { font-size: 0.8rem; }
    .tech-icons-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
 
-   /* Tabs */
+   /* Tab & Grid Adjustments */
     .tabs-container { margin-bottom: 2rem; gap: 0.5rem; }
     .tab-button { padding: 0.6rem 1.2rem; font-size: 1rem; }
     .content-grid { gap: 2rem; }
     .details-section { margin-top: 2rem; }
 }
 
-/* Small Mobile Devices */
 @media screen and (max-width: 480px) {
-  section { padding: 50px 1rem; } /* Minimal padding */
-
   /* Layout Adjustments */
-  .home-container .button-container { flex-direction: column; gap: 1rem; width: 100%; } /* Stack buttons */
-  .primary-button, .secondary-button, .resume-button { width: 100%; text-align: center; }
-  .project-filters { flex-direction: column; align-items: stretch; } /* Stack filters */
-  .project-filters button { width: 100%; max-width: none; }
+  .button-container { flex-direction: column; gap: 1rem; }
+  .primary-button, .secondary-button { text-align: center; width: 100%; }
+  .project-filters { flex-direction: column; align-items: center; }
+  .project-filters button { width: 100%; max-width: 250px; }
 
-  /* Typography */
+  /* Typography Adjustments */
   .section-title { font-size: 2rem; }
-  .name { font-size: 2.4rem; }
-  .title { font-size: 1.3rem; }
-  .description { font-size: 1rem; }
 
-  /* Footer */
-  .footer-logo { font-size: 1.3rem; }
+  /* Footer Adjustments */
+  .footer-logo { font-size: 1.2rem; }
   .footer-links a { font-size: 0.9rem; }
   .footer-social { flex-wrap: wrap; gap: 0.5rem; }
-  .social-icon { font-size: 1rem; }
+  .social-icon { font-size: 0.9rem; }
   .footer-bottom p { font-size: 0.8rem; }
 
   /* Scroll Up Button */
-  .scroll-up-button { width: 40px; height: 40px; bottom: 15px; right: 15px; }
+  .scroll-up-button { width: 40px; height: 40px; }
   .arrow { font-size: 18px; }
 
-  /* Tech Icons - 2 columns */
-  .tech-icons-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  /* Tech Icons */
+  .tech-icons-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } /* 2 columns on very small screens */
   .tech-icons .icon-element { font-size: 2.5em;}
-
-  /* Contact Form Adjustments */
-  .contact-form-container { padding: 1.5rem; }
-  .form-group input, .form-group textarea { padding: 0.8rem; }
 }
+
+/* --- Animation Utility --- */
+@keyframes animate-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: animate-in 1s ease-out forwards; }
