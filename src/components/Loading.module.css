@@ -90,17 +90,21 @@
     transition: opacity 0.4s ease-out; /* Faster fade for loader */
   }
   
-  .loaderCanvasContainer {
-    width: 180px; /* Or adjust based on ParticleSpinner preference */
-    height: 180px;
+  .loaderSpinnerContainer { /* Was .loaderCanvasContainer */
+    width: 80px; /* Adjust size as needed for PacmanLoader */
+    height: 80px;/* Adjust size as needed for PacmanLoader */
     margin-bottom: 25px;
+    /* Remove background/border if PacmanLoader doesn't need it */
+    display: flex; /* Optional: Center Pacman if needed */
+    justify-content: center; /* Optional: Center Pacman if needed */
+    align-items: center; /* Optional: Center Pacman if needed */
   }
-  
+/*   
   .loaderCanvas {
      width: 100% !important;
      height: 100% !important;
      display: block;
-  }
+  } */
   
   .loadingText {
     font-family: 'Yuji Mai', serif;
