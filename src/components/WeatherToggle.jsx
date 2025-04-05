@@ -1,56 +1,56 @@
 // src/components/WeatherToggle.jsx
-import React from 'react';
+import React from 'react'; // No need for named import if not used directly
 import { FaLeaf, FaRegSnowflake, FaCloudRain, FaFire } from 'react-icons/fa';
-// No specific CSS import needed here if App.css is loaded globally
 
-const WeatherToggle = ({ weatherMode, toggleWeatherMode }) => {
+// --- Constants (Define outside component for clarity) ---
+const WEATHER_MODES_ARRAY = ['sakura', 'fireflies', 'snow', 'rain'];
+const MODE_DETAILS = {
+  sakura: { icon: <FaLeaf />, label: 'Sakura' },
+  fireflies: { icon: <FaFire />, label: 'Fireflies' },
+  snow: { icon: <FaRegSnowflake />, label: 'Snow' },
+  rain: { icon: <FaCloudRain />, label: 'Rain' },
+};
 
-  const weatherModesArray = ['sakura', 'fireflies', 'snow', 'rain'];
+// --- Optimization: Wrap component in React.memo ---
+// This prevents re-rendering if props (weatherMode, toggleWeatherMode) haven't changed.
+// Requires toggleWeatherMode to be memoized in the parent (which it is via useCallback).
+const WeatherToggle = React.memo(({ weatherMode, toggleWeatherMode }) => {
 
-  // Define icon and text for each mode
-  const modeDetails = {
-    sakura: { icon: <FaLeaf />, label: 'Sakura' },
-    fireflies: { icon: <FaFire />, label: 'Fireflies' },
-    snow: { icon: <FaRegSnowflake />, label: 'Snow' },
-    rain: { icon: <FaCloudRain />, label: 'Rain' },
-  };
-
-  const currentMode = modeDetails[weatherMode] || modeDetails.sakura; // Default fallback
+  const currentMode = MODE_DETAILS[weatherMode] || MODE_DETAILS.sakura; // Default fallback
 
   // Calculate the next mode for preview or tooltip
-  const currentIndex = weatherModesArray.indexOf(weatherMode);
-  const nextIndex = (currentIndex + 1) % weatherModesArray.length;
-  const nextModeKey = weatherModesArray[nextIndex];
-  const nextMode = modeDetails[nextModeKey];
+  const currentIndex = WEATHER_MODES_ARRAY.indexOf(weatherMode);
+  const nextIndex = (currentIndex + 1) % WEATHER_MODES_ARRAY.length;
+  const nextModeKey = WEATHER_MODES_ARRAY[nextIndex];
+  const nextMode = MODE_DETAILS[nextModeKey];
+
+  // --- Optimization: Memoize icon rendering if it becomes complex ---
+  // For this simple case, direct mapping is fine. If icons involved complex logic,
+  // useMemo could be applied here, but likely unnecessary.
+  const renderedIcons = Object.entries(MODE_DETAILS).map(([key, { icon }]) => (
+    <span
+      key={key}
+      className={`icon ${key === weatherMode ? 'active' : ''}`}
+    >
+      {icon}
+    </span>
+  ));
 
   return (
     <button
       onClick={toggleWeatherMode}
-      // Apply base class and the current weatherMode directly as a class
-      className={`weather-toggle-button ${weatherMode}`}
+      className={`weather-toggle-button ${weatherMode}`} // Apply current mode class for styling
       aria-label={`Switch weather effect. Current: ${currentMode.label}. Click to switch to ${nextMode.label}.`}
-      title={`Switch to ${nextMode.label}`} // Tooltip for hover
+      title={`Switch to ${nextMode.label}`} // Tooltip
     >
       <div className="toggle-icon-container">
-        {/* Map through all possible modes to render icons */}
-        {Object.entries(modeDetails).map(([key, { icon }]) => (
-          <span
-            key={key}
-            // Apply base 'icon' class and conditionally apply the 'active' class
-            className={`icon ${key === weatherMode ? 'active' : ''}`}
-          >
-            {icon}
-          </span>
-        ))}
+        {renderedIcons} {/* Render the mapped icons */}
       </div>
 
-      {/* Add background elements div, apply mode class for specific pseudo styles */}
-      {/* Applying the mode class here allows targeting its pseudo-elements */}
-      <div className={`toggle-background-elements ${weatherMode}`}>
-        {/* This div is primarily for the pseudo-elements defined in App.css */}
-      </div>
+      {/* Background elements div for pseudo-element styling */}
+      <div className={`toggle-background-elements ${weatherMode}`}></div>
     </button>
   );
-};
+}); // End of React.memo wrap
 
 export default WeatherToggle;
