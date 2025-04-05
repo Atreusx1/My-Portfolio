@@ -17,7 +17,7 @@ const MEDIA_DIR = path.join(BUILD_DIR, 'static', 'media'); // Already absolute
 // Define path for temporary obfuscated JS files - Already absolute
 const OBFUSCATED_JS_DIR = path.join(BUILD_DIR, 'obfuscated_js');
 
-
+//hey
 // Log with colors and timestamps
 function log(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString();
