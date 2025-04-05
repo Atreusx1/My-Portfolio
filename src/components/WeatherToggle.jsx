@@ -1,36 +1,36 @@
 // src/components/WeatherToggle.jsx
-import React from 'react'; // No need for named import if not used directly
-import { FaLeaf, FaRegSnowflake, FaCloudRain, FaFire } from 'react-icons/fa';
+import React from 'react';
+// Import the new icon
+import { FaLeaf, FaRegSnowflake, FaCloudRain, FaFire, FaCanadianMapleLeaf } from 'react-icons/fa'; // <-- ADDED FaCanadianMapleLeaf
 
-// --- Constants (Define outside component for clarity) ---
-const WEATHER_MODES_ARRAY = ['sakura', 'fireflies', 'snow', 'rain'];
+// --- Constants ---
+// <-- ADDED 'autumn'
+const WEATHER_MODES_ARRAY = ['sakura', 'fireflies', 'snow', 'rain', 'autumn'];
 const MODE_DETAILS = {
   sakura: { icon: <FaLeaf />, label: 'Sakura' },
   fireflies: { icon: <FaFire />, label: 'Fireflies' },
   snow: { icon: <FaRegSnowflake />, label: 'Snow' },
   rain: { icon: <FaCloudRain />, label: 'Rain' },
+  autumn: { icon: <FaCanadianMapleLeaf />, label: 'Autumn' }, // <-- ADDED Autumn entry
 };
 
-// --- Optimization: Wrap component in React.memo ---
-// This prevents re-rendering if props (weatherMode, toggleWeatherMode) haven't changed.
-// Requires toggleWeatherMode to be memoized in the parent (which it is via useCallback).
 const WeatherToggle = React.memo(({ weatherMode, toggleWeatherMode }) => {
 
-  const currentMode = MODE_DETAILS[weatherMode] || MODE_DETAILS.sakura; // Default fallback
+  // Ensure weatherMode is valid, fallback if not
+  const validWeatherMode = WEATHER_MODES_ARRAY.includes(weatherMode) ? weatherMode : WEATHER_MODES_ARRAY[0];
+  const currentMode = MODE_DETAILS[validWeatherMode];
 
-  // Calculate the next mode for preview or tooltip
-  const currentIndex = WEATHER_MODES_ARRAY.indexOf(weatherMode);
+  // Calculate the next mode
+  const currentIndex = WEATHER_MODES_ARRAY.indexOf(validWeatherMode);
   const nextIndex = (currentIndex + 1) % WEATHER_MODES_ARRAY.length;
   const nextModeKey = WEATHER_MODES_ARRAY[nextIndex];
   const nextMode = MODE_DETAILS[nextModeKey];
 
-  // --- Optimization: Memoize icon rendering if it becomes complex ---
-  // For this simple case, direct mapping is fine. If icons involved complex logic,
-  // useMemo could be applied here, but likely unnecessary.
   const renderedIcons = Object.entries(MODE_DETAILS).map(([key, { icon }]) => (
     <span
       key={key}
-      className={`icon ${key === weatherMode ? 'active' : ''}`}
+      // Use validWeatherMode for comparison
+      className={`icon ${key === validWeatherMode ? 'active' : ''}`}
     >
       {icon}
     </span>
@@ -39,18 +39,18 @@ const WeatherToggle = React.memo(({ weatherMode, toggleWeatherMode }) => {
   return (
     <button
       onClick={toggleWeatherMode}
-      className={`weather-toggle-button ${weatherMode}`} // Apply current mode class for styling
+      // Apply validWeatherMode class
+      className={`weather-toggle-button ${validWeatherMode}`}
       aria-label={`Switch weather effect. Current: ${currentMode.label}. Click to switch to ${nextMode.label}.`}
-      title={`Switch to ${nextMode.label}`} // Tooltip
+      title={`Switch to ${nextMode.label}`}
     >
       <div className="toggle-icon-container">
-        {renderedIcons} {/* Render the mapped icons */}
+        {renderedIcons}
       </div>
-
-      {/* Background elements div for pseudo-element styling */}
-      <div className={`toggle-background-elements ${weatherMode}`}></div>
+      {/* Apply validWeatherMode class here too */}
+      <div className={`toggle-background-elements ${validWeatherMode}`}></div>
     </button>
   );
-}); // End of React.memo wrap
+});
 
 export default WeatherToggle;
