@@ -1,67 +1,98 @@
-// src/components/Loading.jsx
-import React, { useState, useEffect, Suspense } from 'react'; // Keep Suspense for particles
-import { Canvas } from '@react-three/fiber'; // Keep Canvas for particles
+import React, { useState, useEffect, Suspense, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
 
-// Keep particle imports (if you are keeping particles on the loading screen)
+// Particle component imports (ensure these are performant)
 import FloatingParticles from './FloatingParticles';
 import Fireflies from './Fireflies';
 
-// --- REMOVE ParticleSpinner Import ---
-// import ParticleSpinner from './ThreeSpinner';
-
-// --- ADD GhibliSpinner Import ---
-// Ensure the path is correct. This component should now contain the PacmanLoader.
+// Spinner component import
 import GhibliSpinner from './ThreeSpinner';
 
 import styles from './Loading.module.css';
 
+// Image paths (used for deferred loading)
+const ghibliDayPath = '/ghibli-day.webp';
+const ghibliNightPath = '/ghibli-night.webp';
+
+// Animation/Effect Constants
 const ANIMATION_DURATION_MS = 1200;
-const SAKURA_COUNT = 100; // Only relevant if particles are kept
-const FIREFLY_COUNT = 75;  // Only relevant if particles are kept
+// --- Consider reducing these counts significantly for LCP/performance ---
+const SAKURA_COUNT = 100; // High count, likely impacts LCP render delay
+const FIREFLY_COUNT = 75;  // High count, likely impacts LCP render delay
+// --- End potential optimization area ---
 
 const Loading = ({ isLoading, isInitiallyDark }) => {
   const [isExiting, setIsExiting] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
+  // Refs
+  const containerRef = useRef(null);
+  const leftHalfRef = useRef(null);
+  const rightHalfRef = useRef(null);
+
+  // Effect: Apply deferred background images via CSS variables
+  useEffect(() => {
+    const applyImages = () => {
+      if (leftHalfRef.current) {
+        leftHalfRef.current.style.setProperty('--bg-day', `url(${ghibliDayPath})`);
+      }
+      if (rightHalfRef.current) {
+        rightHalfRef.current.style.setProperty('--bg-night', `url(${ghibliNightPath})`);
+      }
+      if (containerRef.current) {
+         containerRef.current.style.setProperty('--bg-mobile-main', `url(${ghibliDayPath})`);
+      }
+      setImagesLoaded(true); // Trigger fade-in for backgrounds
+    };
+
+    if (document.readyState === 'complete') {
+      applyImages();
+    } else {
+      window.addEventListener('load', applyImages);
+    }
+    // Cleanup listener
+    return () => window.removeEventListener('load', applyImages);
+  }, []); // Run only once
+
+  // Effect: Handle component exit animation and final hiding
   useEffect(() => {
     let hideTimer;
     if (!isLoading && !isExiting) {
       setIsExiting(true);
-      hideTimer = setTimeout(() => {
-        setIsHidden(true);
-      }, ANIMATION_DURATION_MS);
+      hideTimer = setTimeout(() => setIsHidden(true), ANIMATION_DURATION_MS);
     }
-    return () => {
-      clearTimeout(hideTimer);
-    };
-  }, [isLoading, isExiting]);
+    // Cleanup timer
+    return () => clearTimeout(hideTimer);
+  }, [isLoading, isExiting]); // Rerun if loading state changes
 
+  // Don't render anything if fully hidden
   if (isHidden) {
-    // console.log("LOADING SCREEN: Returning null, component removed.");
     return null;
   }
 
+  // Determine initial classes for theme and fade-in state
   const initialThemeClass = isInitiallyDark ? styles.darkModeInitial : styles.lightModeInitial;
-  const containerClasses = `${styles.loadingScreenSplit} ${isExiting ? styles.exiting : ''} ${initialThemeClass}`;
+  const containerClasses = `${styles.loadingScreenSplit} ${isExiting ? styles.exiting : ''} ${initialThemeClass} ${imagesLoaded ? styles.imagesVisible : ''}`;
 
   return (
-    <div className={containerClasses}>
+    <div ref={containerRef} className={containerClasses}>
 
       {/* --- Left Half (Day) --- */}
-      {/* Keep this Canvas ONLY if you are keeping the FloatingParticles */}
-      <div className={`${styles.loadingHalf} ${styles.loadingLeft}`}>
+      <div ref={leftHalfRef} className={`${styles.loadingHalf} ${styles.loadingLeft}`}>
+        {/* Canvas for Sakura particles - PERFORMANCE BOTTLENECK for LCP */}
         <Canvas className={styles.particleCanvas} camera={{ position: [0, 0, 10], fov: 55 }}>
-          <Suspense fallback={null}>
+          <Suspense fallback={null}> {/* Suspense for lazy loaded particle component */}
             {!isExiting && <FloatingParticles count={SAKURA_COUNT} />}
           </Suspense>
         </Canvas>
       </div>
 
       {/* --- Right Half (Night) --- */}
-      {/* Keep this Canvas ONLY if you are keeping the Fireflies */}
-      <div className={`${styles.loadingHalf} ${styles.loadingRight}`}>
+      <div ref={rightHalfRef} className={`${styles.loadingHalf} ${styles.loadingRight}`}>
+        {/* Canvas for Firefly particles - PERFORMANCE BOTTLENECK for LCP */}
         <Canvas className={styles.particleCanvas} camera={{ position: [0, 0, 10], fov: 55 }}>
-          <Suspense fallback={null}>
+          <Suspense fallback={null}> {/* Suspense for lazy loaded particle component */}
             {!isExiting && <Fireflies count={FIREFLY_COUNT} />}
           </Suspense>
         </Canvas>
@@ -69,21 +100,14 @@ const Loading = ({ isLoading, isInitiallyDark }) => {
 
       {/* --- Centered Loader Overlay --- */}
       <div className={styles.loaderOverlay}>
-        {/* --- MODIFIED: Replace Canvas/ParticleSpinner with GhibliSpinner --- */}
-        {/* Use a simpler container class name if preferred */}
-        <div className={styles.loaderSpinnerContainer}> {/* Renamed/Adjusted container */}
-          {/* Render GhibliSpinner (which uses PacmanLoader) conditionally */}
+        <div className={styles.loaderSpinnerContainer}>
           {!isExiting && (
             <GhibliSpinner
-              size={25} // Use the desired smaller size
-              color="var(--flower-yellow)" // Example: Use theme color variable
-              // You can add other PacmanLoader props here if needed:
-              // speedMultiplier={1}
+              size={25}
+              color="var(--flower-yellow)" // Example color
             />
           )}
         </div>
-        {/* --- End Modification --- */}
-
         <p className={styles.loadingText}>
           Conjuring magic... Please wait!
         </p>

@@ -219,25 +219,16 @@ function App() {
         <ScrollButton />
 
         {/* Background Particle Canvas Container */}
-        <div className="canvas-container" aria-hidden="true">
-          {/*
-            IMPORTANT: The Canvas component itself does NOT have a key={weatherMode}.
-            This keeps the WebGL context alive across weather changes,
-            improving performance and preventing context loss.
-            React will swap the *content* (the particle component) inside the Canvas.
-          */}
-          <Canvas camera={{ position: [0, 0, 12], fov: 55 }}>
-            {/* Ambient light intensity adjusts based on dark/light mode */}
-            <ambientLight intensity={isEffectivelyDarkMode ? 0.15 : 0.5} />
-
-            {/* Suspense handles lazy loading of the specific particle component */}
-            <Suspense fallback={null}>
-              {/* Render the currently selected particle effect */}
-              {renderParticles()}
-            </Suspense>
-          </Canvas>
-        </div>
-
+<div className="canvas-container" aria-hidden="true">
+  {!isLoading && ( // <-- Add this condition
+    <Canvas camera={{ position: [0, 0, 12], fov: 55 }}>
+      <ambientLight intensity={isEffectivelyDarkMode ? 0.15 : 0.5} />
+      <Suspense fallback={null}>
+        {renderParticles()}
+      </Suspense>
+    </Canvas>
+  )}
+</div>
         {/* --- Scrollable Page Content --- */}
         {/* Only render content after the loading screen is done */}
         {!isLoading && (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo, useCallback } from "react"; // Added useMemo, useCallback
 // Using <a> tag for logo scroll-to-top, assuming no React Router needed for this.
 // If you use React Router elsewhere, keep the import:
 // import { Link } from "react-router-dom";
@@ -16,155 +16,146 @@ const Navbar = () => {
   const [isVisible, setIsVisible] = useState(true); // Navbar visible/hidden based on scroll activity
   const visibilityTimeoutRef = useRef(null); // Ref to store the timeout ID for hiding
 
-  // Effect 1: Detect scroll past threshold to trigger 'scrolled' state
+  // --- Effects (Keep existing Effects 1-4 as they are) ---
+
+  // Effect 1: Detect scroll past threshold
   useEffect(() => {
     const handleScrollState = () => {
       const scrollTop = window.scrollY;
-      setScrolled(scrollTop > 50); // Set scrolled to true if scrolled more than 50px
+      setScrolled(scrollTop > 50);
     };
-
     window.addEventListener("scroll", handleScrollState);
-    handleScrollState(); // Initial check on component mount
-    // Cleanup scroll listener on component unmount
+    handleScrollState();
     return () => window.removeEventListener("scroll", handleScrollState);
   }, []);
 
-  // Effect 2: Handle the hide/show visibility of the entire Navbar
+  // Effect 2: Handle the hide/show visibility
   useEffect(() => {
     const handleScrollVisibility = () => {
-      // Always show if at the very top of the page
       if (window.scrollY === 0) {
         setIsVisible(true);
-        if (visibilityTimeoutRef.current) {
-          clearTimeout(visibilityTimeoutRef.current); // Clear existing hide timeout
-        }
-        return; // Stop processing if at top
+        if (visibilityTimeoutRef.current) clearTimeout(visibilityTimeoutRef.current);
+        return;
       }
-
-      // Show navbar immediately whenever user scrolls
       setIsVisible(true);
-
-      // Clear any previous timeout if user scrolls again quickly
-      if (visibilityTimeoutRef.current) {
-        clearTimeout(visibilityTimeoutRef.current);
-      }
-
-      // Set a new timeout to hide the navbar after scrolling stops
+      if (visibilityTimeoutRef.current) clearTimeout(visibilityTimeoutRef.current);
       visibilityTimeoutRef.current = setTimeout(() => {
-         // Only hide if user is not at the very top
-         if (window.scrollY > 0) {
-             setIsVisible(false); // Hide the navbar
-         }
-      }, 2000); // Hide after 2 seconds of no scrolling (adjust as needed)
+         if (window.scrollY > 0) setIsVisible(false);
+      }, 2000);
     };
-
     window.addEventListener("scroll", handleScrollVisibility);
-
-    // Cleanup listener and timeout on component unmount
     return () => {
       window.removeEventListener("scroll", handleScrollVisibility);
-      if (visibilityTimeoutRef.current) {
-        clearTimeout(visibilityTimeoutRef.current);
-      }
+      if (visibilityTimeoutRef.current) clearTimeout(visibilityTimeoutRef.current);
     };
-  }, []); // Run this effect only once on mount
+  }, []);
 
   // Effect 3: Intersection Observer for Active Link Highlighting
   useEffect(() => {
     const sections = document.querySelectorAll("section[id]");
-    // Ensure sections and navLinks exist before proceeding
     if (!sections.length || !navLinks || navLinks.length === 0) return;
-
-    const firstLinkId = navLinks[0].id; // Assume the first link corresponds to the top section
-
-    const observerOptions = {
-        root: null, // Observe intersections relative to the viewport
-        rootMargin: '-40% 0px -60% 0px', // Trigger when section is in the middle 20% of the viewport
-        threshold: 0, // Trigger as soon as any part enters the margin
-    };
-
-    let lastIntersectingEntryId = active || firstLinkId; // Keep track
+    const firstLinkId = navLinks[0].id;
+    const observerOptions = { root: null, rootMargin: '-40% 0px -60% 0px', threshold: 0 };
+    let lastIntersectingEntryId = active || firstLinkId;
 
     const observer = new IntersectionObserver((entries) => {
         let foundActive = false;
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
-                setActive(entry.target.id); // Set active ID to the intersecting section's ID
+                setActive(entry.target.id);
                 lastIntersectingEntryId = entry.target.id;
                 foundActive = true;
             }
         });
-
-        // Fallback check: If scrolled near top and nothing is intersecting, set active to first link
          if (!foundActive && window.scrollY < window.innerHeight * 0.4) {
              setActive(firstLinkId);
              lastIntersectingEntryId = firstLinkId;
-         }
-         // Optional: if scrolled down and nothing is intersecting, keep the last active one
-         else if (!foundActive && window.scrollY >= window.innerHeight * 0.4) {
+         } else if (!foundActive && window.scrollY >= window.innerHeight * 0.4) {
             setActive(lastIntersectingEntryId);
          }
-
     }, observerOptions);
 
-    // Observe sections whose IDs are present in navLinks
     sections.forEach((section) => {
         if (navLinks.some(link => link.id === section.id)) {
              observer.observe(section);
         }
     });
-
-    // Initial check on load: Set active to first link if near the top
-    if (window.scrollY < window.innerHeight * 0.4) {
-        setActive(firstLinkId);
-    }
-
-    // Cleanup: Unobserve all sections on component unmount
+    if (window.scrollY < window.innerHeight * 0.4) setActive(firstLinkId);
     return () => sections.forEach((section) => observer.unobserve(section));
-  // Dependency array includes navLinks in case it could change, though usually static
-  }, [navLinks]);
+  }, [navLinks, active]); // Include active here as it's used in the observer logic state
 
-
-  // Effect 4: Prevent body scrolling when the mobile menu overlay is open
+  // Effect 4: Prevent body scrolling when mobile menu is open
   useEffect(() => {
     if (toggle) {
-      document.body.style.overflow = 'hidden'; // Disable body scroll
+      document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'auto'; // Enable body scroll
-    }
-    // Cleanup function to restore scroll on unmount
-    return () => {
       document.body.style.overflow = 'auto';
-    };
-  }, [toggle]); // Run this effect whenever 'toggle' state changes
+    }
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [toggle]);
 
 
   // --- Event Handlers ---
+
   // Handles clicks on navigation links (primarily for mobile)
-  const handleNavClick = (navId) => {
+  // Memoize with useCallback because it's used in mobileMenuItems useMemo dependency
+  const handleNavClick = useCallback((navId) => {
      setToggle(false); // Close mobile menu overlay
-     // Let the browser handle the smooth scroll via the href="#id"
-  }
+     // Scrolling handled by href="#id"
+  }, []); // No dependencies, setToggle is stable
 
   // Handles click on the logo
   const handleLogoClick = (e) => {
-      e.preventDefault(); // Prevent default anchor behavior
-      window.scrollTo({ top: 0, behavior: 'smooth' }); // Smooth scroll to top
-      setToggle(false); // Ensure mobile menu is closed
-      // Observer will automatically set active to 'home'/'firstLinkId' when at top
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setToggle(false);
+      // Active state handled by observer
   }
 
+  // --- Memoized Menu Items ---
+
+  // Memoize the generation of desktop menu items
+  const desktopMenuItems = useMemo(() => {
+    // console.log('Recalculating desktop menu items'); // For debugging memoization
+    return navLinks.map((nav) => (
+      <li
+        key={nav.id}
+        className={`${styles.menuItem} ${active === nav.id ? styles.activeMenuItem : styles.inactiveMenuItem}`}
+      >
+        {active === nav.id && <div className={styles.activeIndicator}></div>}
+        <a href={`#${nav.id}`}>{nav.title}</a>
+      </li>
+    ));
+  // Dependencies: Recalculate only if navLinks or the active section changes
+  }, [navLinks, active]);
+
+  // Memoize the generation of mobile menu items
+  const mobileMenuItems = useMemo(() => {
+     // console.log('Recalculating mobile menu items'); // For debugging memoization
+    return navLinks.map((nav) => (
+      <li
+        key={nav.id}
+        className={`${styles.mobileMenuItem} ${active === nav.id ? styles.mobileActiveItem : styles.mobileInactiveItem}`}
+        // Use the memoized handleNavClick
+        onClick={() => handleNavClick(nav.id)}
+      >
+        <a href={`#${nav.id}`}>{nav.title}</a>
+      </li>
+    ));
+  // Dependencies: Recalculate if navLinks, active section, or the handleNavClick function reference changes
+  }, [navLinks, active, handleNavClick]);
+
+
+  // --- Render ---
   return (
-    // Apply base styles and conditional classes for scrolled state and visibility
     <nav className={`
         ${styles.nav}
         ${scrolled ? styles.scrolled : ''}
-         {/* Hide entire nav if not visible AND mobile menu is closed */}
         ${!isVisible && !toggle ? styles.hidden : ''}
       `}
     >
       <div className={styles.navWrapper}>
-        {/* Logo Link: Use <a> for scroll, hidden on mobile, conditionally hidden on desktop scroll */}
+        {/* Logo Link */}
         <a
           href="/"
           className={`
@@ -172,81 +163,54 @@ const Navbar = () => {
             ${scrolled ? styles.logoHiddenWhenScrolled : ''}
           `}
           onClick={handleLogoClick}
-          aria-label="The Invincible Studio - Home" // Accessibility label
+          aria-label="The Invincible Studio - Home"
         >
           <p className={styles.logoText}>My Portfolio</p>
         </a>
 
-        {/* Desktop Navigation Menu */}
+        {/* Desktop Navigation Menu - Use memoized items */}
         <ul className={styles.desktopMenu}>
-          {navLinks.map((nav) => (
-            <li
-              key={nav.id}
-              // Apply menu item base style and conditional active/inactive styles
-              className={`${styles.menuItem} ${active === nav.id ? styles.activeMenuItem : styles.inactiveMenuItem}`}
-            >
-              {/* Render the blue active indicator bar */}
-              {active === nav.id && <div className={styles.activeIndicator}></div>}
-              {/* Standard anchor link for same-page scrolling */}
-              <a href={`#${nav.id}`}>{nav.title}</a>
-            </li>
-          ))}
+          {desktopMenuItems}
         </ul>
 
-        {/* Mobile Navigation Container (holds the hamburger icon) */}
+        {/* Mobile Navigation Container */}
         <div className={styles.mobileMenuContainer}>
-           {/* Hamburger Icon Button */}
            <button
               className={styles.mobileMenuToggle}
-              onClick={() => setToggle(true)} // Open the mobile overlay
-              aria-label="Open menu" // Accessibility label
-              aria-expanded={toggle} // Indicate menu state
-              aria-controls="mobile-menu-list" // Link to the menu it controls
+              onClick={() => setToggle(true)}
+              aria-label="Open menu"
+              aria-expanded={toggle}
+              aria-controls="mobile-menu-list"
             >
-              <img src={menuIconUrl} alt='' /> {/* Alt can be empty for decorative icons within buttons */}
+              <img src={menuIconUrl} alt='' />
            </button>
         </div>
 
-        {/* Mobile Dropdown Overlay (Fullscreen) */}
+        {/* Mobile Dropdown Overlay */}
         <div
-          id="mobile-menu-overlay" // ID for potential targeting
+          id="mobile-menu-overlay"
           className={`${styles.mobileDropdown} ${toggle ? styles.mobileDropdownOpen : ''}`}
-          // Add ARIA properties for accessibility
           role="dialog"
           aria-modal="true"
-          aria-labelledby="mobile-menu-heading" // Needs a heading element inside
+          aria-labelledby="mobile-menu-heading"
         >
-            {/* Close Button Inside Overlay */}
              <button
                 className={styles.mobileCloseButton}
-                onClick={() => setToggle(false)} // Close the mobile overlay
-                aria-label="Close menu" // Accessibility label
+                onClick={() => setToggle(false)}
+                aria-label="Close menu"
               >
-                 <img src={closeIconUrl} alt="" /> {/* Alt can be empty */}
+                 <img src={closeIconUrl} alt="" />
              </button>
-
-             {/* Add an invisible heading for screen readers */}
              <h2 id="mobile-menu-heading" className={styles.visuallyHidden}>Navigation Menu</h2>
 
-             {/* Mobile Navigation Links List */}
+             {/* Mobile Navigation Links List - Use memoized items */}
              <ul className={styles.mobileMenuList} id="mobile-menu-list">
-              {navLinks.map((nav) => (
-                <li
-                  key={nav.id}
-                  // Apply base mobile item style and conditional active/inactive styles
-                  className={`${styles.mobileMenuItem} ${active === nav.id ? styles.mobileActiveItem : styles.mobileInactiveItem}`}
-                  // Click closes overlay (handleNavClick also sets toggle to false)
-                  onClick={() => handleNavClick(nav.id)}
-                >
-                  {/* Standard anchor link */}
-                  <a href={`#${nav.id}`}>{nav.title}</a>
-                </li>
-              ))}
-            </ul>
+                {mobileMenuItems}
+             </ul>
         </div>
       </div>
     </nav>
   );
 };
 
-export default Navbar;
+export default Navbar; // Consider wrapping in React.memo if it receives props
