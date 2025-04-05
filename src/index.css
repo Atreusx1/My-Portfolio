@@ -1,44 +1,28 @@
 /* index.css */
-* {
-  cursor: url('../public/Assets/cursor.png'), auto; /* Path to your cursor PNG */
+/* * {
+  cursor: url('../public/Assets/cursor.png'), auto; 
 }
 
 button:hover, a:hover {
-  cursor: url('../public/Assets/cursor2.png'), pointer; /* Path to your pointer PNG */
+  cursor: url('../public/Assets/cursor2.png'), pointer;
 }
 
 #root{
   --theme-color: linear-gradient(45deg, #a931e1a2,#E97451, #8c9eff);
-}
+} */
 
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-/* Add your Neue Machine font */
-@font-face {
-  font-family: 'Neue Machine';
-  src: url('../public/fonts/PPNeueMachina-InktrapLight.otf') format('opentype'); /* Update the path accordingly */
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Neue Machine';
-  src: url('../public/fonts/PPNeueMachina-InktrapRegular.otf') format('opentype'); /* Update the path accordingly */
-  font-weight: bold;
-  font-style: normal;
-}
 
 body {
   margin: 0;
-  font-family:'Neue Machine','Neue Machine', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  /* font-family:'Neue Machine','Neue Machine', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    sans-serif; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: url('../public/Assets/cursor.png'), auto;
+  /* cursor: url('../public/Assets/cursor.png'), auto; */
 }
 
-code {
+/* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
+} */
