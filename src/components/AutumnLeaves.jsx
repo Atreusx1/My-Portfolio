@@ -1,4 +1,3 @@
-// src/components/AutumnLeaves.jsx
 import React, { useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 
@@ -7,17 +6,15 @@ import InstancedFallingItems from './utils/InstancedFallingItems'; // Adjust pat
 import { createMapleLeafShape, createOakLeafShape, createBirchLeafShape } from './utils/leafShapes';
 import { autumnMapleColors, autumnOakColors, autumnBirchColors } from './utils/autumnColors';
 
-// --- Geometry Creation Hook ---
+// --- Geometry Creation Hook (Remains the same) ---
 const useLeafGeometries = () => {
     const mapleGeometry = useMemo(() => {
-        // console.log("Creating Maple Geometry"); // Less verbose
         const geom = new THREE.ShapeGeometry(createMapleLeafShape());
         geom.center();
         return geom;
     }, []);
 
     const oakGeometry = useMemo(() => {
-        // console.log("Creating Oak Geometry"); // Less verbose
         const geom = new THREE.ShapeGeometry(createOakLeafShape());
         geom.center();
         geom.rotateZ(Math.PI * 0.1);
@@ -25,7 +22,6 @@ const useLeafGeometries = () => {
     }, []);
 
     const birchGeometry = useMemo(() => {
-        // console.log("Creating Birch Geometry"); // Less verbose
         const geom = new THREE.ShapeGeometry(createBirchLeafShape());
         geom.center();
         return geom;
@@ -34,42 +30,51 @@ const useLeafGeometries = () => {
     // Effect for disposing geometries when the component unmounts
     useEffect(() => {
         return () => {
-            // console.log("Disposing Leaf Geometries"); // Less verbose
-            mapleGeometry.dispose();
-            oakGeometry.dispose();
-            birchGeometry.dispose();
+            // console.log("Disposing Leaf Geometries");
+            if (mapleGeometry) mapleGeometry.dispose();
+            if (oakGeometry) oakGeometry.dispose();
+            if (birchGeometry) birchGeometry.dispose();
         };
-    }, [mapleGeometry, oakGeometry, birchGeometry]);
+    }, [mapleGeometry, oakGeometry, birchGeometry]); // Dependencies ensure disposal happens correctly
 
     return { mapleGeometry, oakGeometry, birchGeometry };
 };
 
 
-function AutumnLeaves({ totalCount = 300 }) {
-    // --- Distribute Count ---
+function AutumnLeavesComponent({ totalCount = 300 }) { // Renamed slightly to avoid conflict with default export
+    // --- Distribute Count (Remains the same) ---
     const counts = useMemo(() => {
         const baseCount = Math.floor(totalCount / 3);
         const remainder = totalCount % 3;
-        // Ensure count is never negative if totalCount is very small
         const mapleCount = Math.max(0, baseCount + (remainder > 0 ? 1 : 0));
         const oakCount = Math.max(0, baseCount + (remainder > 1 ? 1 : 0));
         const birchCount = Math.max(0, baseCount);
-        // Adjust if totalCount was less than 3 to avoid counts summing > totalCount
-        if (totalCount < 3 && totalCount > 0) {
-             if (mapleCount + oakCount + birchCount > totalCount) {
-                // Simple redistribution logic for small counts
-                return { maple: totalCount >= 1 ? 1 : 0, oak: totalCount >= 2 ? 1 : 0, birch: totalCount >= 3 ? 1 : 0 };
-            }
-        } else if (totalCount === 0) {
+        if (totalCount === 0) {
             return { maple: 0, oak: 0, birch: 0 };
+        }
+        // Adjust if totalCount was less than 3 to avoid counts summing > totalCount
+         if (mapleCount + oakCount + birchCount > totalCount) {
+             // Simple redistribution logic for small counts
+             const m = totalCount >= 1 ? 1 : 0;
+             const o = totalCount >= 2 ? 1 : 0;
+             const b = totalCount >= 3 ? 1 : 0;
+             // Ensure sum doesn't exceed totalCount
+             const totalAllocated = m + o + b;
+             if (totalAllocated > totalCount) {
+                 // Prioritize maple, then oak
+                 if (o > 0 && totalCount < 2) return { maple: 1, oak: 0, birch: 0 };
+                 if (b > 0 && totalCount < 3) return { maple: m, oak: o, birch: 0 };
+             }
+             return { maple: m, oak: o, birch: b };
+
         }
          return { maple: mapleCount, oak: oakCount, birch: birchCount };
     }, [totalCount]);
 
-    // --- Get Geometries ---
+    // --- Get Geometries (Remains the same) ---
     const { mapleGeometry, oakGeometry, birchGeometry } = useLeafGeometries();
 
-    // --- Optional: Customize Physics per Leaf Type ---
+    // --- Optional: Customize Physics per Leaf Type (Remains the same) ---
     const oakPhysics = useMemo(() => ({
         scaleRange: [0.10, 0.18],
         fallSpeedRange: [0.010, 0.016],
@@ -83,17 +88,16 @@ function AutumnLeaves({ totalCount = 300 }) {
         swayFactorRange: [0.7, 1.2],
     }), []);
 
-    // Birch uses default physics
-
-    // Render only if geometries are ready
+    // --- Resource Loading Check ---
+    // Ensure geometries are created before attempting to render children
     if (!mapleGeometry || !oakGeometry || !birchGeometry) {
-        return null;
+        return null; // Or a loading indicator
     }
 
     return (
         <>
             {/* Maple Leaves - Only render if count > 0 */}
-            {counts.maple > 0 && (
+            {counts.maple > 0 && mapleGeometry && ( // Add geometry check
                 <InstancedFallingItems
                     key="maple" // Key is good practice here
                     count={counts.maple}
@@ -104,7 +108,7 @@ function AutumnLeaves({ totalCount = 300 }) {
             )}
 
             {/* Oak Leaves - Only render if count > 0 */}
-            {counts.oak > 0 && (
+            {counts.oak > 0 && oakGeometry && ( // Add geometry check
                 <InstancedFallingItems
                     key="oak"
                     count={counts.oak}
@@ -115,7 +119,7 @@ function AutumnLeaves({ totalCount = 300 }) {
             )}
 
             {/* Birch Leaves - Only render if count > 0 */}
-            {counts.birch > 0 && (
+            {counts.birch > 0 && birchGeometry && ( // Add geometry check
                 <InstancedFallingItems
                     key="birch"
                     count={counts.birch}
@@ -128,4 +132,8 @@ function AutumnLeaves({ totalCount = 300 }) {
     );
 }
 
+// --- Optimization: React Memoization ---
+// Wrap the component in React.memo. Ensure props passed *to* AutumnLeaves
+// (like totalCount) are stable or memoized in the parent if needed.
+const AutumnLeaves = React.memo(AutumnLeavesComponent);
 export default AutumnLeaves;
